@@ -1778,25 +1778,25 @@ function playTreeBeam(heroId){
   const start = performance.now();
   // Zoom: pan zu Node hin
   const startPan = {x: pan.x, y: pan.y};
-  const targetPan = {x: box.width/2 - (OX + n.x*GRID), y: box.height/2 - (OY + n.y*GRID)};
+  const targetPan = {x: box.width/2 - (OX + n.x*GRID)*treeScale, y: box.height/2 - (OY + n.y*GRID)*treeScale};
+  // Ziel = echte Bildschirmposition des Knotens (berücksichtigt Verschieben UND Zoom)
+  const tgt = () => { const el = $('#tree').querySelector(`.node[data-id="${nodeId}"]`), b = $('#treebox').getBoundingClientRect();
+    if(el){ const r = el.getBoundingClientRect(); return {x:r.left + r.width/2 - b.left, y:r.top + r.height/2 - b.top}; }
+    return {x:(OX + n.x*GRID)*treeScale + pan.x, y:(OY + n.y*GRID)*treeScale + pan.y}; };
   let beamDone = false;
   function frame(now){
     const elapsed = now - start;
     const p = Math.min(1, elapsed / totalDur);
     const ease = p < 0.5 ? 2*p*p : -1+(4-2*p)*p; // ease in-out
     // Sanfter Zoom (Pan bewegen)
-    if(p < 0.85){
-      pan.x = startPan.x + (targetPan.x - startPan.x) * ease;
-      pan.y = startPan.y + (targetPan.y - startPan.y) * ease;
-      applyTreeTransform();
-    }
+    { const q = Math.min(1, p / 0.6), e2 = q < 0.5 ? 2*q*q : -1+(4-2*q)*q; // Kamera ist bei 60 % angekommen, der Elf landet bei 70 %
+      if(q <= 1 && !frame._panDone){ pan.x = startPan.x + (targetPan.x - startPan.x) * e2; pan.y = startPan.y + (targetPan.y - startPan.y) * e2; applyTreeTransform(); if(q >= 1) frame._panDone = true; } }
     // Beam zeichnen
     ctx2.clearRect(0, 0, cv.width, cv.height);
     const beamP = Math.min(1, elapsed / (totalDur * 0.7));
     if(beamP < 1){
       // Aktueller Beam-Endpunkt (zieht von Mitte zum Node)
-      const bx = cx + (nx + (targetPan.x - startPan.x)*ease - cx) * beamP;
-      const by = cy + (ny + (targetPan.y - startPan.y)*ease - cy) * beamP;
+      const T = tgt(), bx = cx + (T.x - cx) * beamP, by = cy + (T.y - cy) * beamP;
       // Haupt-Beam
       const grad = ctx2.createLinearGradient(cx, cy, bx, by);
       grad.addColorStop(0, 'rgba(255,220,60,0)');
@@ -1828,8 +1828,7 @@ function playTreeBeam(heroId){
       ctx2.clearRect(0, 0, cv.width, cv.height);
       if(fade > 0 && beamP >= 1){
         // Nur noch Glow am Ziel
-        const ex = cx + (nx + (targetPan.x - startPan.x) - cx);
-        const ey = cy + (ny + (targetPan.y - startPan.y) - cy);
+        const T = tgt(), ex = T.x, ey = T.y;
         ctx2.save();
         const fg = ctx2.createRadialGradient(ex, ey, 0, ex, ey, 30*fade);
         fg.addColorStop(0, `rgba(255,255,180,${0.8*fade})`); fg.addColorStop(1, 'rgba(255,180,0,0)');
@@ -2188,13 +2187,25 @@ function mollyBerserk(u){
   addRing(u.x, u.y - 30, 90, '#c070ff', 0.7); addRing(u.x, u.y - 30, 50, '#ffffff', 0.4);
 }
 // Helden dürfen nicht hinter die Höhle laufen (dort würden sie verdeckt)
-const CAVE_W = 92, CAVE_TOP = -132, CAVE_BOT = 24;
-const inCaveZone = (x, y) => Math.abs(x) < CAVE_W && y < CAVE_BOT && y > CAVE_TOP;
-function outOfCave(x, y){ return y < (CAVE_TOP + CAVE_BOT) / 2 - 20 ? [x, CAVE_TOP - 6] : [(x < 0 ? -1 : 1) * (CAVE_W + 6), y]; }
+// Barriere um die Höhle: Oval (Mitte etwas über dem Eingang). Figuren werden entlang des Rands nach außen gedrückt → sie gleiten herum statt festzustecken
+const CAVE_BX = 90, CAVE_BY = 82, CAVE_CY = -48;
+const caveN = (x, y) => Math.hypot(x / CAVE_BX, (y - CAVE_CY) / CAVE_BY);
+const inCaveZone = (x, y) => caveN(x, y) < 1;
+function outOfCave(x, y){ const d = caveN(x, y); if(d < 0.001) return [CAVE_BX + 2, CAVE_CY]; const f = 1.02 / d; return [x * f, CAVE_CY + (y - CAVE_CY) * f]; }
+// Liegt die Höhle zwischen Figur und Ziel? Dann einen Umweg-Punkt außen am Oval nehmen (kürzere Seite)
+function caveDetour(x, y, tx, ty){
+  let hit = false; for(let k = 1; k < 10; k++){ const f = k / 10; if(inCaveZone(x + (tx - x) * f, y + (ty - y) * f)){ hit = true; break; } }
+  if(!hit) return [tx, ty];
+  const au = Math.atan2((y - CAVE_CY) / CAVE_BY, x / CAVE_BX), at = Math.atan2((ty - CAVE_CY) / CAVE_BY, tx / CAVE_BX);
+  let da = at - au; while(da > Math.PI) da -= 2 * Math.PI; while(da < -Math.PI) da += 2 * Math.PI;
+  const a = au + Math.sign(da || 1) * Math.min(Math.abs(da), 0.7), R = 1.22;
+  return [Math.cos(a) * CAVE_BX * R, CAVE_CY + Math.sin(a) * CAVE_BY * R];
+}
 function keepOutOfCave(u){
-  if(u.hx !== undefined && inCaveZone(u.hx, u.hy)){ [u.hx, u.hy] = outOfCave(u.hx, u.hy); } // Heimposition nicht hinter der Höhle
-  if(u.rjump || u.wzip || u.leap) return;
-  if(inCaveZone(u.x, u.y)){ [u.x, u.y] = outOfCave(u.x, u.y); } }
+  if(u.hx !== undefined && inCaveZone(u.hx, u.hy)){ [u.hx, u.hy] = outOfCave(u.hx, u.hy); } // Heimposition nie in der Höhle
+  if(u.rjump || u.wzip || u.leap) return; // Sprünge nicht abbrechen
+  if(inCaveZone(u.x, u.y)){ [u.x, u.y] = outOfCave(u.x, u.y); }
+}
 function caveDist(e){ const ry = e.y < 0 ? 120 : 50; return Math.hypot(e.x / 100, e.y / ry) * 100 - 100; }
 // Fernkampf-Gegner: bleiben auf Abstand und schießen auf Helden oder die Höhle
 function enemyRanged(e, dt, heroes){
@@ -2562,7 +2573,7 @@ function update(dt){
           t.max *= (1 + st.toadHp) * own; t.hp = t.max; t.toadMul = (1 + st.toadDmg) * owd; t.hx = tx; t.hy = ty; t.owner = u; u.big = t;
           B.shake = 0.2; addRing(tx, ty - 10, 50, '#9aff3a', 0.6); addText(tx, ty - 70, 'RIESENKRÖTE!', '#b0ff6a', 16, 1.4); } }
     }
-    const moveTo = (tx, ty, s) => { const dx = tx - u.x, dy = ty - u.y, d = Math.hypot(dx, dy); if(d > 2){ const m = Math.min(d, s*dt); u.x += dx/d*m; u.y += dy/d*m; u.moving = true; if(Math.abs(dx) > 1) u.face = dx > 0 ? 1 : -1; } };
+    const moveTo = (tx, ty, s) => { [tx, ty] = caveDetour(u.x, u.y, tx, ty); const dx = tx - u.x, dy = ty - u.y, d = Math.hypot(dx, dy); if(d > 2){ const m = Math.min(d, s*dt); u.x += dx/d*m; u.y += dy/d*m; u.moving = true; if(Math.abs(dx) > 1) u.face = dx > 0 ? 1 : -1; } };
     if(u.c.melee || u.berserk){
       u.retT = (u.retT || 0) - dt;
       if(!u.tgt || u.tgt.dead || u.retT <= 0){

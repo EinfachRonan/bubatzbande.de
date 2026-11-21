@@ -1187,30 +1187,45 @@ function save(){ // immer deferred – verhindert Freeze im Game-Loop
   if(_saveTimer) return; // bereits eingeplant
   _saveTimer = setTimeout(() => {
     _saveTimer = null;
+    // Zeitstempel: der zuletzt gespielte Stand gewinnt beim Abgleich (erst nach dem Konto-Abgleich, damit Start-Speichern einen alten Stand nicht „neu“ macht)
+    if(_cloudPulled || !(window.BB && BB.loggedIn)) S.ts = Date.now();
     try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){}
     cloudSave();
   }, 0);
 }
 function saveNow(){ // nur für kritische Pfade (Seitenunload etc.)
   if(_saveTimer){ clearTimeout(_saveTimer); _saveTimer = null; }
+  if(_cloudPulled || !(window.BB && BB.loggedIn)) S.ts = Date.now();
   try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){}
   cloudSave();
 }
-function cloudSave(now){ if(window.BB && BB.loggedIn && BB.cloud) BB.cloud.put('kh', S, now); }
-let _cloudPulled = false;
+// Konto-Speicher: erst hochladen, wenn der Konto-Stand abgerufen wurde – sonst überschreibt ein altes Gerät den neuen Stand
+function cloudSave(now){ if(_cloudPulled && window.BB && BB.loggedIn && BB.cloud) BB.cloud.put('kh', S, now); }
+var _cloudPulled = false, _cloudBusy = false;
+const _khInFight = () => { try { return typeof B !== 'undefined' && B && !B.over; } catch(e) { return false; } };
+// Beim Start (und beim Zurückkommen in den Tab): zuletzt gespielten Stand vom Konto holen.
+// Regel: Der Stand mit dem neueren Zeitstempel gewinnt. Hat das Gerät noch keinen Zeitstempel (alter Stand), gewinnt das Konto.
 async function cloudLoad(){
-  if(!window.BB || !BB.loggedIn || !BB.cloud) return;
-  try {
-    const c = await BB.cloud.get('kh');
-    if(!c) { cloudSave(true); return; } // nichts auf dem Server → aktuellen Stand hochladen
-    // Besser: der Stand mit mehr Kapitel oder mehr Kr gewinnt
-    const local = S;
-    const better = (c.chapter || 1) > (local.chapter || 1) || ((c.chapter||1) === (local.chapter||1) && (c.kr||0) > (local.kr||0));
-    if(better){ S = Object.assign(defState(), c); migrate(); try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} renderHub(); newDay(); }
-    else { cloudSave(true); }
-  } catch(e){}
+  if(!window.BB || !BB.loggedIn || !BB.cloud || _cloudBusy) return;
+  _cloudBusy = true;
+  let c = null, ok = false;
+  try { c = await BB.cloud.get('kh'); ok = true; } catch(e){}
+  _cloudBusy = false;
+  if(!ok){ setTimeout(cloudLoad, 5000); return; } // Netz weg: später nochmal, solange nichts hochladen
+  const lt = S.ts || 0, ct = (c && c.ts) || 0;
   _cloudPulled = true;
+  if(c && (ct > lt || !lt)){
+    if(ct === lt && lt) return;
+    S = Object.assign(defState(), c); migrate();
+    try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){}
+    if(!S.day) newDay();
+    try{ renderHub(); }catch(e){}
+    try{ toast('☁ Letzter Spielstand vom Konto geladen'); }catch(e){}
+  } else {
+    cloudSave(true); // dieses Gerät ist neuer (oder Konto leer) → hochladen
+  }
 }
+document.addEventListener('visibilitychange', () => { if(!document.hidden && _cloudPulled && !_khInFight()) cloudLoad(); });
 load();
 // Cloud-Sync wenn bb.js bereits geladen ist (oder sobald Login passiert)
 function updateBBBtn(){

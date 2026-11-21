@@ -1233,7 +1233,7 @@ const RORD = ['C','U','R','E','L'];
 const NODE = {}; NODES.forEach(n => NODE[n.id] = n);
 NODES.forEach(n => { if(n.t === 'hero'){ const h = HERO[n.hero]; n.n = h.n; n.d = `Wird freigeschaltet, sobald du ${h.n} zum ersten Mal aus einem Paket ziehst. Danach kannst du ihn hier aufwerten.`; } });
 
-const KEY = 'kraeuterhoehle_beta1'; // Beta-Start 21.11.2026: alle Spielstände zurückgesetzt (vorher kraeuterhoehle_v3)
+const KEY = TESTMODE ? 'kraeuterhoehle_test' : 'kraeuterhoehle_beta1'; // Testmodus (?test) hat einen eigenen Spielstand; // Beta-Start 21.11.2026: alle Spielstände zurückgesetzt (vorher kraeuterhoehle_v3)
 const CLOUD_KEY = 'kh';              // Server erlaubt nur 'kh' – Reset läuft über BETA-Markierung im Spielstand
 const BETA = 1;
 let S;
@@ -1274,13 +1274,14 @@ function saveNow(){ // nur für kritische Pfade (Seitenunload etc.)
   cloudSave();
 }
 // Konto-Speicher: erst hochladen, wenn der Konto-Stand abgerufen wurde – sonst überschreibt ein altes Gerät den neuen Stand
-function cloudSave(now){ if(_cloudPulled && window.BB && BB.loggedIn && BB.cloud) BB.cloud.put(CLOUD_KEY, S, now); }
+function cloudSave(now){ if(TESTMODE) return; if(_cloudPulled && window.BB && BB.loggedIn && BB.cloud) BB.cloud.put(CLOUD_KEY, S, now); }
 var _cloudPulled = false, _cloudBusy = false;
 const _khInFight = () => { try { return typeof B !== 'undefined' && B && !B.over; } catch(e) { return false; } };
 // Beim Start (und beim Zurückkommen in den Tab): zuletzt gespielten Stand vom Konto holen.
 // Regel: Der Stand mit dem neueren Zeitstempel gewinnt. Hat das Gerät noch keinen Zeitstempel (alter Stand), gewinnt das Konto.
 // Beta-Reset: Konto-Stände von vor der Beta (ohne beta-Markierung) zählen als leer und werden überschrieben.
 async function cloudLoad(){
+  if(TESTMODE) return; // Testmodus: nie mit dem Konto abgleichen
   if(!window.BB || !BB.loggedIn || !BB.cloud || _cloudBusy) return;
   _cloudBusy = true;
   let c = null, ok = false;
@@ -1758,7 +1759,17 @@ function renderColl(){
 }
 
 /* ===================== HUB ===================== */
+// Testmodus: unendlich 💎 / ✨ / 🪙, alle Kapitel offen, alle Artefakte + 3 Slots – nur im Test-Spielstand
+function testBoost(){
+  if(!TESTMODE || !S) return;
+  S.kr = Math.max(S.kr || 0, 1e7); S.sm = Math.max(S.sm || 0, 1e6);
+  if(S.day) S.day.coins = Math.max(S.day.coins || 0, 99999);
+  S.chapter = Math.max(S.chapter || 1, MAX_CH);
+  S.arts = ARTS.map(a => a.id); S.artSlot2 = true; S.artSlot3 = true;
+  S.intro = true; S.introFightDone = true;
+}
 function renderHub(){
+  testBoost();
   // Sicherheit: Im Hub darf kein heroReveal aktiv sein
   if(!B){ heroRevealQ = []; heroRevealActive = null; _heroRevealPendingDismiss = false; }
   S.sel = Math.min(Math.max(1, S.sel), Math.min(TESTMODE ? MAX_CH : S.chapter, MAX_CH));
@@ -1923,7 +1934,7 @@ function openChest(){
   sparks(B.chest.x, B.chest.y - 15, 30, 2, ['#ffd84d','#fff6c0','#ff9a3a']); addRing(B.chest.x, B.chest.y, 50, '#ffd84d', 0.5); B.chest = null; save();
 }
 function startFight(ch){
-  hideTip(); selNode = null;
+  testBoost(); hideTip(); selNode = null;
   if(ch >= S.chapter) S.tries[ch] = (S.tries[ch] || 0) + 1;
   $('#hub').style.display = 'none'; $('#battle').style.display = 'flex';
   rebuildGround(ch);

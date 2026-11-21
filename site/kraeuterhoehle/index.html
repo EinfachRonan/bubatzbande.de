@@ -1304,6 +1304,7 @@ async function cloudLoad(){
 }
 document.addEventListener('visibilitychange', () => { if(!document.hidden && _cloudPulled && !_khInFight()) cloudLoad(); });
 load();
+if(TESTMODE) testBoost(); // Test-Spielstand sofort freischalten (kein Tutorial)
 // Cloud-Sync wenn bb.js bereits geladen ist (oder sobald Login passiert)
 function updateBBBtn(){
   const btn = document.getElementById('bblogin');
@@ -1766,7 +1767,12 @@ function testBoost(){
   if(S.day) S.day.coins = Math.max(S.day.coins || 0, 99999);
   S.chapter = Math.max(S.chapter || 1, MAX_CH);
   S.arts = ARTS.map(a => a.id); S.artSlot2 = true; S.artSlot3 = true;
-  S.intro = true; S.introFightDone = true;
+  S.intro = true; S.introFightDone = true; S.galaxy = true; S.rerollUnlocked = true; // Shiny-Galaxie + Auffrischen sichtbar
+  // alle Helden freigeschaltet (Upgrades kauft man selbst)
+  S.seen = S.seen || {}; for(const h of HEROES){ S.seen[h.id] = 1; S.owned['h_' + h.id] = 1; }
+  // alle Quests mit vollem Fortschritt – sie schließen sich ab, sobald sie im Baum sichtbar sind
+  S.q = S.q || {}; for(const n of NODES) if(n.t === 'quest' && n.q) S.q[n.q.key] = Math.max(S.q[n.q.key] || 0, n.q.goal);
+  try{ checkQuests(); computeMods(); }catch(e){}
 }
 function renderHub(){
   testBoost();

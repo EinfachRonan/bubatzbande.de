@@ -174,6 +174,57 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;displa
   /* Canvas battle */
   #battle{position:fixed}
 }
+
+/* ================= HANDY-LAYOUT ================= */
+#mnav{display:none}
+/* Hochformat: eine Ansicht im Vollbild + Navigationsleiste unten */
+@media (max-width:820px) and (orientation:portrait){
+  html,body{overflow:hidden;height:100%}
+  #hub{position:fixed;inset:0;flex-direction:column;min-height:0;padding-bottom:calc(58px + env(safe-area-inset-bottom))}
+  #hub #left,#hub #right{display:none}
+  #hub[data-m="shop"] #left{display:flex;flex:1;width:auto;min-height:0;overflow-y:auto;border:0;padding:6px 10px 92px;gap:8px}
+  #hub[data-m="right"] #right{display:flex;flex:1;min-height:0;height:auto}
+  #right .tabs button[data-t]{display:none}
+  #right .tabs{padding:6px 10px 4px;justify-content:flex-end;border-bottom-width:1px}
+  .tabs .krc{font-size:22px;margin-left:0;padding:0 4px 2px}
+  #treebox{min-height:0}
+  #coll{padding:8px 8px 92px}
+  .chap b{font-size:22px} .chap small{font-size:13px} .chap button{font-size:24px;padding:4px 8px}
+  .panel{padding:8px}
+  .ph{font-size:24px;margin-bottom:6px}
+  #offers{grid-template-columns:repeat(3,1fr);gap:6px}
+  .of .pr{font-size:17px;padding:1px 0}
+  .of .pb{height:70px} .of .pb img{height:52px}
+  .of .sn{font-size:13px} .of .odds{font-size:11px;line-height:1.25}
+  #bag{font-size:13px;min-height:0;margin-top:6px;padding-top:6px} #bag img{height:26px}
+  #reroll{font-size:17px;padding:8px}
+  #info{font-size:13px}
+  #reset{font-size:14px!important}
+  #fight{position:fixed;left:10px;right:10px;bottom:calc(66px + env(safe-area-inset-bottom));font-size:26px;padding:10px;z-index:30;box-shadow:0 4px 18px rgba(0,0,0,.6)}
+  #tip{width:min(300px,86vw)!important;font-size:15px}
+  #mnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;background:#0e0d08;border-top:2px solid var(--gb);padding-bottom:env(safe-area-inset-bottom)}
+  #mnav button{flex:1;height:58px;background:none;border:0;color:#8a90a8;font:700 12px inherit;letter-spacing:.5px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer}
+  #mnav button b{font-size:22px;line-height:1}
+  #mnav button.on{color:var(--gold);background:#1a1708;box-shadow:inset 0 3px 0 var(--gold)}
+  #battle #mnav{display:none}
+}
+/* Querformat (Handy liegt): Laden schmal links, alles kompakter */
+@media (max-height:520px) and (orientation:landscape){
+  #left{width:250px;flex:0 0 250px;padding:6px;gap:6px}
+  .chap b{font-size:18px} .chap small{font-size:11px} .chap button{font-size:20px;padding:2px 6px}
+  .panel{padding:6px} .ph{font-size:20px;margin-bottom:4px}
+  #offers{grid-template-columns:repeat(3,1fr);gap:4px}
+  .of .pr{font-size:14px;padding:0} .of .pb{height:48px} .of .pb img{height:36px}
+  .of .sn{font-size:11px} .of .odds{display:none}
+  #bag{font-size:11px;min-height:0;margin-top:4px;padding-top:4px} #bag img{height:20px}
+  #reroll{font-size:14px;padding:5px;margin-top:4px}
+  #info{font-size:11px} #reset{font-size:12px!important;padding:3px!important}
+  .tabs{padding:4px 8px 0;gap:4px}
+  .tabs button{font-size:14px;padding:4px 8px}
+  .tabs .krc{font-size:18px}
+  #fight{font-size:20px;padding:6px 16px;right:10px;bottom:10px}
+  #tip{width:260px!important;font-size:14px}
+}
 </style>
 </head>
 <body>
@@ -483,9 +534,6 @@ NODES.push(
   {id:'q_boss2', x:-1, y:-5, p:'q_boss1', t:'quest', icon:'👹', n:'Quest', d:'Besiege den Boss von Kapitel 2.', q:{key:'boss2', goal:1}, rew:'+3 🪙 Einkommen', eff:{income:3}},
   {id:'q_boss3', x:-1, y:-7, p:'q_boss2', t:'quest', icon:'👹', n:'Quest', d:'Besiege den Boss von Kapitel 3.', q:{key:'boss3', goal:1}, rew:'+4 🪙 Einkommen', eff:{income:4}},
   {id:'q_boss4', x:-1, y:-9, p:'q_boss3', t:'quest', icon:'👑', n:'Quest', d:'Besiege den Boss von Kapitel 4.', q:{key:'boss4', goal:1}, rew:'+30% Schaden aller Helden', eff:{allDmg:.3}},
-  {id:'q_bogen', x:-6, y:8, p:'kr_kill', t:'quest', icon:'🏹', n:'Quest', d:'Besiege 40 Goblin-Bogenschützen.', q:{key:'k_bogen', goal:40}, rew:'+1 🪙 Einkommen', eff:{income:1}},
-  {id:'q_schamane', x:-8, y:8, p:'q_bogen', t:'quest', icon:'🔮', n:'Quest', d:'Besiege 20 Ork-Schamanen.', q:{key:'k_schamane', goal:20}, rew:'+15% LP aller Helden', eff:{allHp:.15}},
-  {id:'q_bandit', x:-8, y:10, p:'q_schamane', t:'quest', icon:'🗡️', n:'Quest', d:'Erwische 20 Schatten-Banditen mit dem Mauszeiger.', q:{key:'k_bandit', goal:20}, rew:'+1 🪙 Einkommen', eff:{income:1}},
   // Laden Slots 6–8
   {id:'slot6', x:6, y:3, p:'slot5', cur:'sm', t:'up', icon:'🛒', n:'Marktgasse', d:'+1 Platz im Laden.', cost:8, eff:{slots:1}},
   {id:'q_messer250', x:6, y:5, p:'slot6', t:'quest', icon:'🗡️', n:'Quest', d:'Besiege 250 Messer-Goblins.', q:{key:'k_messer', goal:250}, rew:'+1 Platz im Laden', eff:{slots:1}},
@@ -1161,14 +1209,16 @@ const RORD = ['C','U','R','E','L'];
 const NODE = {}; NODES.forEach(n => NODE[n.id] = n);
 NODES.forEach(n => { if(n.t === 'hero'){ const h = HERO[n.hero]; n.n = h.n; n.d = `Wird freigeschaltet, sobald du ${h.n} zum ersten Mal aus einem Paket ziehst. Danach kannst du ihn hier aufwerten.`; } });
 
-const KEY = 'kraeuterhoehle_v3';
+const KEY = 'kraeuterhoehle_beta1'; // Beta-Start 21.11.2026: alle Spielstände zurückgesetzt (vorher kraeuterhoehle_v3)
+const CLOUD_KEY = 'kh';              // Server erlaubt nur 'kh' – Reset läuft über BETA-Markierung im Spielstand
+const BETA = 1;
 let S;
 // Held-Vorstellung – Variablen früh definiert (werden in spawnUnit genutzt)
 let heroRevealQ = [];
 let heroRevealActive = null;
 let _heroRevealPendingDismiss = false;
 const HERO_REVEAL_DUR = 3.8;
-function defState(){ return {kr:0, owned:{root:1, h_nille:1}, q:{basis:0, packs:0, kills:0, click:0, surv:0}, chapter:1, sel:1, best:{}, speed:1, day:null, tries:{}, ctot:{}, seen:{}, newSeen:{}, intro:false, introFightDone:false, rerollUnlocked:false}; }
+function defState(){ return {beta:BETA, kr:0, owned:{root:1, h_nille:1}, q:{basis:0, packs:0, kills:0, click:0, surv:0}, chapter:1, sel:1, best:{}, speed:1, day:null, tries:{}, ctot:{}, seen:{}, newSeen:{}, intro:false, introFightDone:false, rerollUnlocked:false}; }
 function load(){ try{ const r = localStorage.getItem(KEY); if(r){ S = Object.assign(defState(), JSON.parse(r)); migrate(); return; } }catch(e){} S = defState(); }
 // Entfernte Mauszeiger-Knoten: ausgegebene Meisterschaft zurückgeben
 function migrate(){
@@ -1200,18 +1250,20 @@ function saveNow(){ // nur für kritische Pfade (Seitenunload etc.)
   cloudSave();
 }
 // Konto-Speicher: erst hochladen, wenn der Konto-Stand abgerufen wurde – sonst überschreibt ein altes Gerät den neuen Stand
-function cloudSave(now){ if(_cloudPulled && window.BB && BB.loggedIn && BB.cloud) BB.cloud.put('kh', S, now); }
+function cloudSave(now){ if(_cloudPulled && window.BB && BB.loggedIn && BB.cloud) BB.cloud.put(CLOUD_KEY, S, now); }
 var _cloudPulled = false, _cloudBusy = false;
 const _khInFight = () => { try { return typeof B !== 'undefined' && B && !B.over; } catch(e) { return false; } };
 // Beim Start (und beim Zurückkommen in den Tab): zuletzt gespielten Stand vom Konto holen.
 // Regel: Der Stand mit dem neueren Zeitstempel gewinnt. Hat das Gerät noch keinen Zeitstempel (alter Stand), gewinnt das Konto.
+// Beta-Reset: Konto-Stände von vor der Beta (ohne beta-Markierung) zählen als leer und werden überschrieben.
 async function cloudLoad(){
   if(!window.BB || !BB.loggedIn || !BB.cloud || _cloudBusy) return;
   _cloudBusy = true;
   let c = null, ok = false;
-  try { c = await BB.cloud.get('kh'); ok = true; } catch(e){}
+  try { c = await BB.cloud.get(CLOUD_KEY); ok = true; } catch(e){}
   _cloudBusy = false;
   if(!ok){ setTimeout(cloudLoad, 5000); return; } // Netz weg: später nochmal, solange nichts hochladen
+  if(c && c.beta !== BETA) c = null; // alter Stand vor der Beta → ignorieren
   const lt = S.ts || 0, ct = (c && c.ts) || 0;
   _cloudPulled = true;
   if(c && (ct > lt || !lt)){
@@ -1366,7 +1418,10 @@ function renderShop(){
   }).join('');
   $('#bag').innerHTML = D.bag.length ? `Im Rucksack (fliegen im Kampf raus):<br>${D.bag.map(p => `<img src="${PACK_SPR[p].url}">`).join('')}` : 'Nicht ausgegebenes Gold verfällt nach dem Kampf. Kaufe Pakete. Sie fliegen im Kampf aus der Höhle und du sammelst sie per Klick ein.';
   if(!S.rerollUnlocked){ $('#reroll').disabled = true; $('#reroll').textContent = '🔒 AUFFRISCHEN'; }
+  else if(D.offers.every(o => o.sold)){ $('#reroll').disabled = true; $('#reroll').textContent = '✔ ALLES GEKAUFT'; }
   else { $('#reroll').disabled = D.coins < 1 && !D.free; $('#reroll').textContent = D.free ? 'AUFFRISCHEN (GRATIS)' : 'AUFFRISCHEN 1 🪙'; }
+  { let n = $('#rerollInfo'); if(!n){ n = document.createElement('div'); n.id = 'rerollInfo'; n.style.cssText = 'font-size:12px;color:#a89a50;text-align:center;margin-top:5px;line-height:1.3'; $('#reroll').after(n); }
+    n.textContent = S.rerollUnlocked && D.offers.every(o => o.sold) ? 'Alle Pakete gekauft – Auffrischen geht erst nach dem nächsten Kampf wieder.' : ''; }
   document.querySelectorAll('#offers .of').forEach(el => el.onclick = () => {
     const o = D.offers[+el.dataset.i], cst = offerCost(o);
     if(o.sold || D.coins < cst) return;
@@ -1375,6 +1430,7 @@ function renderShop(){
 }
 $('#reroll').onclick = () => {
   const D = S.day;
+  if(D.offers.every(o => o.sold)) return; // nichts mehr aufzufrischen
   if(D.free){ D.free--; } else { if(D.coins < 1) return; D.coins--; }
   // Nur nicht-gekaufte Paket-Slots neu würfeln — Hero-Slots auch tauschen
   const pw = {basis:60, gross:30, magie:15, box:10}, av = MD.packs, tot = av.reduce((a,p) => a + pw[p], 0);
@@ -1484,7 +1540,7 @@ function buyNode(id){
   renderHub();
 }
 function applyTreeTransform(){ $('#tree').style.transform = `translate(${pan.x}px,${pan.y}px) scale(${treeScale})`; $('#tree').style.transformOrigin = '0 0'; }
-function centerTree(){ const b = $('#treebox').getBoundingClientRect(); pan.x = b.width/2 - OX - 120; pan.y = b.height/2 - OY + 20; applyTreeTransform(); }
+function centerTree(){ const b = $('#treebox').getBoundingClientRect(); pan.x = b.width/2 - OX - (b.width < 700 ? 0 : 120); pan.y = b.height/2 - OY + 20; applyTreeTransform(); }
 (function initPan(){
   const tb = $('#treebox');
   const pointers = new Map();
@@ -1689,6 +1745,7 @@ function renderHub(){
   $('#info').innerHTML = `Bestzeit Kapitel ${S.sel}: ${b ? mmss(b) : '–'} · Boss (${BOSSES[S.sel-1].n}) erscheint nach ${mmss(DIFF.bossT[S.sel-1])}${S.tries[S.sel] ? ` · Versuche: ${S.tries[S.sel]}` : ''}<br>Einkommen: ${MD.income} 🪙 pro Kampf`;
   renderShop();
   document.querySelectorAll('.tabs button').forEach(x => x.classList.toggle('on', x.dataset.t === curTab));
+  if(window._mnavMark) window._mnavMark();
   $('#treebox').style.display = curTab === 'tree' ? 'block' : 'none';
   // Skillbaum-Hintergrund: Magische Wiese, füllt das Fenster (wie im Kampf), leicht abgedunkelt
   if(typeof CUSTOM_BGS !== 'undefined' && CUSTOM_BGS[0] && !$('#treebox').dataset.bg){ const T = $('#treebox'); T.dataset.bg = 1;
@@ -1786,6 +1843,15 @@ function playTreeBeam(heroId){
   requestAnimationFrame(frame);
 }
 document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { curTab = b.dataset.t; selNode = null; hideTip(); renderHub(); });
+// Handy: Navigationsleiste unten (Laden | Aufwerten | Artefakte | Helden)
+(function(){ const hub = $('#hub'); hub.dataset.m = 'shop'; hub.appendChild($('#fight')); /* KÄMPFEN immer erreichbar, auch in der Laden-Ansicht */ const nav = document.createElement('div'); nav.id = 'mnav';
+  nav.innerHTML = [['shop','🛒','LADEN'],['tree','⬆','AUFWERTEN'],['coll','💠','ARTEFAKTE'],['heroes','🦸','HELDEN']].map(([k,i,t]) => `<button data-mn="${k}"><b>${i}</b>${t}</button>`).join('');
+  hub.appendChild(nav);
+  const mark = () => nav.querySelectorAll('button').forEach(x => x.classList.toggle('on', hub.dataset.m === 'shop' ? x.dataset.mn === 'shop' : x.dataset.mn === curTab));
+  nav.querySelectorAll('button').forEach(b => b.onclick = () => { const k = b.dataset.mn; hideTip();
+    if(k === 'shop'){ hub.dataset.m = 'shop'; } else { const first = hub.dataset.m !== 'right'; hub.dataset.m = 'right'; curTab = k; selNode = null; renderHub(); if(k === 'tree' && (first || !hub._treeCentered)){ hub._treeCentered = true; requestAnimationFrame(centerTree); } }
+    mark(); window.dispatchEvent(new Event('resize')); });
+  window._mnavMark = mark; mark(); })();
 $('#chPrev').onclick = () => { S.sel--; save(); renderHub(); };
 $('#chNext').onclick = () => { S.sel++; save(); renderHub(); };
 $('#fight').onclick = () => startFight(S.sel);
@@ -2121,6 +2187,14 @@ function mollyBerserk(u){
   addText(u.x, u.y - 110, '💊 MOLLY-BERSERKER! 💊', '#e090ff', 22, 2.5);
   addRing(u.x, u.y - 30, 90, '#c070ff', 0.7); addRing(u.x, u.y - 30, 50, '#ffffff', 0.4);
 }
+// Helden dürfen nicht hinter die Höhle laufen (dort würden sie verdeckt)
+const CAVE_W = 92, CAVE_TOP = -132, CAVE_BOT = 24;
+const inCaveZone = (x, y) => Math.abs(x) < CAVE_W && y < CAVE_BOT && y > CAVE_TOP;
+function outOfCave(x, y){ return y < (CAVE_TOP + CAVE_BOT) / 2 - 20 ? [x, CAVE_TOP - 6] : [(x < 0 ? -1 : 1) * (CAVE_W + 6), y]; }
+function keepOutOfCave(u){
+  if(u.hx !== undefined && inCaveZone(u.hx, u.hy)){ [u.hx, u.hy] = outOfCave(u.hx, u.hy); } // Heimposition nicht hinter der Höhle
+  if(u.rjump || u.wzip || u.leap) return;
+  if(inCaveZone(u.x, u.y)){ [u.x, u.y] = outOfCave(u.x, u.y); } }
 function caveDist(e){ const ry = e.y < 0 ? 120 : 50; return Math.hypot(e.x / 100, e.y / ry) * 100 - 100; }
 // Fernkampf-Gegner: bleiben auf Abstand und schießen auf Helden oder die Höhle
 function enemyRanged(e, dt, heroes){
@@ -2442,6 +2516,7 @@ function update(dt){
   // Helden
   for(const u of B.units){
     if(u.dead) continue;
+    keepOutOfCave(u);
     u.anim = Math.max(0, u.anim - dt); u.hit = Math.max(0, u.hit - dt); u.moving = false;
     if(u.invisT > 0) u.invisT -= dt;
     if(u.poisonT > 0){ u.poisonT -= dt; if(u.poisonT > 0){ u.poisonDot = (u.poisonDot||0) + dt; if(u.poisonDot >= 1){ u.poisonDot -= 1; heroHurt(u, 4, null); addText(u.x, u.y - 40, '-4 ☠', '#44ff44', 10, 0.5); B.fx.push({t:'poof', x:u.x + (Math.random()-.5)*16, y:u.y - 15, r:7, life:0.3, max:0.3}); } } else u.poisonT = 0; }
@@ -3105,6 +3180,7 @@ function draw(){
     ctx.globalAlpha = 1; ctx.fillStyle = 'rgba(30,10,60,0.7)'; ctx.beginPath(); ctx.ellipse(P.x, P.y - 20, 12*wob, 19*wob, 0, 0, 7); ctx.fill();
     for(let i = 0; i < 3; i++){ ctx.fillStyle = i < 3 - P.hits ? '#ffffff' : 'rgba(255,255,255,0.25)'; ctx.fillRect(Math.round(P.x - 10 + i*7), Math.round(P.y + 16), 5, 3); }
   }
+  for(const u of B.units) if(!u.dead) keepOutOfCave(u); // nie hinter der Höhle zeichnen
   const list = [{y:30, k:'cave'}];
   for(const e of B.hidden) if(!e.dead) list.push({y:e.y, k:'enemy', o:e});
   for(const b of B.blds) list.push({y:BUILDINGS[b.id].y + 20, k:'bld', o:b});
@@ -3318,7 +3394,11 @@ function drawBld(b){
 function drawCave(){
   const w = CAVE.width*CAVE_SC, h = CAVE.height*CAVE_SC;
   ctx.fillStyle = 'rgba(0,0,0,0.45)'; ctx.beginPath(); ctx.ellipse(0, 30, w*0.46, 16, 0, 0, 7); ctx.fill();
-  ctx.drawImage(CAVE, -w/2, 30 - h + 4, w, h);
+  // Steht jemand hinter der Höhle? Dann wird sie durchsichtig, damit man ihn sieht
+  const hidden = o => !o.dead && Math.abs(o.x) < w*0.46 && o.y < 26 && o.y > 30 - h + 12;
+  const behind = B.units.some(hidden) || B.enemies.some(hidden);
+  B.caveA = (B.caveA === undefined ? 1 : B.caveA) + ((behind ? 0.42 : 1) - (B.caveA === undefined ? 1 : B.caveA)) * 0.18;
+  ctx.globalAlpha = B.caveA; ctx.drawImage(CAVE, -w/2, 30 - h + 4, w, h); ctx.globalAlpha = 1;
   // grünes Glimmen im Eingang
   const fl = 0.18 + Math.sin(B.t*3)*0.05;
   const gy = CAVE_SC < 2 ? 30 - h*0.42 : 18, gx = CAVE_SC < 2 ? w*0.0 : 0;

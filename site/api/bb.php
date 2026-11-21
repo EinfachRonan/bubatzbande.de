@@ -420,7 +420,7 @@ if ($a === 'save') {
   if (array_key_exists('rh', $in)) { if ($in['rh'] === '' || $in['rh'] === null) $U['rh'] = ''; elseif (rhOk($U, $in['rh'])) $U['rh'] = $in['rh']; }
   foreach (($in['stats'] ?? []) as $k => $v) {
     $k = substr(preg_replace('/[^a-z0-9_]/i', '', (string) $k), 0, 24);
-    if ($k !== '' && is_numeric($v) && count($U['stats']) < 60) $U['stats'][$k] = max($U['stats'][$k] ?? 0, min(1e7, (int) $v));
+    if ($k !== '' && is_numeric($v) && count($U['stats']) < 100) $U['stats'][$k] = max($U['stats'][$k] ?? 0, min(1e7, (int) $v));
   }
   $finish(['me' => pub($U, $id)]);
 }

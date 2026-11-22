@@ -463,7 +463,7 @@ const ENEMIES = [
   // ── Die Leere (Kapitel 6) ─────────────────────────────────────────────
   {id:'leerenkriecher', ch:[6],  n:'Leerenkriecher',    hp:30,  spd:62, dmg:7,  g:3,  sc:.88, m:0,  w:1,   v:'brute', melee:true, r:12},
   {id:'leerenauge',     ch:[6],  n:'Leerenauge',        hp:55,  spd:34, dmg:11, g:5,  sc:1.06, m:10, w:.55, v:'brute', flying:true, range:165, cd:2.3},
-  {id:'phasenpirscher', ch:[6],  n:'Phasenpirscher',    hp:60,  spd:40, dmg:16, g:6,  sc:1.38, m:30, w:/[?&]test\b/.test(location.search) ? .2 : .35, v:'brute', melee:true, r:13, invis:1, cloak:1},
+  {id:'phasenpirscher', ch:[6],  n:'Phasenpirscher',    hp:60,  spd:/[?&]test\b/.test(location.search) ? 24 : 40, dmg:/[?&]test\b/.test(location.search) ? 11.2 : 16, /* Test: -40% Tempo, -30% Schaden */ g:6,  sc:1.38, m:30, w:/[?&]test\b/.test(location.search) ? .2 : .35, v:'brute', melee:true, r:13, invis:1, cloak:1},
   {id:'obsidiankoloss', ch:[6],  n:'Obsidian-Koloss',   hp:640, spd:14, dmg:36, g:20, sc:1.8, m:75, w:.07, v:'brute', melee:true, armor:.4, r:24, splash:50, elite:1},
   {id:'ork',   ch:[], n:'Ork-Speerträger', hp:40,  spd:28, dmg:5,  g:2, sc:2.3, m:0,  w:1,   v:'ork',   pal:{G:'#4f8a3a',E:'#ffe02a',M:'#1a0a0a',B:'#5a4a2a',W:'#f0ece0'}},
   {id:'bogen', ch:[], n:'Goblin-Bogenschütze', hp:30, spd:26, dmg:6, g:2, sc:2, m:15, w:.35, v:'base', range:150, cd:1.8, pal:{G:'#7a9a3a',E:'#ffe02a',M:'#2a1a10',B:'#3a5a2a'}},

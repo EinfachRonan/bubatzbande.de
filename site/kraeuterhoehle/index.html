@@ -2026,7 +2026,7 @@ function rollHero(w){
   for(let i = 0; i < 5; i++){ if(x < w[i]){ ri = i; break; } x -= w[i]; }
   const pool = r => HEROES.filter(h => h.r === RORD[r] && !h.intruder).map(h => h.id);
   const arts = activeArts().map(a => ART[a]).filter(A => A && A.eff.more);
-  const wt = id => arts.reduce((m, A) => artFits(A, id) ? m + A.eff.more : m, 1) * (TESTMODE && id === 'nille' ? 0.79 : 1); // Testmodus: Nille-Anteil 15% seltener
+  const wt = id => arts.reduce((m, A) => artFits(A, id) ? m + A.eff.more : m, 1) * (TESTMODE && id === 'nille' ? 0.5 : 1); // Testmodus: Nille nur ~20% der grauen Helden
   for(let i = ri; i >= 0; i--){ const p = pool(i); if(p.length){ let t = p.reduce((a, id) => a + wt(id), 0), x = Math.random() * t; for(const id of p){ x -= wt(id); if(x <= 0) return id; } return p[p.length-1]; } }
   for(let i = ri + 1; i < 5; i++){ const p = pool(i); if(p.length) return p[Math.floor(Math.random()*p.length)]; }
   return 'nille';

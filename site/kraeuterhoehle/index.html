@@ -463,7 +463,7 @@ const ENEMIES = [
   // ── Die Leere (Kapitel 6) ─────────────────────────────────────────────
   {id:'leerenkriecher', ch:[6],  n:'Leerenkriecher',    hp:30,  spd:62, dmg:7,  g:3,  sc:.88, m:0,  w:1,   v:'brute', melee:true, r:12},
   {id:'leerenauge',     ch:[6],  n:'Leerenauge',        hp:55,  spd:34, dmg:11, g:5,  sc:1.06, m:10, w:.55, v:'brute', flying:true, range:165, cd:2.3},
-  {id:'phasenpirscher', ch:[6],  n:'Phasenpirscher',    hp:60,  spd:40, dmg:16, g:6,  sc:1.38, m:30, w:.35, v:'brute', melee:true, r:13, invis:1, cloak:1},
+  {id:'phasenpirscher', ch:[6],  n:'Phasenpirscher',    hp:60,  spd:40, dmg:16, g:6,  sc:1.38, m:30, w:/[?&]test\b/.test(location.search) ? .2 : .35, v:'brute', melee:true, r:13, invis:1, cloak:1},
   {id:'obsidiankoloss', ch:[6],  n:'Obsidian-Koloss',   hp:640, spd:14, dmg:36, g:20, sc:1.8, m:75, w:.07, v:'brute', melee:true, armor:.4, r:24, splash:50, elite:1},
   {id:'ork',   ch:[], n:'Ork-Speerträger', hp:40,  spd:28, dmg:5,  g:2, sc:2.3, m:0,  w:1,   v:'ork',   pal:{G:'#4f8a3a',E:'#ffe02a',M:'#1a0a0a',B:'#5a4a2a',W:'#f0ece0'}},
   {id:'bogen', ch:[], n:'Goblin-Bogenschütze', hp:30, spd:26, dmg:6, g:2, sc:2, m:15, w:.35, v:'base', range:150, cd:1.8, pal:{G:'#7a9a3a',E:'#ffe02a',M:'#2a1a10',B:'#3a5a2a'}},
@@ -492,8 +492,8 @@ const DIFF = {
   spawnRamp: 0.009,    // wie schnell es enger wird
   hpRamp: 120,          // alle X Sekunden +100% Gegner-Leben
   dmgRamp: 200,
-  chHp: [0.68, 0.95, 2.86, 13.0, 25.25, 28.0],   // Gegner-Leben je Kapitel
-  chDmg: [0.98, 1.05, 2.47, 8.5, 20.6, 20.0],   // Gegner-Schaden je Kapitel
+  chHp: [0.68, 0.95, 2.86, 13.0, 25.25, /[?&]test\b/.test(location.search) ? 25.1 : 28.0],   // Gegner-Leben je Kapitel
+  chDmg: [0.98, 1.05, 2.47, 8.5, 20.6, /[?&]test\b/.test(location.search) ? 17.75 : 20.0],   // Gegner-Schaden je Kapitel
   chSpawn: [1.3, 1.4, 1.63, 1.76, 1.76, 1.8],  // Spawnrate je Kapitel
 };
 // Kapitel 5 + 6 sind noch in Arbeit: nur im Testmodus (?test in der Adresse) sichtbar und direkt anwählbar
@@ -3142,7 +3142,7 @@ function update(dt){
     if(caveDist(e) < 30){
       if(NEWF()){ // bleibt unsichtbar und greift die Höhle an – nur ein Klick enttarnt
         const len2 = Math.hypot(e.x, e.y) || 1; e.x += e.x/len2*step; e.y += e.y/len2*step; e.walking = false;
-        enemyStrike(e, dt, () => { const dm = e.dmg * (e.spr.atkR ? e.spr.frameT * e.spr.nFrames : 1); B.hp -= dm; B.shake = 0.1; addText((Math.random()-.5)*50, -40, '-' + Math.round(dm), '#c08aff', 13, 0.6); });
+        enemyStrike(e, dt, () => { const dm = e.dmg * (e.spr.atkR ? e.spr.frameT * e.spr.nFrames : 1) * (TESTMODE ? 0.5 : 1); B.hp -= dm; B.shake = 0.1; /* unsichtbar: halber Höhlenschaden */ addText((Math.random()-.5)*50, -40, '-' + Math.round(dm), '#c08aff', 13, 0.6); });
       } else { e.invis = false; B.enemies.push(e); addText(e.x, e.y - e.h - 8, 'Enttarnt!', '#e0e0ff', 11, 0.7); }
     }
   }
@@ -3819,7 +3819,10 @@ function drawEnemy(e){
       ctx.globalAlpha = 1; } return;
   }
   if(e.born !== undefined && e.fadeIn === undefined) e.fadeIn = 0; if(e.fadeIn !== undefined && e.fadeIn < 1) e.fadeIn = Math.min(1, e.fadeIn + 1/48); // eigene Einblend-Uhr (B.t steht während der Legion still)
-  ctx.globalAlpha = (e.fadeIn !== undefined ? e.fadeIn : 1) * (e.invis ? 0.28 : 1);
+  if(e.invis && TESTMODE){ const pu = 0.5 + 0.5 * Math.sin(B.t * 6 + (e.born || 0) * 3); // Getarnte: pulsierender violetter Schimmer am Boden
+    ctx.save(); ctx.globalAlpha = 0.35 + 0.45 * pu; ctx.strokeStyle = '#e09aff'; ctx.lineWidth = 2; ctx.shadowColor = '#b040ff'; ctx.shadowBlur = 8;
+    ctx.beginPath(); ctx.ellipse(e.x, e.y, e.r + 7, (e.r + 7) * 0.45, 0, 0, 7); ctx.stroke(); ctx.restore(); }
+  ctx.globalAlpha = (e.fadeIn !== undefined ? e.fadeIn : 1) * (e.invis ? (TESTMODE ? 0.5 : 0.28) : 1);
   let drew = false;
   // GIF-only Sterbe-Animation (Fledermaus / Skelett)
   if(e.dying && sp.dieR && sp.dieR.length){

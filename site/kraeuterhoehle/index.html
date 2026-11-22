@@ -2088,7 +2088,7 @@ function openPack(p){
   }
   if(p.pid === 'basis' && (MD.H.nille || {}).verst && Math.random() < (TESTMODE ? 0.25 * 0.85 : 0.25)){ spawnUnit('nille', p.x + 24, p.y + 10, false, true, true); addText(p.x, p.y + 30, 'Verstärkung!', '#e8d870', 13, 1.2); }
   // Eindringling: ab Kapitel 2, 1% pro geöffnetem Paket
-  if(B.ch >= 2 && Math.random() < INTRUDER_CHANCE) spawnIntruder(p.x, p.y);
+  if(B.ch >= 2 && Math.random() < INTRUDER_CHANCE * (B.ch >= 5 ? 3 : 1)) spawnIntruder(p.x, p.y); // ab Kapitel 5: 3% statt 1%
   else { const called = HEROES.filter(h => h.intruder && S.seen[h.id] && MD.H[h.id] && MD.H[h.id].call).map(h => h.id);
     if(called.length && Math.random() < CALL_CHANCE){ const id = called[Math.floor(Math.random() * called.length)], sh = Math.random() < SHINY_CHANCE + MD.shinyAdd; spawnUnit(id, p.x + 20, p.y + 10, sh, false, false, true); if(sh){ addText(p.x, p.y - 85, '✨ SHINY!', '#ffe070', 16, 2); shinyBonus(p.x, p.y); }
       S.q['found_' + id] = (S.q['found_' + id] || 0) + 1; addText(p.x, p.y - 60, '👾 ' + HERO[id].n + '!', '#d070ff', 15, 1.6); sparks(p.x, p.y - 20, 18, 1.4, ['#c060ff','#ffffff']); } }

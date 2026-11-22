@@ -550,6 +550,7 @@ NODES.push(
   {id:'q_boss1', x:-1, y:-3, p:'hp1', t:'quest', icon:'👹', n:'Quest', d:'Besiege den Bergtroll.', q:{key:'boss1', goal:1}, rew:'+2 🪙 Einkommen', eff:{income:2}},
   {id:'q_gross6', x:-4, y:6, p:'p_gross', t:'quest', icon:'📦', n:'Quest', d:'Öffne 6 Große Pakete.', q:{key:'gross', goal:6}, rew:'+1 🪙 Einkommen', eff:{income:1}},
   {id:'extra', x:4, y:8, p:'p_box', t:'up', icon:'🎁', n:'Beipack', d:'15% Chance auf ein zusätzliches Basis-Paket, wenn ein Großes Paket oder eine Box geöffnet wird.', cost:350, eff:{extra:.15}},
+  {id:'hits3', x:-2, y:3, p:'hits1', t:'up', icon:'👊', n:'Paketbrecher', d:'Alle Pakete brauchen 2 Treffer weniger zum Öffnen.', cost:5000, minCh:5, test:1, eff:{hitsBasis:2, hitsAdv:2}},
   {id:'hits2', x:4, y:10, p:'extra', t:'up', icon:'🔨', n:'Brecheisen', d:'Große Pakete und Boxen brauchen 2 Treffer weniger.', cost:500, eff:{hitsAdv:2}},
   {id:'q_basis100', x:2, y:10, p:'inc3', t:'quest', icon:'📦', n:'Quest', d:'Öffne 100 Basis-Pakete.', q:{key:'basis', goal:100}, rew:'Helden aus Basis-Paketen +100% LP', eff:{basisHp:1}},
   {id:'sale', x:4, y:4, p:'slot4', t:'up', icon:'🏷️', n:'Sonderangebote', d:'+5% Chance pro Angebot auf 30% Rabatt.', cost:120, max:5, cf:1.6, eff:{sale:.05}},
@@ -738,7 +739,8 @@ const VET_COST = {C:40, U:80, R:160, E:320, L:640};
 NODES.push(
   {id:'z_dmg',  x:2, y:0,  p:'root',  t:'up', icon:'👆', n:'Spitzer Zeiger', d:'+15 Klickschaden (pro Stufe).', cost:1667, cinc:1667, minCh:5, max:10, eff:{cdmg:15}},
   {id:'z_crit', x:3, y:-1, p:'z_dmg', t:'up', icon:'🎯', n:'Präzisionsklick', d:'+6% Chance auf Krit-Klicks (3-facher Schaden) pro Stufe.', cost:1667, cinc:1667, minCh:5, max:5, eff:{ccrit:.06}},
-  {id:'z_rad',  x:3, y:1,  p:'z_dmg', t:'up', icon:'⭕', n:'Weiter Griff', d:'+12% Klickradius (pro Stufe).', cost:1667, cinc:1667, minCh:5, max:5, eff:{crad:.12}},
+  {id:'z_rad',  x:3, y:1,  p:'z_dmg', t:'up', icon:'⭕', n:'Weiter Griff', d:'+12% Klickradius (pro Stufe).', cost:1667, cinc:1667, minCh:5, max:TESTMODE ? 6 : 5, eff:{crad:.12}},
+  {id:'z_fast', x:2, y:-1, p:'z_dmg', t:'up', icon:'🖐️', n:'Schnellfeuer', d:'Kürzerer Klick-Cooldown: 1 Klick mehr pro Sekunde (ca. 5,5 statt 4,5).', cost:5000, minCh:5, test:1, eff:{cfast:1}},
   {id:'z_pct',  x:4, y:0,  p:'z_dmg', t:'up', icon:'💥', n:'Zerschmetternder Klick', d:'Jeder Klick trifft zusätzlich mit 0,5% der max. LP des Gegners (pro Stufe; Bosse 1/5).', cost:1667, cinc:1667, minCh:5, max:4, eff:{cpct:.005}});
 (function(){
   // Helden-Äste verteilen sich rechts UND links der Höhle, jeweils nach oben und unten
@@ -1408,6 +1410,7 @@ function computeMods(){
     if(e.crate) M.crate += e.crate;
     if(e.ccrit) M.ccrit += e.ccrit;
     if(e.cpct) M.cpct = (M.cpct || 0) + e.cpct;
+    if(e.cfast) M.cfast = (M.cfast || 0) + e.cfast;
     if(e.bld) M.blds.push(e.bld);
     if(e.bspeed) M.bspeed += e.bspeed;
     if(e.moon) M.moon += e.moon;
@@ -1523,7 +1526,7 @@ const maxed = n => n.max ? lvlOf(n.id) >= n.max : owned(n.id);
 const nodeCost = n => n.max ? (n.cinc ? n.cost + n.cinc * lvlOf(n.id) : Math.floor(n.cost * Math.pow(n.cf || 1.4, lvlOf(n.id)))) : n.cost; // cinc: fester Aufschlag pro Stufe
 const curOf = n => n.cur === 'sm' ? 'sm' : 'kr', curIc = n => n.cur === 'sm' ? '✨' : '💎', wallet = n => n.cur === 'sm' ? (S.sm || 0) : S.kr;
 const canBuy = n => n.t !== 'quest' && n.t !== 'root' && n.t !== 'hero' && visible(n) && !maxed(n) && wallet(n) >= nodeCost(n);
-const visible = n => (n.cur !== 'sm' || S.galaxy) && !(n.minCh && (!NEWF() || (S.chapter || 1) < n.minCh)) && (!n.p || owned(n.p)) && !(n.t === 'hero' && HERO[n.hero] && HERO[n.hero].intruder && !S.seen[n.hero]); // Eindringling-Äste versteckt
+const visible = n => !(n.test && !TESTMODE) && (n.cur !== 'sm' || S.galaxy) && !(n.minCh && (!NEWF() || (S.chapter || 1) < n.minCh)) && (!n.p || owned(n.p)) && !(n.t === 'hero' && HERO[n.hero] && HERO[n.hero].intruder && !S.seen[n.hero]); // Eindringling-Äste versteckt
 const unknown = n => !visible(n) && n.p && visible(NODE[n.p]) && NODE[n.p].p !== undefined && owned(NODE[n.p].p);
 function qProg(n){ return Math.min(n.q.goal, Math.floor(S.q[n.q.key] || 0)); }
 function checkQuests(){
@@ -2222,7 +2225,7 @@ cv.addEventListener('pointerup', release); cv.addEventListener('pointercancel', 
 
 function doClick(x, y){
   const now = performance.now() / 1000; // echte Zeit, damit 2×/3× Tempo nichts ändert
-  if(now - (B.lastClickR || 0) < 0.22) return; // max. ~4,5 Klicks pro Sekunde, Halten wirkt nicht
+  if(now - (B.lastClickR || 0) < 1 / (1 / 0.22 + (MD.cfast || 0))) return; // max. ~4,5 Klicks pro Sekunde, Halten wirkt nicht
   B.lastClickR = now; B.lastClick = B.t;
   const R = MD.crad, crit = Math.random() < MD.ccrit, d = MD.cdmg * (crit ? 3 : 1);
   for(const e of B.enemies.concat(B.hidden)){ if(!e.dead && Math.hypot(e.x - x, (e.y - e.h/2) - y) <= R + e.r) hurt(e, d + (MD.cpct ? e.max * MD.cpct * (e.boss ? 0.2 : 1) : 0), crit, 'mouse'); }
@@ -3743,7 +3746,8 @@ function draw(){
     ctx.font = `700 20px ${FONT}`; ctx.lineWidth = 3; ctx.strokeStyle = '#000';
     ctx.strokeText(label, 0, y0 + 30); ctx.fillStyle = isP2 ? '#e080ff' : '#ffb0a0'; ctx.fillText(label, 0, y0 + 30);
   }
-  if(mouse.in){
+  drawMouseCursor();
+  function drawMouseCursor(){ if(!mouse.in) return;
     ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(mouse.x, mouse.y, MD.crad, 0, 7); ctx.stroke();
     if(NEWF() && GLOVE_IMG.width){ const gs = 1.1; ctx.imageSmoothingEnabled = false; ctx.save(); ctx.filter = 'drop-shadow(0 0 1px rgba(255,255,255,0.75))'; ctx.drawImage(GLOVE_IMG, Math.round(mouse.x - CUSTOM_FX.gloveTx * gs), Math.round(mouse.y - CUSTOM_FX.gloveTy * gs), Math.round(GLOVE_IMG.width * gs), Math.round(GLOVE_IMG.height * gs)); ctx.restore(); }
     else { ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.fillRect(Math.round(mouse.x)-2, Math.round(mouse.y)-2, 4, 4); }
@@ -3761,6 +3765,7 @@ function draw(){
     ctx.fillRect(0, 0, W, H);
     drawHeroReveal(ctx, W, H);
     ctx.restore();
+    if(TESTMODE){ ctx.setTransform(DPR*K, 0, 0, DPR*K, (VW/2)*DPR*K, (VH/2)*DPR*K); drawMouseCursor(); } // Mauszeiger auch während der Vorstellung sichtbar
   }
   if(B.vs && B.vs.t > 3.2){ ctx.setTransform(1,0,0,1,0,0); ctx.fillStyle = `rgba(0,0,0,${Math.min(1, (B.vs.t - 3.2) / 1.1)})`; ctx.fillRect(0, 0, cv.width, cv.height); }
 }

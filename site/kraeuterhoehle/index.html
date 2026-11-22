@@ -451,7 +451,7 @@ const BOSSES = [
   {n:'Mutierter Rattentroll', desc:'Riesiger mutierter Rattentroll. Er täuscht seinen Tod vor – und erwacht als dämonische Bestie wieder.', phase2:1, fakedie:1, hp:14000, spd:15, dmg:45, g:250, sc:4.2, pal:{G:'#8aa83a',E:'#ff2a2a',M:'#1a0a0a',B:'#5a1a6a'}, slam:{every:5, rad:70, dmg:60}, jump:{every:10, first:12, rad:105, dmg:120}, poison:{every:3, rad:90, dmg:12, dur:5}, abilityRot:{every:3}},
   {n:'Grabsumpf-Hexe', id:'hexe', desc:'Eine uralte Hexe aus dem Grabsumpf. Ihre Magie beschwört die Toten.', sprite:'hexe', hp:22000, spd:12, dmg:140, cd:0.5, g:450, sc:4.4, pal:{G:'#2a2a5a',E:'#ff3a3a',M:'#0a0a1a',B:'#1a1a4a',W:'#8080c0'}, slam:{every:3, rad:80, dmg:160}, jump:{every:6.5, first:10, rad:115, dmg:360}},
   {n:'Dämonenschmied Morgraak', id:'morgraak', desc:'Riesiger Dämonenschmied. Seine Lava-Rüstung macht ihn nahezu unverwundbar – bis sie bricht.', sprite:'morgraak', phase2:1, fakedie:1, hp:120000, spd:14, dmg:115, g:800, sc:4.8, pal:{G:'#2a1a0a',E:'#ff5a1a',M:'#0a0808',B:'#1a0808',W:'#ff8040'}, slam:{every:4, rad:90, dmg:120}, jump:{every:8, first:10, rad:125, dmg:280}},
-  {n:'Frostdämon Vrakhul', id:'frostdaemon', desc:'Uralter Dämon aus schwarzem Eis. Er stürzt vom Gipfel herab und zerfetzt alles mit seinen Kristallklauen.', sprite:'frostdaemon', entrance:1, pal:{G:'#9ab0c8',E:'#b06aff',M:'#0a1020',B:'#2a3a5a',W:'#e0f0ff'}, hp:150000, spd:13, dmg:140, cd:1.6, g:1100, sc:4.2, slam:{every:4, rad:95, dmg:130}, jump:{every:7.5, first:9, rad:130, dmg:290}},
+  {n:'Frostdämon Vrakhul', id:'frostdaemon', desc:'Uralter Dämon aus schwarzem Eis. Er stürzt vom Gipfel herab und zerfetzt alles mit seinen Kristallklauen.', sprite:'frostdaemon', entrance:1, pal:{G:'#9ab0c8',E:'#b06aff',M:'#0a1020',B:'#2a3a5a',W:'#e0f0ff'}, hp:195000, spd:13, dmg:140, cd:1.6, g:1100, sc:4.2, slam:{every:4, rad:95, dmg:130}, jump:{every:7.5, first:9, rad:130, dmg:290}},
   {n:"Xal'Thorak, der Leerenschlund", id:'leerenschlund', desc:'Eine uralte Bestie aus der Leere. Ihr Maul öffnet sich in vier Kiefer – dahinter glüht das Nichts.', sprite:'leerenschlund', entrance:1, pal:{G:'#2a1a3a',E:'#ff3aff',M:'#0a0410',B:'#1a0a2a',W:'#c06aff'}, hp:210000, spd:14, dmg:170, cd:1.5, g:1600, sc:3.4, r:34, slam:{every:4, rad:105, dmg:160}, jump:{every:7, first:9, rad:140, dmg:340}},
   // Phase 2 — wird automatisch nach fakedie geladen (wie boss2b)
   {n:'Morgraak – Wahre Form', id:'morgraakb', desc:'Die Rüstung ist zersplittert. Morgraak erwacht als reiner Feuerdämon.', sprite:'morgraakb', hp:55000, spd:18, dmg:160, g:0, sc:5.2, pal:{G:'#3a0a0a',E:'#ff2a00',M:'#0a0404',B:'#2a0808',W:'#ffaa40'}, slam:{every:3.5, rad:95, dmg:140}, jump:{every:7, first:9, rad:130, dmg:320}},
@@ -464,8 +464,8 @@ const DIFF = {
   spawnRamp: 0.009,    // wie schnell es enger wird
   hpRamp: 120,          // alle X Sekunden +100% Gegner-Leben
   dmgRamp: 200,
-  chHp: [0.68, 0.95, 2.86, 13.0, 16.0, 20.0],   // Gegner-Leben je Kapitel
-  chDmg: [0.98, 1.05, 2.47, 8.5, 10.0, 12.0],   // Gegner-Schaden je Kapitel
+  chHp: [0.68, 0.95, 2.86, 13.0, 24.0, 20.0],   // Gegner-Leben je Kapitel
+  chDmg: [0.98, 1.05, 2.47, 8.5, 20.0, 12.0],   // Gegner-Schaden je Kapitel
   chSpawn: [1.3, 1.4, 1.63, 1.76, 1.76, 1.8],  // Spawnrate je Kapitel
 };
 // Kapitel 5 + 6 sind noch in Arbeit: nur im Testmodus (?test in der Adresse) sichtbar und direkt anwählbar
@@ -562,7 +562,7 @@ const HERO_TREE = {
     {n:'Schwertkunst', d:'+50% Schaden.', mark:'⚔', cost:60, eff:{dmg:.5}},
     {n:'Meisterknappe', d:'Ein aufgewerteter Nille, der 3 weitere Monster besiegt, wird nochmal aufgewertet.', mark:'★', cost:250, eff:{train2:1}},
     {n:'Verstärkung', d:'25% Chance auf einen zusätzlichen Nille, wenn ein Basis-Paket geöffnet wird.', mark:'+', cost:40, eff:{verst:1}},
-    {n:'Bannerträger', d:'ENDSTUFE: Jeder Nille trägt ein Kriegsbanner. Helden in seiner Nähe erhalten +25% Schaden und +15% Angriffstempo (nicht stapelbar). Nille +100% LP.', mark:'🚩', cost:25000, minCh:4, eff:{hp:1, banner:1}}]},
+    {n:'Bannerträger', d:'ENDSTUFE: Jeder Nille trägt ein Kriegsbanner. Helden in seiner Nähe erhalten +25% Schaden und +15% Angriffstempo (nicht stapelbar). Nille +100% LP.', mark:'🚩', cost:50000, minCh:4, eff:{hp:1, banner:1}}]},
   marwin:  {cost:20, ups:[
     {n:'Elfenpfeile', d:'+40% Schaden.', mark:'⚔', cost:30, eff:{dmg:.4}},
     {n:'Adlerauge', d:'+30% Reichweite.', mark:'🎯', cost:50, eff:{range:.3}},
@@ -573,14 +573,14 @@ const HERO_TREE = {
     {n:'Pfeilsturm', d:'Alle 8 Sek. schießt Marwin 12 Pfeile in einem Kegel vor sich ab.', mark:'⇶', cost:600, eff:{volley:12}},
     {n:'Elfenblut', d:'+60% LP.', mark:'♥', cost:200, eff:{hp:.6}},
     {n:'Sturmschütze', d:'Pfeilsturm alle 5 Sek. und die Pfeile durchbohren jeden Gegner.', mark:'⇶', cost:1400, eff:{volleyFast:1}},
-    {n:'Koi-Schutzgeist', d:'ENDSTUFE: Ein fliegender schwarz-weißer Koi begleitet Marwin als Schutzgeist und schießt alle 1,8 Sek. riesige Wasserbälle, die beim Aufprall platzen (500% Flächenschaden).', mark:'🐟', cost:25000, minCh:4, eff:{koi:1}}]},
+    {n:'Koi-Schutzgeist', d:'ENDSTUFE: Ein fliegender schwarz-weißer Koi begleitet Marwin als Schutzgeist und schießt alle 1,8 Sek. riesige Wasserbälle, die beim Aufprall platzen (350% Flächenschaden).', mark:'🐟', cost:50000, minCh:4, eff:{koi:1}}]},
   foku:    {cost:40, ups:[
     {n:'Abgehärtet', d:'+50% LP.', mark:'♥', cost:30, eff:{hp:.5}},
     {n:'Sprint', d:'Nach jedem Angriff sprintet der Mönch zu einem weiteren Gegner und schlägt zu.', mark:'»', cost:80, eff:{sprint:1}},
     {n:'Innere Ruhe', d:'Doppelte Selbstheilung pro Treffer.', mark:'✚', cost:60, eff:{selfheal:1}},
     {n:'Kettenreaktion', d:'Besiegt der Mönch ein Monster, sprintet er ein zusätzliches Mal.', mark:'»', cost:300, eff:{sprintKill:1}},
     {n:'Wirbelfaust', d:'Die Schläge treffen alle Gegner im Umkreis.', mark:'◎', cost:150, eff:{splashAdd:30}},
-    {n:'Erleuchteter Meister', d:'ENDSTUFE: Alle 4,5 Sek. leuchtet der Mönch golden auf und stößt beide Fäuste nach vorn: drei riesige gold-blaue Energiefäuste rasen im Fächer über das Feld (je 1200% Schaden, stoßen zurück). Doppelter Schaden.', mark:'✊', cost:25000, minCh:4, eff:{dmg:1, fists:1}}]},
+    {n:'Erleuchteter Meister', d:'ENDSTUFE: Alle 4,5 Sek. leuchtet der Mönch golden auf und stößt beide Fäuste nach vorn: drei riesige gold-blaue Energiefäuste rasen im Fächer über das Feld (je 1200% Schaden, stoßen zurück). Doppelter Schaden.', mark:'✊', cost:50000, minCh:4, eff:{dmg:1, fists:1}}]},
   lg3:     {cost:80, ups:[
     {n:'Dornenranken', d:'Verlangsamt 50% stärker.', mark:'❄', cost:50, eff:{slow:.5}},
     {n:'Waldsegen', d:'Heilt doppelt so viel.', mark:'✚', cost:100, eff:{heal:1}},
@@ -590,7 +590,7 @@ const HERO_TREE = {
     {n:'Wurzelausbruch', d:'Alle 7 Sek. brechen Wurzeln unter bis zu 5 Gegnern aus: 200% Schaden und 1,5 Sek. festgehalten.', mark:'🌿', cost:400, eff:{rootBurst:5}},
     {n:'Uralte Wurzeln', d:'+20% Wurzelgriff-Chance, Wurzelausbruch trifft 3 Gegner mehr.', mark:'⛓', cost:700, eff:{root:.2, rootBurstAdd:3}},
     {n:'Heiliger Hain', d:'Heilung +100% und LG3 heilt auch die Höhle (2 LP pro Sek.).', mark:'✚', cost:900, eff:{heal:1, healCaveAdd:2}},
-    {n:'Uralter Waldhüter', d:'ENDSTUFE: Nach 20 Wurzelgriffen verwandelt sich LG3 für 20 Sek. in einen riesigen Baum-Ent: dreifache LP, stampft alle 2 Sek. (500% Flächenschaden), zieht Gegner auf sich, heilt Helden in der Nähe und heilt doppelt.', mark:'🌳', cost:25000, minCh:4, eff:{ent:1}}]},
+    {n:'Uralter Waldhüter', d:'ENDSTUFE: Nach 20 Wurzelgriffen verwandelt sich LG3 für 20 Sek. in einen riesigen Baum-Ent: dreifache LP, stampft alle 2 Sek. (500% Flächenschaden), zieht Gegner auf sich, heilt Helden in der Nähe und heilt doppelt.', mark:'🌳', cost:50000, minCh:4, eff:{ent:1}}]},
   kobold:  {cost:120, ups:[
     {n:'Durchbohren', d:'Speere treffen 1 zusätzliches Ziel.', mark:'+', cost:80, eff:{multi:1}},
     {n:'Gehärtete Spitzen', d:'+40% Schaden.', mark:'⚔', cost:120, eff:{dmg:.4}},
@@ -607,28 +607,28 @@ const HERO_TREE = {
     {n:'Donnerschild', d:'Blockt der Ritter einen Angriff, schlägt ein Blitz in einen zufälligen Gegner ein.', mark:'⚡', cost:500, eff:{blockBolt:1}},
     {n:'Kriegsschrei', d:'Alle 8 Sek. zwingt der Paladin alle Gegner im großen Umkreis, ihn anzugreifen, und erleidet 3 Sek. lang 40% weniger Schaden.', mark:'📣', cost:600, eff:{warcry:1}},
     {n:'Heiliger Schild', d:'+10% Blockchance und jeder Block heilt ihn um 5% seiner LP.', mark:'🛡', cost:800, eff:{block:.1, blockHeal:.05}},
-    {n:'Heilige Bastion', d:'ENDSTUFE: Alle 15 Sek. rammt der Paladin seinen Schild in den Boden und errichtet eine heilige Kuppel: Helden darin erleiden 4 Sek. lang 50% weniger Schaden, 30% davon wird auf den Angreifer zurückgeworfen.', mark:'⛨', cost:25000, minCh:4, eff:{bastion:1}}]},
+    {n:'Heilige Bastion', d:'ENDSTUFE: Alle 15 Sek. rammt der Paladin seinen Schild in den Boden und errichtet eine heilige Kuppel: Helden darin erleiden 4 Sek. lang 50% weniger Schaden, 30% davon wird auf den Angreifer zurückgeworfen.', mark:'⛨', cost:50000, minCh:4, eff:{bastion:1}}]},
   geist:   {cost:280, ups:[
     {n:'Größere Sense', d:'+25% Flächenangriff und +20% Schaden (pro Stufe).', mark:'⚔', cost:150, max:3, cf:1.7, eff:{splash:.25, dmg:.2}},
     {n:'Seelenernte', d:'+25% Chance, dass getötete Gegner zu Skeletten werden.', mark:'💀', cost:250, eff:{reap:.25}},
     {n:'Nebelgestalt', d:'+15% Ausweichen.', mark:'~', cost:150, eff:{dodge:.15}},
     {n:'Knochenheer', d:'Skelette haben +100% LP und Schaden.', mark:'☠', cost:400, eff:{skelBuff:1}},
     {n:'Zwei Sensen', d:'Der Graue Geist führt eine zweite Sense, wird größer und mächtiger: +60% Schaden, +40% Fläche, +50% LP.', mark:'⚔⚔', cost:1500, eff:{dmg:.6, splash:.4, hp:.5, dual:1}},
-    {n:'Seelensturm', d:'ENDSTUFE: Alle 8 Sek. schwingt der Graue Geist seine Sense und entfesselt einen Seelensturm – einen Tornado aus Schnitten, der 6 Sek. lang über die Map zu zufälligen Gegnern zieht und alles zerschneidet. +40% Schaden.', mark:'🌪', cost:25000, minCh:4, eff:{dmg:.4, storm:1}}]},
+    {n:'Seelensturm', d:'ENDSTUFE: Alle 8 Sek. schwingt der Graue Geist seine Sense und entfesselt einen Seelensturm – einen Tornado aus Schnitten, der 6 Sek. lang über die Map zu zufälligen Gegnern zieht und alles zerschneidet. +40% Schaden.', mark:'🌪', cost:50000, minCh:4, eff:{dmg:.4, storm:1}}]},
   dino:    {cost:300, ups:[
     {n:'Weitreichender Schwung', d:'+50% Angriffsbereich.', mark:'◎', cost:150, eff:{splash:.5}},
     {n:'Dicke Haut', d:'+50% LP.', mark:'♥', cost:150, eff:{hp:.5}},
     {n:'Raserei', d:'Je niedriger Dinos LP, desto schneller greift er an.', mark:'💢', cost:300, eff:{rage:1}},
     {n:'Siegesschmaus', d:'Jeder Kill heilt Dino um 15% seiner LP.', mark:'🍖', cost:300, eff:{killHeal:.15}},
     {n:'Urzeitkraft', d:'+50% Schaden.', mark:'⚔', cost:400, eff:{dmg:.5}},
-    {n:'Erdbebenaxt', d:'ENDSTUFE: Dino führt eine riesige Erdbeben-Axt und wird 25% größer. Alle 6 Sek. springt er hoch und schmettert die Axt in den Boden: 300% Flächenschaden, Gegner 1 Sek. betäubt. +50% Schaden.', mark:'🪓', cost:25000, minCh:4, eff:{dmg:.5, quake:1}}]},
+    {n:'Erdbebenaxt', d:'ENDSTUFE: Dino führt eine riesige Erdbeben-Axt und wird 25% größer. Alle 6 Sek. springt er hoch und schmettert die Axt in den Boden: 300% Flächenschaden, Gegner 1 Sek. betäubt. +50% Schaden.', mark:'🪓', cost:50000, minCh:4, eff:{dmg:.5, quake:1}}]},
   allan:   {cost:400, ups:[
     {n:'Ewiger Hunger', d:'Der Vollmond dauert 5 Sek. länger.', mark:'🌕', cost:200, eff:{moonG:5}},
     {n:'Rudelinstinkt', d:'Rudel-Bonus (Allan + Artur im Feld) steigt von +25% auf +50% Schaden.', mark:'🐺', cost:300, eff:{rudelG:.25}},
     {n:'Hetzjagd', d:'+30% Angriffstempo.', mark:'⏱', cost:200, eff:{rate:.3}},
     {n:'Blutrausch', d:'Jeder Kill heilt Allan um 15% seiner LP.', mark:'🩸', cost:300, eff:{killHeal:.15}},
     {n:'Dickes Fell', d:'+50% LP.', mark:'♥', cost:200, eff:{hp:.5}},
-    {n:'König der Nacht', d:'ENDSTUFE: Für Allan herrscht immer Vollmond – er bleibt dauerhaft in Wolfsgestalt. +30% Schaden.', mark:'🌕', cost:25000, minCh:4, eff:{dmg:.3, night:1}}]},
+    {n:'König der Nacht', d:'ENDSTUFE: Für Allan herrscht immer Vollmond – er bleibt dauerhaft in Wolfsgestalt. +30% Schaden.', mark:'🌕', cost:50000, minCh:4, eff:{dmg:.3, night:1}}]},
   artur:   {cost:600, ups:[
     {n:'Alpha-Biss', d:'+20% Lebensraub.', mark:'🩸', cost:300, eff:{lifesteal:.2}},
     {n:'Raserei', d:'Je niedriger Arturs LP, desto schneller greift er an (bis doppelt so schnell).', mark:'💢', cost:400, eff:{rage:1}},
@@ -2697,7 +2697,7 @@ function update(dt){
     if(st.koi){ const K = u.koi = u.koi || {x:u.x - u.face * 30, y:u.y - 70, cd:1.2, ph:Math.random() * 6, face:u.face};
       const tx = u.x - u.face * 34, ty = u.y - 74 + Math.sin(B.t * 2 + K.ph) * 8; K.x += (tx - K.x) * Math.min(1, dt * 3); K.y += (ty - K.y) * Math.min(1, dt * 3);
       K.cd -= dt; if(K.cd <= 0){ const t = nearest(K.x, K.y + 70, 340);
-        if(t){ K.cd = 1.8; K.face = t.x > K.x ? 1 : -1; (B.kproj = B.kproj || []).push({x:K.x + K.face * 22, y:K.y, tgt:t, tx:t.x, ty:t.y - t.h/2, dmg:unitDmg(u) * 5, src:u, t:0, trail:[]}); }
+        if(t){ K.cd = 1.8; K.face = t.x > K.x ? 1 : -1; (B.kproj = B.kproj || []).push({x:K.x + K.face * 22, y:K.y, tgt:t, tx:t.x, ty:t.y - t.h/2, dmg:unitDmg(u) * 3.5, src:u, t:0, trail:[]}); }
         else { K.cd = 0.3; K.face = u.face; } } }
     // Mönch – Erleuchteter Meister (Energiefäuste)
     if(st.fists && !u.fist && !u.ultra){ u.fsT = (u.fsT === undefined ? 3 : u.fsT) - dt;

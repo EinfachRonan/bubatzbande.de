@@ -579,7 +579,7 @@ const HERO_TREE = {
     {n:'Innere Ruhe', d:'Doppelte Selbstheilung pro Treffer.', mark:'✚', cost:60, eff:{selfheal:1}},
     {n:'Kettenreaktion', d:'Besiegt der Mönch ein Monster, sprintet er ein zusätzliches Mal.', mark:'»', cost:300, eff:{sprintKill:1}},
     {n:'Wirbelfaust', d:'Die Schläge treffen alle Gegner im Umkreis.', mark:'◎', cost:150, eff:{splashAdd:30}},
-    {n:'Erleuchteter Meister', d:'ENDSTUFE: Alle 4,5 Sek. leuchtet der Mönch golden auf und stößt beide Fäuste nach vorn: drei riesige gold-blaue Energiefäuste rasen im Fächer über das Feld (je 600% Schaden, stoßen zurück). Doppelter Schaden.', mark:'✊', cost:12000, minCh:4, eff:{dmg:1, fists:1}}]},
+    {n:'Erleuchteter Meister', d:'ENDSTUFE: Alle 4,5 Sek. leuchtet der Mönch golden auf und stößt beide Fäuste nach vorn: drei riesige gold-blaue Energiefäuste rasen im Fächer über das Feld (je 1200% Schaden, stoßen zurück). Doppelter Schaden.', mark:'✊', cost:12000, minCh:4, eff:{dmg:1, fists:1}}]},
   lg3:     {cost:80, ups:[
     {n:'Dornenranken', d:'Verlangsamt 50% stärker.', mark:'❄', cost:50, eff:{slow:.5}},
     {n:'Waldsegen', d:'Heilt doppelt so viel.', mark:'✚', cost:100, eff:{heal:1}},
@@ -589,7 +589,7 @@ const HERO_TREE = {
     {n:'Wurzelausbruch', d:'Alle 7 Sek. brechen Wurzeln unter bis zu 5 Gegnern aus: 200% Schaden und 1,5 Sek. festgehalten.', mark:'🌿', cost:400, eff:{rootBurst:5}},
     {n:'Uralte Wurzeln', d:'+20% Wurzelgriff-Chance, Wurzelausbruch trifft 3 Gegner mehr.', mark:'⛓', cost:700, eff:{root:.2, rootBurstAdd:3}},
     {n:'Heiliger Hain', d:'Heilung +100% und LG3 heilt auch die Höhle (2 LP pro Sek.).', mark:'✚', cost:900, eff:{heal:1, healCaveAdd:2}},
-    {n:'Uralter Waldhüter', d:'ENDSTUFE: Nach 20 Wurzelgriffen verwandelt sich LG3 für 20 Sek. in einen riesigen Baum-Ent: dreifache LP, stampft alle 2 Sek. (250% Flächenschaden), zieht Gegner auf sich, heilt Helden in der Nähe und heilt doppelt.', mark:'🌳', cost:12000, minCh:4, eff:{ent:1}}]},
+    {n:'Uralter Waldhüter', d:'ENDSTUFE: Nach 20 Wurzelgriffen verwandelt sich LG3 für 20 Sek. in einen riesigen Baum-Ent: dreifache LP, stampft alle 2 Sek. (500% Flächenschaden), zieht Gegner auf sich, heilt Helden in der Nähe und heilt doppelt.', mark:'🌳', cost:12000, minCh:4, eff:{ent:1}}]},
   kobold:  {cost:120, ups:[
     {n:'Durchbohren', d:'Speere treffen 1 zusätzliches Ziel.', mark:'+', cost:80, eff:{multi:1}},
     {n:'Gehärtete Spitzen', d:'+40% Schaden.', mark:'⚔', cost:120, eff:{dmg:.4}},
@@ -1384,7 +1384,7 @@ function unitStats(id, shiny){
   const c = HERO[id], h = MD.H[id] || {}, s = shiny ? c.shiny : {};
   const add = k => 1 + (h[k] || 0) + (s[k] || 0) + (k === 'hp' ? MD.allHp : k === 'dmg' ? MD.allDmg : k === 'rate' ? MD.allRate : 0);
   return {
-    hp: c.hp * add('hp'), atk: c.atk * add('dmg'), cd: c.cd / add('rate'),
+    hp: c.hp * add('hp'), atk: c.atk * add('dmg') * (TESTMODE ? 1.3 : 1) /* Testmodus: alle Helden +30% Schaden */, cd: c.cd / add('rate'),
     range: c.melee ? c.range : c.range * (1 + (h.range || 0)),
     multi: (c.multi || 1) + (h.multi || 0) + (s.multi || 0),
     chain: (c.chain || 0) + (h.chain || 0) + (s.chain || 0),
@@ -2649,14 +2649,14 @@ function update(dt){
       B.shake = 0.5; addRing(u.x, u.y, 90, '#9aff6a', 0.7); sparks(u.x, u.y - 40, 26, 2, ['#9aff6a','#5ac83a','#ffffff']); addText(u.x, u.y - 160, '🌳 WALDHÜTER! 🌳', '#9aff6a', 20, 2); }
     if(u.entT > 0){ u.entT -= dt; u.stompT -= dt; if(u.stompA > 0){ u.stompA += dt; if(u.stompA > 0.88) u.stompA = 0; }
       if(u.stompT <= 0){ u.stompT = 2; u.stompA = 0.001; u.stompHit = false; }
-      if(u.stompA >= 0.36 && !u.stompHit){ u.stompHit = true; const R = 115, dm = unitDmg(u) * 2.5;
+      if(u.stompA >= 0.36 && !u.stompHit){ u.stompHit = true; const R = 115, dm = unitDmg(u) * 5;
         for(const e of B.enemies){ if(e.dead || Math.hypot(e.x - u.x, (e.y - u.y) * 1.2) > R + e.r) continue; hurt(e, dm, false, u); if(!e.dead){ e.tgt = u; e.stunT = Math.max(e.stunT, e.boss ? 0.2 : 0.5); } }
         for(const o of B.units) if(!o.dead && Math.hypot(o.x - u.x, o.y - u.y) < 150) o.hp = Math.min(o.max, o.hp + o.max * 0.04 * HEAL_MUL);
         B.shake = Math.max(B.shake || 0, 0.35); addRing(u.x, u.y, R, '#9aff6a', 0.45); B.fx.push({t:'roots', x:u.x + u.face * 30, y:u.y, life:1.2, max:1.2, seed:Math.random()*9}); }
       if(u.entT <= 0){ u.entT = 0; u.max = u.entMax || u.max / 3; u.hp = Math.min(u.hp, u.max); addText(u.x, u.y - 70, 'Der Waldhüter schläft ein', '#9aff6a', 12, 1); } }
     // Grauer Geist – Seelensturm
     if(st.storm){ u.stT = (u.stT === undefined ? 4 : u.stT) - dt;
-      if(u.stT <= 0){ if(B.enemies.some(e => !e.dead)){ u.stT = 8; u.swing = 0; (B.storms = B.storms || []).push({x:u.x + u.face * 30, y:u.y, t:6, tick:0, tgt:null, src:u, dmg:unitDmg(u) * 0.6, ph:Math.random() * 12});
+      if(u.stT <= 0){ if(B.enemies.some(e => !e.dead)){ u.stT = 8; u.swing = 0; (B.storms = B.storms || []).push({x:u.x + u.face * 30, y:u.y, t:6, tick:0, tgt:null, src:u, dmg:unitDmg(u) * 1.2, ph:Math.random() * 12});
         addText(u.x, u.y - 85, 'SEELENSTURM!', '#a8eaff', 16, 1.2); addRing(u.x, u.y, 60, '#a8eaff', 0.4); } else u.stT = 0.5; } }
     // Dino – Erdbebenaxt
     if(st.quake && !u.quake){ u.qkT = (u.qkT === undefined ? 3 : u.qkT) - dt;
@@ -2673,7 +2673,7 @@ function update(dt){
     if(st.fists && !u.fist && !u.ultra){ u.fsT = (u.fsT === undefined ? 3 : u.fsT) - dt;
       if(u.fsT <= 0){ const t0 = nearest(u.x, u.y, 260); if(t0){ u.fsT = 3.75; u.fist = {t:0, hit:false, ang:Math.atan2(t0.y - u.y, t0.x - u.x)}; u.face = t0.x > u.x ? 1 : -1; u.swing = -1; } else u.fsT = 0.4; } }
     if(u.fist){ const Fq = u.fist; Fq.t += dt; u.cd = Math.max(u.cd, 0.1);
-      if(!Fq.hit && Fq.t >= 0.5){ Fq.hit = true; const dm = unitDmg(u) * 6;
+      if(!Fq.hit && Fq.t >= 0.5){ Fq.hit = true; const dm = unitDmg(u) * 12;
         for(const k of [-1, 0, 1]){ const an = Fq.ang + k * 0.38; (B.fists = B.fists || []).push({x:u.x + Math.cos(an) * 20, y:u.y - 28 + Math.sin(an) * 12, vx:Math.cos(an) * 270, vy:Math.sin(an) * 270 * 0.75, t:0, life:0.95, dmg:dm, src:u, hit:new Set(), ang:an}); }
         B.shake = Math.max(B.shake || 0, 0.3); addRing(u.x, u.y - 25, 45, '#ffd040', 0.4); addText(u.x, u.y - 90, 'ERLEUCHTET!', '#ffe070', 15, 1.0); }
       if(Fq.t >= 0.75) u.fist = null; }

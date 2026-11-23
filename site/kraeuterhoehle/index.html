@@ -3482,8 +3482,8 @@ function showVoidEnd(){
   <div class="txt"><h2>IHR WURDET IN DIE LEERE GESOGEN …</h2>
     <p>Die Kräuterhöhle liegt weit hinter euch. Was auf der anderen Seite wartet, weiß niemand.</p>
     <p>Eine neue Welt, neue Gefahren – und ein neuer Weg für eure Helden.</p>
-    <div class="soon">✦ FORTSETZUNG FOLGT ✦</div><p>Bald kommt mehr Inhalt!</p>
-    <button>WEITER ▶</button></div>`;
+    <div class="soon">✦ FORTSETZUNG FOLGT ✦</div><p>${TESTMODE ? 'Die Welt hinter der Leere wartet auf dich …' : 'Bald kommt mehr Inhalt!'}</p>
+    <button>WEITER ▶</button>${TESTMODE ? ' <button id="khFate" style="border-color:#ffd25a;color:#fff3c8">BETRITT DIE WELT HINTER DER LEERE ▶</button>' : ''}</div>`;
   document.body.appendChild(d);
   const cv2 = d.querySelector('canvas'), g = cv2.getContext('2d'), t0 = performance.now(); let last = t0, parts = [], rings = [];
   const step = now => {
@@ -3524,6 +3524,7 @@ function showVoidEnd(){
   };
   requestAnimationFrame(step);
   d.querySelector('button').onclick = () => { try{ SND.hum(false); }catch(e){} d.remove(); B.vs = null; B.voidDone = true; endFight(true); };
+  const fb = d.querySelector('#khFate'); if(fb) fb.onclick = () => { try{ SND.hum(false); }catch(e){} location.href = 'fatebreaker/?test'; };
 }
 
 /* ---------- Zeichnen ---------- */

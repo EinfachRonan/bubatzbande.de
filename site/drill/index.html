@@ -587,6 +587,23 @@ html,body{overscroll-behavior:none;position:fixed;inset:0;width:100%}button,a{to
 .augo-l span.mx{border-color:#ffd23f;color:#ffd23f}.augo-l span.mx b{color:#ffd23f}
 
 .sync{display:flex;gap:6px;margin-top:10px}.sync button{flex:1;padding:9px 4px;border-radius:9px;background:#0d1a24;border:1.5px solid #5ce8f0;color:#cfefff;font:700 11.5px var(--mono);cursor:pointer}
+
+/* Kopfleiste ohne Balken: schwebt über dem Spielfeld */
+.hud{position:absolute!important;top:0;left:0;right:0;z-index:6;background:transparent!important;border:0!important;box-shadow:none!important;pointer-events:none}
+.hud>*{pointer-events:auto}.hud::after{display:none!important}
+.hud .cr,.hud .mul,.hud .cry,.hud .pl small{text-shadow:0 2px 0 #000,0 0 8px rgba(0,0,0,.9),2px 0 0 #000,-2px 0 0 #000}
+@media (min-width:900px) and (min-height:540px){.hud{right:clamp(390px,30vw,500px)}#cv{grid-row:1/3!important}}
+/* Fähigkeiten: alle als kleine Knöpfe in einer Reihe */
+.hot{display:flex!important;flex-wrap:nowrap;justify-content:center;gap:4px;padding:6px 6px!important}
+.hot .hs{flex:1 1 0;min-width:0;max-width:36px;width:auto!important;height:auto;max-height:none!important;aspect-ratio:1;border-radius:7px;border-width:1.5px}
+.hot .hs.tgl{display:none!important}.hot .hs .ct{font-size:9px}.hot .hs.empty{font-size:13px;opacity:.6}
+.hot .hs.shp svg,.hot .hs.bst svg{width:60%;height:60%}.hot .hs.bst{font-size:9px}
+@media (min-width:900px){.hot .hs{max-width:44px}}
+
+.odds2{max-height:52vh;overflow-y:auto;text-align:left;margin:8px 0 4px;padding-right:4px}
+.odh{font:400 11px Silkscreen,var(--mono);margin:10px 0 5px;letter-spacing:1px}
+.odl{display:flex;flex-direction:column;gap:3px}.odl span{display:flex;align-items:center;gap:8px;background:#0b131b;border:1px solid #1f3040;border-radius:7px;padding:3px 8px}
+.odl em{flex:1;font:12px var(--mono);font-style:normal;color:#dfeaee}.odl b{font:700 12px var(--mono);color:#fff}
 </style>
 </head>
 <body data-bbtoast="top">
@@ -746,7 +763,7 @@ let S = null;
 // Version des Spielstands: alles mit älterer Version wird verworfen (kompletter Neustart)
 const VER = 14; // interne Stand-Nummer (höher = einmaliger Reset)
 const VLABEL = '0.7'; // angezeigte Version: kleine Updates bleiben, größere Updates -> 0.6 usw.
-const NEWSV = '2026-11-21'; // bei größerem Update hochsetzen → „Was ist neu“ erscheint einmal
+const NEWSV = '2026-11-24'; // bei größerem Update hochsetzen → „Was ist neu“ erscheint einmal
 const fresh = () => ({ seed: (Math.random() * 1e6) | 0, v: VER, newsV: NEWSV, wq5b: 1, wp1: 1, slot1b: 1, aug1: 1, augQ: 1, cr: 0, cry: 0, wm: 1, p: 1, best: 1, w: { line: 1 }, sk: {}, boostEnd: 0, boostCd: 0, ema: 0, t: Date.now(), last: Date.now(), done: 0, dm: 0, dmAll: 0, pc: 0, wp: {}, own: '', ab: {}, hot: [], abT: {}, buf: {}, inv: { h_pfeil: 1, r_basis: 1, t_basis: 1 }, eq: { h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, wo: ['line'], offer: null, rr: null, wpu: [] });
 const norm = o => Object.assign(fresh(), o || {}, { wq5b: o ? o.wq5b : 1, wp1: o ? o.wp1 : 1, slot1b: o ? o.slot1b : 1, aug1: o ? o.aug1 : 1, newsV: o ? o.newsV : NEWSV, augQ: o ? o.augQ || 0 : 1, w: Object.assign({ line: 1 }, (o && o.w) || {}), sk: (o && o.sk) || {}, wp: (o && o.wp) || {}, ab: (o && o.ab) || {}, hot: (o && o.hot) || [], abT: (o && o.abT) || {}, buf: (o && o.buf) || {}, inv: (o && o.inv && Object.keys(o.inv).length) ? o.inv : { h_pfeil: 1, r_basis: 1, t_basis: 1 }, /* Start-Teile nur bei neuem Spielstand, sonst kämen eingeschmolzene Teile beim Laden zurück */ eq: Object.assign({ h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, (o && o.eq) || {}), wpu: (o && o.wpu) || [], wo: (o && o.wo) || ['line', 'star', 'drill', 'nova', 'scatter', 'drones'].filter(id => o && o.w && o.w[id]) });
 try { S = JSON.parse(localStorage.getItem('gb_save')); } catch (e) {}
@@ -2082,6 +2099,8 @@ function augCard(c, k) { const T = AUGT[c.t];
 
 // ================== „Was ist neu“: einmal pro größerem Update beim Start, gut sichtbar ==================
 const NEWS = [
+  ['🃏', 'Tageskarten', 'Nach der täglichen Belohnung ziehst du 1 von 3 verdeckten Karten mit Hangar-Teilen. Je öfter du spielst, desto höher der Rang und desto besser die Karten.'],
+  ['📊', 'Kisten-Chancen', 'Tipp im Shop auf eine Kiste und sieh genau, mit welcher Wahrscheinlichkeit du welches Teil bekommst.'],
   ['🃏', 'Augmente statt Skills', 'Nach jedem Planeten wählst du 1 von 3 Augmenten. Jede Karte kannst du einmal neu würfeln. Gewöhnlich +1 Stufe, Silber +2, Gold +3.'],
   ['✨', '3 neue Skills', 'Riesentöter (mehr Schaden auf Boss & Elite), Abrissbirne (fast kaputte Blöcke zerbröseln) und Krit-Wucht (härtere Krits).'],
   ['⚒', 'Schmiede komplett', 'Neu: Bohrminen, Sternbumerang und die Dreier-Fusion Prisma-Railgun. Jede Waffe gehört zu genau einem Rezept – wer alle Waffen hat, kann alle verschmelzen.'],
@@ -2130,10 +2149,10 @@ function eliteWarn() { if ($('elw')) return; const d = document.createElement('d
 const ELW = () => CRATES.find(k => k.id === 'k3').w; // Gewichte wie die goldene (Ultimative) Kiste
 function elitePick() { const W8 = ELW(), tot = W8.g + W8.s + W8.e + W8.l; let x = Math.random() * tot, r = 's'; for (const [rr, w] of Object.entries(W8)) { if ((x -= w) < 0) { r = rr; break; } }
   const pool = ITEMS.filter(i => i.r === r); return { it: pool[(Math.random() * pool.length) | 0], r }; }
-function eliteReward() {
-  if ($('elc')) return; const cards = [elitePick(), elitePick(), elitePick()];
+function eliteReward(title, sub, pick) {
+  if ($('elc')) return; pick = pick || elitePick; const cards = [pick(), pick(), pick()];
   const d = document.createElement('div'); d.id = 'elc'; let picked = -1;
-  d.innerHTML = `<div class="elcw"><h2>ELITE-PLANET BESIEGT!</h2><p>Such dir eine Karte aus</p><div class="elr">${cards.map((c, k) => `<div class="elk" data-ek="${k}" style="--rc:${RAR[c.r].c}"><div class="elk-in"><div class="elk-b"><span>?</span></div><div class="elk-f">${itemSvg(c.it, 64)}<b>${c.it.n}</b><small>${RAR[c.r].n}</small></div></div></div>`).join('')}</div><div class="elt" id="elt"></div></div>`;
+  d.innerHTML = `<div class="elcw"><h2>${title || 'ELITE-PLANET BESIEGT!'}</h2><p>${sub || 'Such dir eine Karte aus'}</p><div class="elr">${cards.map((c, k) => `<div class="elk" data-ek="${k}" style="--rc:${RAR[c.r].c}"><div class="elk-in"><div class="elk-b"><span>?</span></div><div class="elk-f">${itemSvg(c.it, 64)}<b>${c.it.n}</b><small>${RAR[c.r].n}</small></div></div></div>`).join('')}</div><div class="elt" id="elt"></div></div>`;
   $('app').appendChild(d); SND.fx.win(); vib([60, 40, 60]);
   d.querySelectorAll('[data-ek]').forEach(el => el.onclick = () => { if (picked >= 0) return; picked = +el.dataset.ek; const c = cards[picked];
     const had = S.inv[c.it.id] || 0; S.dup = S.dup || {}; if (had) S.dup[c.it.id] = (S.dup[c.it.id] || 0) + 1; else S.inv[c.it.id] = 1; save('now');
@@ -2144,7 +2163,7 @@ function eliteReward() {
 function planetDone() {
   SND.fx.win();
   const gain = Math.ceil((1 + S.p * .3 + WP('kris')) * (G.boss ? 2 : 1)), old = G.name; // Prototyp: ◆ nur noch für Kisten & Fähigkeiten → weniger
-  if (G.elite) setTimeout(eliteReward, 1900);
+  if (G.elite) setTimeout(() => eliteReward(), 1900);
   mis('planets'); if (G.boss) { mis('boss'); vib([90, 60, 90, 60, 160]); } else vib(30);
   S.cry += gain; S.p++; S.best = Math.max(S.best, S.p); if (!augDone()) { S.augQ = (S.augQ || 0) + 1; setTimeout(augShow, 2500); }
   S.pAll = (S.pAll || 0) + 1; let chipT = ''; if (S.pAll % 5 === 0) { const cg = 1 + WP('chips'); S.chip = (S.chip || 0) + cg; chipT = ' · +⬢' + cg + ' Chip!'; setTimeout(() => toast('⬢ Waffen-Chip bekommen! Im Waffen-Tab bei „Waffen-Mods“ einsetzen.'), 2600); }
@@ -2501,6 +2520,13 @@ function openMulti(k, n) {
   ovb.querySelectorAll('.flip.mini').forEach(el => el.onclick = () => flip(el));
   all.onclick = e => { e.stopPropagation(); [...ovb.querySelectorAll('.flip.mini:not(.on)')].forEach((el, q) => setTimeout(() => flip(el), q * 140)); };
 }
+function crateOdds(k) { // Wahrscheinlichkeiten einer Kiste: je Seltenheit und je Teil
+  let h = '';
+  if (k.w) { const tot = Object.values(k.w).reduce((a, b) => a + b, 0);
+    for (const r of ['l', 'e', 's', 'g']) { if (!k.w[r]) continue; const its = ITEMS.filter(i => i.r === r), pr = k.w[r] / tot * 100;
+      h += `<div class="odh" style="color:${RAR[r].c}">${RAR[r].n} · ${pr.toFixed(pr < 1 ? 2 : 1).replace('.', ',')} %</div><div class="odl">${its.map(i => `<span>${itemSvg(i, 22)}<em>${i.n}</em><b>${(pr / its.length).toFixed(pr / its.length < 1 ? 3 : 2).replace('.', ',')} %</b></span>`).join('')}</div>`; } }
+  if (k.ab) h += `<div class="odh" style="color:#c9a2ff">Fähigkeit · ${k.w ? 'zusätzlich' : '100 %'}</div><p style="margin:4px 0 0;font-size:12px">Jede der ${ABIL.length} Fähigkeiten gleich wahrscheinlich (je ${(100 / ABIL.length).toFixed(1).replace('.', ',')} %): neu freischalten oder +1 Stufe.</p>`;
+  overlay(`<h2 style="color:${k.c}">${k.n} · Chancen</h2><div class="odds2">${h}</div>`, [['Schließen', null]]); }
 function openCrate(k) {
   if (S.cry < k.cost) return;
   S.cry -= k.cost; mis('crate');
@@ -2541,7 +2567,7 @@ function bestEquip() { const ch = []; for (const sl of ['h', 'r', 't']) { let be
   save('now'); render(); toast(ch.length ? '✓ Ausgerüstet: ' + ch.join(', ') : 'Du hast schon die besten Teile drin 👌'); if (ch.length) SND.fx.up(); }
 const better = it => { const e = eqItem(it.s); return S.eq[it.s] !== it.id && itemVal(it, ILV(it.id)) > itemVal(e, ILV(e.id)); };
 // ================== Hotbar ==================
-let hotSig = ''; let hotX = innerWidth >= 900; try { const v = localStorage.getItem('gb_hotx'); if (v != null) hotX = v === '1'; } catch (e) {} // Hotbar ausgeklappt?
+let hotSig = ''; let hotX = true; // Hotbar: alle Fähigkeiten als kleine Knöpfe in einer Reihe
 function hotbar(force) {
   const el = $('hot'); if (!el) return;
   const now = Date.now(), sig = S.hot.join() + '|' + Object.keys(S.ab).length;
@@ -2617,13 +2643,18 @@ function dly() {
 }
 function mis(id, n) { if (!S) return; const D = dly(); for (const m of D.ms) { const M = MPOOL.find(x => x.id === m.id); if (m.id !== id || m.p >= M.n) continue; m.p = Math.min(M.n, m.p + (n || 1)); if (m.p >= M.n) setTimeout(() => toast('✅ Mission geschafft: ' + M.t + ' · im Shop abholen'), 600); } }
 const dlyOpen = () => { const D = dly(); return D.ms.some(m => !m.c && m.p >= MPOOL.find(x => x.id === m.id).n) || (D.ms.every(m => m.c) && !D.bonus); };
+function dailyPick() { const D = dly(), L = Math.min(12, (D.streak || 1) + Math.floor((D.tot || 1) / 7));
+  const W8 = { g: Math.max(15, 70 - 5 * L), s: 25 + 2.5 * L, e: 5 + 2 * L, l: .1 * L }; // Legendär höchstens ~1,2 %
+  const pool = ITEMS.map(it => ({ it, w: W8[it.r] / ITEMS.filter(x => x.r === it.r).length * (it.s === 'h' ? (it.r === 'l' ? .15 : .35) : 1) })); // Raumschiffe seltener, goldene noch seltener
+  let x = Math.random() * pool.reduce((a, b) => a + b.w, 0); for (const p of pool) { if ((x -= p.w) < 0) return { it: p.it, r: p.it.r }; } return { it: pool[0].it, r: pool[0].it.r }; }
+function dailyCards() { const D = dly(), L = Math.min(12, (D.streak || 1) + Math.floor((D.tot || 1) / 7)); setTimeout(() => eliteReward('TAGESKARTE', `Rang ${L} · je öfter du spielst, desto besser die Karten`, dailyPick), 400); }
 function loginCheck() {
   const D = dly(), td = dayKey(); if (D.last === td) return;
   if (!$('ov')) return; if (!$('ov').classList.contains('hide')) { setTimeout(loginCheck, 1500); return; }
   const st = D.last === dayKey(Date.now() - 864e5) ? D.streak % 7 + 1 : 1, rw = LOGIN[st - 1];
   overlay(`<h2>Tägliche Belohnung</h2><div class="lgd">${LOGIN.map((r, k) => `<div class="${k + 1 < st ? 'ok' : k + 1 === st ? 'on' : ''}"><small>Tag ${k + 1}</small><b>${rwTxt(r).replace(' + ', '<br>')}</b></div>`).join('')}</div>
     <p>${st > 1 ? `🔥 ${st} Tage in Folge!` : 'Komm jeden Tag wieder, Tag 7 bringt eine Ultimative Kiste.'}<br>Heute: <b style="color:var(--cy)">${rwTxt(rw)}</b></p>`,
-    [['Abholen', () => { D.last = td; D.streak = st; giveRw(rw); if (tab === 'k') render(); }]]);
+    [['Abholen', () => { D.last = td; D.streak = st; D.tot = (D.tot || 0) + 1; giveRw(rw); if (tab === 'k') render(); dailyCards(); }]]);
 }
 const hybReady = h => HYB[h].p.every(p => (S.w[p] || 0) >= HYBLV);
 function renderForge(L) {
@@ -2664,6 +2695,7 @@ function renderShop(L) {
     <div class="shop">${CRATES.map(k => `<div class="sbox" style="--rc:${k.c}"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="${k.c}" stroke-width="1.4"><rect x="3" y="8" width="18" height="12" rx="1"/><path d="M3 12h18M10 8V5h4v3M12 12v3"/>${k.ab && k.w ? '<path d="M7 3l1 2M17 3l-1 2M12 1v3"/>' : ''}</svg><div><b>${k.n}</b><small>${k.d}</small>${k.w ? `<small class="odds">${['g', 's', 'e', 'l'].filter(r => k.w[r]).map(r => `<i style="color:${RAR[r].c}">${String(k.w[r]).replace('.', ',')} %</i>`).join(' ')}</small><div class="oddsbar">${['g', 's', 'e', 'l'].filter(r => k.w[r]).map(r => `<i style="flex:${Math.max(1.5, k.w[r])};background:${RAR[r].c}"></i>`).join('')}</div>` : ''}</div><div class="cbtn"><button class="br" data-cr="${k.id}" ${S.cry < k.cost ? 'disabled' : ''}>◆${k.cost}</button><button class="br" data-cm="${k.id}" data-n="5" ${S.cry < k.cost * 5 ? 'disabled' : ''}>x5<small>◆${k.cost * 5}</small></button><button class="br" data-cm="${k.id}" data-n="10" ${S.cry < k.cost * 10 ? 'disabled' : ''}>x10<small>◆${k.cost * 10}</small></button></div></div>`).join('')}</div>
     <div class="hint">◆ Kristalle gibt's für jeden abgebauten Planeten. Prozente = Chance auf Gewöhnlich / Selten / Episch / Legendär.</div>`;
   L.querySelectorAll('[data-cr]').forEach(b => b.onclick = () => openShopCrate(CRATES.find(k => k.id === b.dataset.cr)));
+  L.querySelectorAll('.sbox').forEach((el, k) => { el.style.cursor = 'pointer'; el.onclick = e => { if (e.target.closest('button')) return; crateOdds(CRATES[k]); }; });
   L.querySelectorAll('[data-cm]').forEach(b => b.onclick = () => openMulti(CRATES.find(k => k.id === b.dataset.cm), +b.dataset.n));
   L.querySelectorAll('[data-mi]').forEach(b => b.onclick = () => { const m = D.ms[+b.dataset.mi], M = MPOOL.find(x => x.id === m.id); if (m.c || m.p < M.n) return; m.c = 1; SND.fx.win(); toast('Belohnung: ' + rwTxt(M.rw)); giveRw(M.rw); render(); });
   $('mibo').onclick = () => { if (D.bonus || !D.ms.every(m => m.c)) return; D.bonus = 1; giveRw({ crate: 'k3' }); };

@@ -2195,13 +2195,13 @@ function augShow() {
   const d = document.createElement('div'); d.id = 'aug';
   const draw = () => { d.innerHTML = `<div class="augw"><h2>Augment wählen</h2><p>Planet geschafft! Such dir eins aus.${S.augQ > 1 ? ` <b>Noch ${S.augQ - 1} weitere</b>` : ''}</p><div class="augr" style="grid-template-columns:repeat(${S.augO.length},minmax(0,${S.augO.length < 3 ? '210px' : '1fr'}));justify-content:center">${S.augO.map((c, k) => `<div class="augs">${augCard(c, k)}<button class="augrr" data-rr="${k}" ${c.rr ? 'disabled' : ''}>${c.rr ? 'Neu gewürfelt' : '↻ Neu würfeln'}</button></div>`).join('')}</div>${augOwned()}<button class="augl" id="augl">Später</button></div>`;
     d.querySelectorAll('[data-ag]').forEach(b => b.onclick = () => augPick(+b.dataset.ag));
-    d.querySelectorAll('[data-rr]').forEach(b => b.onclick = () => { const k = +b.dataset.rr, c = S.augO[k]; if (c.rr) return; let n = augRoll(S.augO.filter((_, j) => j !== k).map(x => x.id).concat(c.id)); if (n.id === '_cry') n = augRoll(S.augO.filter((_, j) => j !== k).map(x => x.id)); /* nichts anderes mehr da → gleicher Skill, neue Stufe */ S.augO[k] = { ...n, rr: 1 }; SND.fx.up(); save('now'); draw(); d.querySelectorAll('.augs')[k].classList.add('spin'); });
+    d.querySelectorAll('[data-rr]').forEach(b => b.onclick = () => { const k = +b.dataset.rr, c = S.augO && S.augO[k]; if (!c || c.rr) return; let n = augRoll(S.augO.filter((_, j) => j !== k).map(x => x.id).concat(c.id)); if (n.id === '_cry') n = augRoll(S.augO.filter((_, j) => j !== k).map(x => x.id)); /* nichts anderes mehr da → gleicher Skill, neue Stufe */ S.augO[k] = { ...n, rr: 1 }; SND.fx.up(); save('now'); draw(); d.querySelectorAll('.augs')[k].classList.add('spin'); });
     d.querySelector('#augl').onclick = () => { d.remove(); render(); };
     d.querySelectorAll('[data-ski]').forEach(el => el.onclick = () => { const s2 = SKILLS.find(x => x.id === el.dataset.ski), l = SK(s2.id), box = d.querySelector('.augo-i'); d.querySelectorAll('[data-ski]').forEach(x => x.classList.toggle('sel', x === el));
       box.hidden = false; box.innerHTML = `<b>${s2.n}</b> · Stufe ${l}/${s2.max}<br>${SKTXT[s2.id] || s2.d}<br><em>Jetzt: ${skVal(s2.id, l)}${l < s2.max ? ' · nächste Stufe: ' + skVal(s2.id, l + 1) : ' · MAX'}</em>`; }); };
   draw(); $('app').appendChild(d); SND.fx.up();
 }
-function augPick(k) { const c = S.augO[k], T = AUGT[c.t];
+function augPick(k) { if (!S.augO || !S.augO[k]) { const d0 = $('aug'); if (d0) d0.remove(); return; } const c = S.augO[k], T = AUGT[c.t];
   if (c.id === '_cry') { S.cry += 10 + 10 * c.t; toast('+◆' + (10 + 10 * c.t)); }
   else { const s = SKILLS.find(x => x.id === c.id); S.sk[c.id] = Math.min(s.max, SK(c.id) + T.lv); toast(`${T.n}-Augment: ${s.n} Stufe ${S.sk[c.id]}`); }
   if (c.t === 2) { lflash(); vib([60, 40, 120]); } else vib(30);
@@ -2248,7 +2248,7 @@ function warp() {
     [['SPRINGEN', () => {
       S.wm = Math.round(((S.wm || 1) + wmGain()) * 100) / 100; mis('warp'); vib([40, 30, 40, 30, 300]); S.dm = (S.dm || 0) + n; S.dmAll = (S.dmAll || 0) + n; S.wTok = Math.max(0, wTok() - 1); S.pc = (S.pc || 0) + 1; S.dmgRun = {};
       S.cry = Math.floor(S.cry * keepPct() / 100); { const e = WP('erbe'), o = S.sk || {}; S.sk = {}; if (e) for (const k in o) S.sk[k] = Math.min(o[k], e); } S.abT = {}; S.buf = {}; S.cr = Math.max(150, startCr(WP('start'))); S.w = { line: 1 }; S.wo = ['line']; HP = {}; S.offer = null; S.rrUsed = false; S.p = 1 + 2 * WP('skip'); S.done = 0; S.boostEnd = 0; S.seed = (Math.random() * 1e6) | 0;
-      S.augQ = 1; S.augO = null; travel = travT0 = 2.8; built = false; shake = 12; warpT = 2; G.clearing = 0; save('now'); SND.fx.warp(); setTimeout(augShow, 3200);
+      S.augQ = 1 + Math.max(0, (S.p || 1) - 1); S.augO = null; travel = travT0 = 2.8; /* übersprungene Planeten (Hyperraum) geben ihre Augmente nach */ built = false; shake = 12; warpT = 2; G.clearing = 0; save('now'); SND.fx.warp(); setTimeout(augShow, 3200);
       if (window.BB) BB.unlock('drill_warp');
       toast(`Warp geschafft: ✦${fmt(n)} · Multiplikator x${S.wm.toFixed(2)} · Neuer Lauf ab Planet ${S.p}`); tab = 'w'; document.querySelectorAll('.nav [data-t]').forEach(x => x.classList.toggle('on', x.dataset.t === 'w')); render();
     }], ['Noch nicht', null]]);

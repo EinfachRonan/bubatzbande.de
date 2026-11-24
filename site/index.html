@@ -261,6 +261,10 @@ const SECRET = [
   { k: 'hw', url: 'wacht/', name: 'Höhlenwacht', img: 'wacht/key.jpg', pos: '50% 0%', text: 'Idle-Auto-Battler: die Bande kämpft allein, du grindest Beute, schmiedest und ziehst dich in die Taverne zurück.', tag: 'Testphase · v1.7', sec: 1, cls: 'xl' },
   { k: 'ks', url: 'schenke/', name: 'Kräuterschenke', img: 'schenke/key.jpg', pos: '50% 40%', text: 'Goblins jagen, grillen, brauen, die Bande bewirten – bau Garten, Braustube und Team aus.', tag: 'Testphase · v0.6', sec: 1, cls: 'xl' },
 ];
+// Marios eigene Spiele (Ordner site/m-*): Liste erzeugt die Mario-Schleuse. Beta = nur per Code, freigeben für alle macht Ronan in mario-frei.json
+let MARIO = [], MFREI = [];
+const mGame = (g, frei) => ({ k: g.k, url: g.url, name: g.name, img: g.img, pos: '50% 50%', text: g.text || '', tag: (frei ? '' : 'Testphase · ') + (g.art ? g.art + ' · ' : '') + 'v' + g.v + ' · von Mario', sec: frei ? 0 : 1, cls: 'xl' });
+Promise.all(['mario-spiele.json', 'mario-frei.json'].map(f => fetch(f + '?' + Math.floor(Date.now() / 60000), { cache: 'no-store' }).then(r => r.ok ? r.json() : []).catch(() => []))).then(([a, f]) => { MARIO = Array.isArray(a) ? a : []; MFREI = Array.isArray(f) ? f : []; draw(); });
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const $ = id => document.getElementById(id);
 const B = () => window.BB;
@@ -300,8 +304,9 @@ function draw() {
   $('top').querySelectorAll('[data-mu]').forEach(x => x.onclick = () => window.BBLofi && BBLofi.toggle());
   // Spiele: neuestes (zuletzt geupdatet) als Top-Vorschau, alle anderen als Kacheln
   const go = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>';
-  const sec = SECRET.filter(g => b && b.secret && b.secret(g.k));
-  const all = GAMES.concat(sec).map((g, i) => ({ g, i })).sort((x, y) => (upT(y.g) - upT(x.g)) || (x.i - y.i)).map(x => x.g);
+  const mFrei = MARIO.filter(g => MFREI.includes(g.k)).map(g => mGame(g, 1)), mBeta = MARIO.filter(g => !MFREI.includes(g.k)).map(g => mGame(g, 0));
+  const sec = SECRET.concat(mBeta).filter(g => b && b.secret && b.secret(g.k));
+  const all = GAMES.concat(mFrei, sec).map((g, i) => ({ g, i })).sort((x, y) => (upT(y.g) - upT(x.g)) || (x.i - y.i)).map(x => x.g);
   // Ganz oben: das Spiel, das DU zuletzt gespielt hast (im Konto, geräteübergreifend). Noch nichts gespielt → neuestes Update
   const hot = all.slice().sort((x, y) => (lpMe(y) - lpMe(x)) || (plMe(y) - plMe(x)))[0];
   const isHot = hot && (lpMe(hot) > 0 || plMe(hot) > 0);

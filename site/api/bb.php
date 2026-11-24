@@ -294,6 +294,8 @@ $SECRET = [
   hash('sha256', 'bbcode:423') => ['g' => 'kt', 'name' => 'Kräuter-Titanen', 'v' => '0.3', 'url' => 'titanen/'],
   hash('sha256', 'bbcode:666') => ['g' => 'kl', 'name' => 'Station 666', 'v' => '0.6', 'url' => 'klinik/'],
 ];
+// Marios eigene Beta-Spiele (site/m-*): Codes erzeugt die Mario-Schleuse, Ronans Codes gehen vor
+if (is_file(__DIR__ . '/mario_codes.php')) { $mc = @include __DIR__ . '/mario_codes.php'; if (is_array($mc)) $SECRET += $mc; }
 if ($a === 'code') {
   $n = 0; foreach ($rl as $x) if ($x['ip'] === $ip) $n++;
   if ($n >= 15) $stop('slow', 429);
@@ -384,7 +386,8 @@ if ($a === 'inv_done') {
 // Spielstände in der Cloud (z. B. Bandenhof)
 if ($a === 'gput') {
   $g = (string) ($in['g'] ?? ''); $data = (string) ($in['data'] ?? '');
-  if (!in_array($g, ['hof', 'meta', 'runner', 'krieg', 'match', 'drill', 'ks', 'kh', 'hw', 'kt'], true) || strlen($data) > 60000) $stop('bad');
+  $mg = preg_match('/^m-[a-z0-9-]{2,17}$/', $g) && is_dir(__DIR__ . "/../$g"); // Marios Spiele dürfen auch im Konto speichern
+  if ((!$mg && !in_array($g, ['hof', 'meta', 'runner', 'krieg', 'match', 'drill', 'ks', 'kh', 'hw', 'kt'], true)) || strlen($data) > 60000) $stop('bad');
   $U['gs'][$g] = ['d' => $data, 't' => time()];
   $finish(['ok' => 1]);
 }

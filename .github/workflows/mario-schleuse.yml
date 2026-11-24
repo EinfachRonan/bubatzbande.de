@@ -13,7 +13,8 @@ permissions:
 concurrency: mario-schleuse
 
 env:
-  ERLAUBT: site/kraeuterhoehle   # Marios Ordner (mehrere mit Leerzeichen trennen)
+  ERLAUBT: site/kraeuterhoehle   # Marios feste Ordner (mehrere mit Leerzeichen trennen)
+  # Zusätzlich darf Mario eigene neue Spiele anlegen: jeder Ordner site/m-<name>/ gehört ihm.
 
 jobs:
   uebernehmen:
@@ -35,15 +36,21 @@ jobs:
           verboten=""
           for f in $alle; do
             ok=0; for d in $ERLAUBT; do case "$f" in "$d"/*) ok=1;; esac; done
+            case "$f" in site/m-*/*) ok=1;; esac
             [ $ok = 1 ] || verboten="$verboten $f"
           done
           if [ -n "$verboten" ]; then
             echo "::warning title=Mario-Schleuse::Diese Dateien liegen außerhalb von Marios Ordner und werden NICHT übernommen:$verboten"
           fi
-          for d in $ERLAUBT; do
+          # Marios eigene Spiele-Ordner (site/m-*) – auf beiden Seiten einsammeln (auch gelöschte)
+          mspiele=$( { git ls-tree -d --name-only HEAD site/; git ls-tree -d --name-only origin/mario site/; } | grep '^site/m-' | sort -u || true)
+          for d in $ERLAUBT $mspiele; do
             git rm -rq --ignore-unmatch "$d"
             if git cat-file -e "origin/mario:$d" 2>/dev/null; then git checkout origin/mario -- "$d"; fi
           done
+          # Startseiten-Liste + Beta-Codes erzeugen (Codes nur als Hash, nie öffentlich)
+          python3 scripts/mario_spiele.py
+          git add -A site/mario-spiele.json site/api/mario_codes.php site/m-* 2>/dev/null || git add -A site/mario-spiele.json site/api/mario_codes.php
           if git diff --cached --quiet; then echo "Keine Änderungen in Marios Ordner."; exit 0; fi
           msg=$(git log -1 --format=%s origin/mario)
           git commit -qm "Mario: $msg"

@@ -113,7 +113,7 @@ html,body{height:100%;background:var(--bg);color:var(--txt);font:600 14px var(--
 .ultab{display:flex;align-items:center;gap:10px;justify-content:center;border:1px dashed #c9a2ff;padding:8px;margin-bottom:12px;font-size:12px;color:#cfd8da;text-align:left}.ultab b{color:#c9a2ff}
 .hs.bst{flex:1.25;aspect-ratio:auto;flex-direction:column;font-size:11px;gap:2px;border-color:#3a4246}
 .hs.bst svg{width:20px;height:20px}
-.hs.bst.act{border-color:var(--li);color:var(--li)}
+.hs.bst.act{border-color:#4aa8ff!important;color:#fff;box-shadow:0 0 10px rgba(74,168,255,.6)}
 .hs.bst:disabled{color:var(--mut)}
 .lb2{position:absolute;left:58px;top:max(10px,env(safe-area-inset-top));width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);background:transparent;color:var(--txt);cursor:pointer}
 .lb2 svg{width:20px;height:20px}
@@ -604,6 +604,8 @@ html,body{overscroll-behavior:none;position:fixed;inset:0;width:100%}button,a{to
 .odh{font:400 11px Silkscreen,var(--mono);margin:10px 0 5px;letter-spacing:1px}
 .odl{display:flex;flex-direction:column;gap:3px}.odl span{display:flex;align-items:center;gap:8px;background:#0b131b;border:1px solid #1f3040;border-radius:7px;padding:3px 8px}
 .odl em{flex:1;font:12px var(--mono);font-style:normal;color:#dfeaee}.odl b{font:700 12px var(--mono);color:#fff}
+
+.bfill{position:absolute;left:3px;right:3px;bottom:3px;height:0;max-height:calc(100% - 6px);background:linear-gradient(180deg,rgba(120,190,255,.85),rgba(40,110,255,.75));border-radius:4px;pointer-events:none;z-index:0;transition:height .5s linear}.hs.bst>*:not(.bfill){position:relative;z-index:1}
 </style>
 </head>
 <body data-bbtoast="top">
@@ -1936,9 +1938,9 @@ function ui() {
   $('pln').textContent = 'U' + uniOf(S.p) + ' · ' + (G.boss ? 'BOSS' : (G.elite ? 'ELITE ' : 'Planet ') + pInU(S.p)); $('pln').classList.toggle('boss', !!(G.boss || G.elite)); $('plp').textContent = fmt(G.total - G.left) + '/' + fmt(G.total);
   hotbar();
   const b = $('boost'), bl = $('bl'), now = Date.now();
-  if (boosting()) { b.classList.add('act'); bl.textContent = mmss(S.boostEnd - now); b.disabled = true; }
-  else if (S.boostCd > now) { b.classList.remove('act'); bl.textContent = mmss(S.boostCd - now); b.disabled = true; }
-  else { b.classList.remove('act'); bl.textContent = 'Boost x2'; b.disabled = false; }
+  if (boosting()) { b.classList.add('act'); bl.textContent = mmss(S.boostEnd - now); b.disabled = true; const tot = S.boostDur || (5 + 2 * WP('boost')) * 60e3, f = Math.max(0, Math.min(1, (S.boostEnd - now) / tot)) * 100; const bf = $('bfill'); if (bf) bf.style.height = f + '%'; }
+  else if (S.boostCd > now) { if ($('bfill')) $('bfill').style.height = '0'; b.classList.remove('act'); bl.textContent = mmss(S.boostCd - now); b.disabled = true; }
+  else { if ($('bfill')) $('bfill').style.height = '0'; b.classList.remove('act'); bl.textContent = 'Boost x2'; b.disabled = false; }
   // rote Punkte: neue Fähigkeit liegt noch nicht auf der Hotbar / doppelte Teile zum Einschmelzen
   $('abdot').hidden = !(ABIL.some(a => AL(a.id) && !S.hot.includes(a.id)) && S.hot.filter(Boolean).length < 8);
   // Roter Punkt im Hangar nur, wenn ein Teil leveln kann (5 Doppelte) oder ein besseres Teil nicht ausgerüstet ist
@@ -2042,7 +2044,7 @@ document.querySelectorAll('.nav [data-t]').forEach(b => b.onclick = () => {
   tab = b.dataset.t; $('list').scrollTop = 0; setFold(false); document.querySelectorAll('.nav [data-t]').forEach(x => x.classList.toggle('on', x === b)); render(); });
 function upgradeFx(w) { SND.fx.win(); const n = ST(w.id); fx.push({ k: 'nova', x: ship.x, y: ship.y, r: 90, t: .8, c: '255,233,77' }); for (let k = 0; k < 30; k++) parts.push({ x: ship.x, y: ship.y, vx: (Math.random() - .5) * 300, vy: (Math.random() - .5) * 300, t: .8, c: '#ffe94d' });
   overlay(`<div class="crate" style="--rc:#ffe94d"><div class="cbox" style="font-size:44px;color:#ffe94d">★${n}</div></div><h2 style="color:#ffe94d">${w.n} aufgewertet!</h2><p>x2 Schaden${UPTXT[w.id] ? ' · ' + UPTXT[w.id] : ''}<br>Nächstes Upgrade bei Stufe ${msNext(WL(w.id))}</p>`, [['Stark', null]]); }
-function boostClick() { if (boosting() || S.boostCd > Date.now()) return; S.boostEnd = Date.now() + (5 + 2 * WP('boost')) * 60e3 * (PK('r', 10) ? 1.5 : 1); S.boostCd = S.boostEnd + 3 * 60e3; /* 3 min Abklingzeit nach dem Boost */ toast('Boost aktiv: doppelter Schaden und doppelte CR!'); save(true); ui(); }
+function boostClick() { if (boosting() || S.boostCd > Date.now()) return; S.boostEnd = Date.now() + (5 + 2 * WP('boost')) * 60e3 * (PK('r', 10) ? 1.5 : 1); S.boostDur = S.boostEnd - Date.now(); S.boostCd = S.boostEnd + 3 * 60e3; /* 3 min Abklingzeit nach dem Boost */ toast('Boost aktiv: doppelter Schaden und doppelte CR!'); save(true); ui(); }
 $('lb').onclick = () => window.BB && BB.open('board', 'drill');
 $('opt').onclick = openSettings;
 $('cv').addEventListener('pointerdown', e => { const r = $('cv').getBoundingClientRect(); if (evTap(e.clientX - r.left, e.clientY - r.top)) e.preventDefault(); });
@@ -2578,7 +2580,7 @@ function hotbar(force) {
         : `<button class="hs empty" data-goab="1" aria-label="Fähigkeit hinzufügen">+</button>`; };
     const tg = `<button class="hs tgl" id="hotx" aria-label="${hotX ? 'Hotbar einklappen' : 'Alle Fähigkeiten zeigen'}">${hotX ? '▴' : '▾<small>+' + S.hot.slice(3).filter(Boolean).length + '</small>'}</button>`;
     el.classList.toggle('x', hotX);
-    el.innerHTML = (hotX ? [0, 1, 2, 3, 4].map(ab).join('') + tg + [5, 6, 7].map(ab).join('') : [0, 1, 2].map(ab).join('') + tg) + `<button class="hs shp" data-goshop="1" aria-label="Shop"><span class="dot" id="shdot" hidden></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h2l2.4 11h10.2L20 7H7"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/></svg></button><button class="hs bst" id="boost" aria-label="Boost"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg><span id="bl">x2</span></button>`;
+    el.innerHTML = (hotX ? [0, 1, 2, 3, 4].map(ab).join('') + tg + [5, 6, 7].map(ab).join('') : [0, 1, 2].map(ab).join('') + tg) + `<button class="hs shp" data-goshop="1" aria-label="Shop"><span class="dot" id="shdot" hidden></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h2l2.4 11h10.2L20 7H7"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/></svg></button><button class="hs bst" id="boost" aria-label="Boost"><i class="bfill" id="bfill"></i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg><span id="bl">x2</span></button>`;
     el.querySelectorAll('[data-cast]').forEach(b => b.onclick = () => cast(b.dataset.cast));
     el.querySelectorAll('[data-goab]').forEach(b => b.onclick = () => goTab('a'));
     el.querySelectorAll('[data-goshop]').forEach(b => b.onclick = () => goTab('k'));
@@ -2625,7 +2627,7 @@ function renderAb(L) {
   L.querySelectorAll('[data-shop]').forEach(b => b.onclick = () => goTab('k'));
 }
 // ================== Täglich: Login-Belohnung + Tagesmissionen ==================
-const dayKey = t => { const d = new Date(t == null ? Date.now() : t); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+const dayKey = t => { const d = new Date((t == null ? Date.now() : t) - 12 * 36e5); /* neuer Tag ab 12 Uhr mittags */ return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 const LOGIN = [{ cry: 10 }, { cry: 15 }, { chip: 1 }, { cry: 25 }, { dm: 3 }, { cry: 40 }, { cry: 50, crate: 'k3' }];
 const MPOOL = [
   { id: 'planets', t: 'Baue 5 Planeten ab', n: 5, rw: { cry: 20 } }, { id: 'cast', t: 'Zünde 12 Fähigkeiten', n: 12, rw: { cry: 15 } },
@@ -2638,6 +2640,7 @@ const rwTxt = r => [r.cry ? '◆' + r.cry : '', r.dm ? '✦' + r.dm : '', r.chip
 function giveRw(r) { if (r.cry) S.cry += r.cry; if (r.dm) S.dm = (S.dm || 0) + r.dm; if (r.chip) S.chip = (S.chip || 0) + r.chip; save('now'); ui(); if (r.crate) { const k = CRATES.find(x => x.id === r.crate); S.cry += k.cost; openCrate(k); } }
 function dly() {
   S.dly = S.dly || { last: '', streak: 0, day: '', ms: [], bonus: 0 }; const D = S.dly, td = dayKey();
+  if (D.last > td) D.last = td; if (D.day > td) D.day = td; // Umstellung auf 12-Uhr-Wechsel: heute früh Abgeholtes zählt bis 12 Uhr
   if (D.day !== td) { const r = mulberry(td.split('-').join('') * 1 + (S.seed || 7)), pool = MPOOL.slice(); D.ms = []; while (D.ms.length < 3) { const m = pool.splice((r() * pool.length) | 0, 1)[0]; D.ms.push({ id: m.id, p: 0, c: 0 }); } D.day = td; D.bonus = 0; }
   return D;
 }
@@ -2648,13 +2651,15 @@ function dailyPick() { const D = dly(), L = Math.min(12, (D.streak || 1) + Math.
   const pool = ITEMS.map(it => ({ it, w: W8[it.r] / ITEMS.filter(x => x.r === it.r).length * (it.s === 'h' ? (it.r === 'l' ? .15 : .35) : 1) })); // Raumschiffe seltener, goldene noch seltener
   let x = Math.random() * pool.reduce((a, b) => a + b.w, 0); for (const p of pool) { if ((x -= p.w) < 0) return { it: p.it, r: p.it.r }; } return { it: pool[0].it, r: pool[0].it.r }; }
 function dailyCards() { const D = dly(), L = Math.min(12, (D.streak || 1) + Math.floor((D.tot || 1) / 7)); setTimeout(() => eliteReward('TAGESKARTE', `Rang ${L} · je öfter du spielst, desto besser die Karten`, dailyPick), 400); }
+function nextDayTxt() { const n = new Date(), t = new Date(n); t.setHours(12, 0, 0, 0); if (t <= n) t.setDate(t.getDate() + 1); const m = Math.round((t - n) / 6e4); return 'neu in ' + Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0') + ' min'; }
+setInterval(() => { try { if (!$('elc') && !$('aug')) loginCheck(); } catch (e) {} }, 60e3); // Tagesbonus auch ohne Neuladen um 12 Uhr anbieten
 function loginCheck() {
   const D = dly(), td = dayKey(); if (D.last === td) return;
   if (!$('ov')) return; if (!$('ov').classList.contains('hide')) { setTimeout(loginCheck, 1500); return; }
   const st = D.last === dayKey(Date.now() - 864e5) ? D.streak % 7 + 1 : 1, rw = LOGIN[st - 1];
   overlay(`<h2>Tägliche Belohnung</h2><div class="lgd">${LOGIN.map((r, k) => `<div class="${k + 1 < st ? 'ok' : k + 1 === st ? 'on' : ''}"><small>Tag ${k + 1}</small><b>${rwTxt(r).replace(' + ', '<br>')}</b></div>`).join('')}</div>
-    <p>${st > 1 ? `🔥 ${st} Tage in Folge!` : 'Komm jeden Tag wieder, Tag 7 bringt eine Ultimative Kiste.'}<br>Heute: <b style="color:var(--cy)">${rwTxt(rw)}</b></p>`,
-    [['Abholen', () => { D.last = td; D.streak = st; D.tot = (D.tot || 0) + 1; giveRw(rw); if (tab === 'k') render(); dailyCards(); }]]);
+    <p>${st > 1 ? `🔥 ${st} Tage in Folge!` : 'Komm jeden Tag wieder, Tag 7 bringt eine Ultimative Kiste.'}<br>Heute: <b style="color:var(--cy)">${rwTxt(rw)}</b><br><small style="color:var(--mut)">Neuer Tagesbonus jeden Tag ab 12 Uhr</small></p>`,
+    [['Abholen', () => { D.last = td; D.streak = st; D.tot = (D.tot || 0) + 1; giveRw(rw); if (tab === 'k') render(); dailyCards(); setTimeout(() => toast('Nächster Tagesbonus ' + nextDayTxt().replace('neu ', '')), 4000); }]]);
 }
 const hybReady = h => HYB[h].p.every(p => (S.w[p] || 0) >= HYBLV);
 function renderForge(L) {
@@ -2688,7 +2693,7 @@ function renderStats(L) {
 }
 function renderShop(L) {
   const D = dly();
-  L.innerHTML = `<div class="skh" style="border-left-color:#ffe94d"><span>Tagesmissionen · 🔥 ${D.streak || 0} ${D.streak === 1 ? 'Tag' : 'Tage'} in Folge</span><b style="font-size:11px">neu um 0 Uhr</b></div>
+  L.innerHTML = `<div class="skh" style="border-left-color:#ffe94d"><span>Tagesmissionen · 🔥 ${D.streak || 0} ${D.streak === 1 ? 'Tag' : 'Tage'} in Folge</span><b style="font-size:11px">${nextDayTxt()}</b></div>
     <div class="mis">${D.ms.map((m, i) => { const M = MPOOL.find(x => x.id === m.id), dn = m.p >= M.n; return `<div class="${m.c ? 'c' : dn ? 'd' : ''}"><div class="mt"><b>${M.t}</b><small>${rwTxt(M.rw)}</small><i><s style="width:${Math.min(100, m.p / M.n * 100)}%"></s></i><em>${m.p}/${M.n}</em></div><button class="br" data-mi="${i}" ${dn && !m.c ? '' : 'disabled'}>${m.c ? '✓' : 'Abholen'}</button></div>`; }).join('')}
       <div class="${D.bonus ? 'c' : D.ms.every(m => m.c) ? 'd' : ''}"><div class="mt"><b>Bonus: alle 3 geschafft</b><small>Ultimative Kiste</small></div><button class="br" id="mibo" ${D.ms.every(m => m.c) && !D.bonus ? '' : 'disabled'}>${D.bonus ? '✓' : 'Abholen'}</button></div></div>
     <div class="skh"><span>Shop</span><b>◆ ${fmt(S.cry)}</b></div>

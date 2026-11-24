@@ -805,7 +805,7 @@ let S = null;
 // Version des Spielstands: alles mit älterer Version wird verworfen (kompletter Neustart)
 const VER = 14; // interne Stand-Nummer (höher = einmaliger Reset)
 const VLABEL = '0.7'; // angezeigte Version: kleine Updates bleiben, größere Updates -> 0.6 usw.
-const NEWSV = '2026-11-24'; // bei größerem Update hochsetzen → „Was ist neu“ erscheint einmal
+const NEWSV = '2026-11-24b'; // bei größerem Update hochsetzen → „Was ist neu“ erscheint einmal
 const fresh = () => ({ seed: (Math.random() * 1e6) | 0, v: VER, newsV: NEWSV, wq5b: 1, wp1: 1, slot1b: 1, aug1: 1, augQ: 1, cr: 0, cry: 0, wm: 1, p: 1, best: 1, w: { line: 1 }, sk: {}, boostEnd: 0, boostCd: 0, ema: 0, t: Date.now(), last: Date.now(), done: 0, dm: 0, dmAll: 0, pc: 0, wp: {}, own: '', ab: {}, hot: [], abT: {}, buf: {}, inv: { h_pfeil: 1, r_basis: 1, t_basis: 1 }, eq: { h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, wo: ['line'], offer: null, rr: null, wpu: [] });
 const norm = o => Object.assign(fresh(), o || {}, { wq5b: o ? o.wq5b : 1, wp1: o ? o.wp1 : 1, slot1b: o ? o.slot1b : 1, aug1: o ? o.aug1 : 1, newsV: o ? o.newsV : NEWSV, augQ: o ? o.augQ || 0 : 1, w: Object.assign({ line: 1 }, (o && o.w) || {}), sk: (o && o.sk) || {}, wp: (o && o.wp) || {}, ab: (o && o.ab) || {}, hot: (o && o.hot) || [], abT: (o && o.abT) || {}, buf: (o && o.buf) || {}, inv: (o && o.inv && Object.keys(o.inv).length) ? o.inv : { h_pfeil: 1, r_basis: 1, t_basis: 1 }, /* Start-Teile nur bei neuem Spielstand, sonst kämen eingeschmolzene Teile beim Laden zurück */ eq: Object.assign({ h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, (o && o.eq) || {}), wpu: (o && o.wpu) || [], wo: (o && o.wo) || ['line', 'star', 'drill', 'nova', 'scatter', 'drones'].filter(id => o && o.w && o.w[id]) });
 try { S = JSON.parse(localStorage.getItem('gb_save')); } catch (e) {}
@@ -1341,7 +1341,7 @@ function step(dt) {
   for (let k = novas.length - 1; k >= 0; k--) { const n = novas[k]; n.t += dt * 2.6; if (n.t < 1) continue; novas.splice(k, 1);
     const c0 = Math.floor((n.tx - G.ox - n.rad) / CELL), c1 = Math.ceil((n.tx - G.ox + n.rad) / CELL), r0 = Math.floor((n.ty - G.oy - n.rad) / CELL), r1 = Math.ceil((n.ty - G.oy + n.rad) / CELL), cells = [];
     for (let r = Math.max(0, r0); r <= Math.min(ROWS - 1, r1); r++) for (let c = Math.max(0, c0); c <= Math.min(COLS - 1, c1); c++) { const i = r * COLS + c; if (!G.alive[i]) continue; const [x, y] = cellXY(i), d = Math.hypot(x - n.tx, y - n.ty); if (d <= n.rad) cells.push([d, i]); }
-    SND.fx.boom(); cells.sort((a2, b2) => a2[0] - b2[0]); waves.push({ x: n.tx, y: n.ty, rad: n.rad, r: 0, cells, j: 0, d: n.d * 7 * 1.2 / Math.max(7, cells.length) }); shake = Math.max(shake, 3);
+    SND.fx.boom(); cells.sort((a2, b2) => a2[0] - b2[0]); waves.push({ x: n.tx, y: n.ty, rad: n.rad, r: 0, cells, j: 0, d: n.d * 7 * 1.2 / Math.max(7, Math.min(24, cells.length)) }); /* ab 24 Blöcken nicht weiter verdünnen: größerer Radius = mehr Gesamtschaden */ shake = Math.max(shake, 3);
     { const T = lvTier(WL('nova')); for (let q = 0; q < 0; q++) { const an = Math.random() * 6.283, sp = 50 + Math.random() * 70; bats.push({ x: n.tx, y: n.ty, vx: Math.cos(an) * sp, vy: Math.sin(an) * sp - 20, t: 1.4 + Math.random() * .6, ph: Math.random() * 6 }); }
       for (let q = 0; q < 0; q++) { const an = Math.random() * 6.283, d = Math.random() * n.rad * .7; fogs.push({ x: n.tx + Math.cos(an) * d, y: n.ty + Math.sin(an) * d, vx: Math.cos(an) * 12, vy: Math.sin(an) * 12 - 6, t: 1.8 + Math.random(), t0: 2.6, z: 8 + Math.random() * (6 + T * 2) }); } } }
   for (let k = bats.length - 1; k >= 0; k--) { const b = bats[k]; b.ph += dt * 9; b.vx += Math.sin(b.ph * .7) * 40 * dt; b.x += b.vx * dt; b.y += b.vy * dt + Math.sin(b.ph) * 18 * dt; if ((b.t -= dt) <= 0) bats.splice(k, 1); }
@@ -2144,6 +2144,7 @@ function augCard(c, k) { const T = AUGT[c.t];
 
 // ================== „Was ist neu“: einmal pro größerem Update beim Start, gut sichtbar ==================
 const NEWS = [ // [Icon, Titel, Text, Version] – angezeigt wird nur, was der Spieler noch nicht gesehen hat
+  ['💥', 'Nova repariert', 'Die Supernova verteilt ihren Schaden nicht mehr auf alle Blöcke, sondern trifft jeden Block im Radius voll – je höher die Stufe, desto größer das Loch. Auch die Plasma-Nova wird mit größerem Radius jetzt stärker statt schwächer.', '2026-11-24b'],
   ['⚡', 'Neue Leisten', 'Die Kopfleiste schwebt jetzt frei über dem Spielfeld, alle 8 Fähigkeiten passen klein in eine Reihe, und der Boost zeigt blau, wie lange er noch läuft. Der Tagesbonus kommt jetzt immer ab 12 Uhr.', '2026-11-24'],
   ['🌀', 'Warp-Fähigkeiten', 'Wenn du eine Warp-Fähigkeit ziehst, ist sie direkt auf Stufe 1.', '2026-11-24'],
   ['🃏', 'Tageskarten', 'Nach der täglichen Belohnung ziehst du 1 von 3 verdeckten Karten mit Hangar-Teilen. Je öfter du spielst, desto höher der Rang und desto besser die Karten.', '2026-11-24'],
@@ -2297,7 +2298,7 @@ function abStats(id, lv) {
   else if (id === 'loch') r.push(['Radius', (3.2 + lv * .3).toFixed(2) + ' Blöcke'], ["Schaden", fmt(D * 3.6 * P)], ['Dauer', '2.2 s']);
   else if (id === 'erz') r.push(['Neue Erze', Math.round(10 * P) + ' Blöcke']);
   else if (id === 'drohne') r.push(['Dauer', (15 * (1 + .1 * (lv - 1))).toFixed(1) + ' s'], ['Schaden/s', fmt(D * 1.2 * P)]);
-  else if (id === 'nova') r.push(['Radius', (8 + lv * .7).toFixed(1) + ' Blöcke'], ['Schaden', fmt(D * 12 * P)]);
+  else if (id === 'nova') r.push(['Radius', (8 + lv * .7).toFixed(1) + ' Blöcke'], ['Schaden pro Block', fmt(D * 2 * P)]);
   else if (id === 'frost') r.push(['Effekt', 'x2 Schaden'], ['Dauer', (12 * (1 + .1 * (lv - 1))).toFixed(1) + ' s']);
   else if (id === 'blitz') r.push(['Blitze', '24'], ['Schaden je Blitz', fmt(D * .4 * P)]);
   else if (id === 'kmag') r.push(['Chance je Block', (2 + lv * .3).toFixed(1) + ' %'], ['Max. ◆ pro Einsatz', 4 + lv], ['Dauer', '20 s']);
@@ -2342,7 +2343,7 @@ function cast(id, auto) {
   else if (id === 'erz') { let n = Math.round(10 * P); while (n-- > 0) { const i = randAlive(); if (i >= 0 && G.ore[i] < 3) G.ore[i] = Math.random() < .2 ? 2 : 1; } tDirty = true; }
   else if (id === 'drohne') { S.buf.dr = Date.now() + 15000 * (1 + .1 * (AL(id) - 1)); S.bufP = Object.assign(S.bufP || {}, { dr: D * 1.2 * P, drT: ABT(id) }); }
   else if (id === 'nova') { const n = Math.round(8 + AL(id) * .7), tr = ABT(id); let cells = 0; for (let a = -n; a <= n; a++) for (let b = -n; b <= n; b++) if (a * a + b * b <= n * n) cells++;
-    boomAt(G.cx, G.cy, n, D * 12 * P / cells, abc(id, 1)); for (let q = 0; q <= tr; q++) fx.push({ k: 'nova', x: G.cx, y: G.cy, r: CELL * (n + 2 + q * 3), t: .7 + q * .15, c: abc(id, 1), thick: 1 }); shake = 18 + tr * 4; SND.fx.boom(); }
+    boomAt(G.cx, G.cy, n, D * 2 * P, abc(id, 1)); /* jeder Block im Radius bekommt den vollen Schaden (vorher auf alle Blöcke verteilt → höhere Stufe = weniger pro Block) */ for (let q = 0; q <= tr; q++) fx.push({ k: 'nova', x: G.cx, y: G.cy, r: CELL * (n + 2 + q * 3), t: .7 + q * .15, c: abc(id, 1), thick: 1 }); shake = 18 + tr * 4; SND.fx.boom(); }
   else if (id === 'frost') { S.buf.frz = Date.now() + 12000 * (1 + .1 * (AL(id) - 1)); S.bufP = Object.assign(S.bufP || {}, { frzT: ABT(id) }); }
   else if (id === 'blitz') { const tr = ABT(id); for (let q = 0; q < 24; q++) storms.push({ t: q * .12, d: D * .4 * P, tr }); }
   else if (id === 'kmag') { S.buf.mag = Date.now() + 20000; S.bufP = Object.assign(S.bufP || {}, { mag: .02 + AL(id) * .003, magN: 4 + AL(id) }); }

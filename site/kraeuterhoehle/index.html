@@ -1680,9 +1680,12 @@ function centerTree(){ const b = $('#treebox').getBoundingClientRect(); pan.x = 
   function pinchCenter(){ const pts = [...pointers.values()]; return {x:(pts[0].x+pts[1].x)/2, y:(pts[0].y+pts[1].y)/2}; }
 
   tb.addEventListener('pointerdown', e => {
+    // Handy: erster Finger = frischer Start (vergessene Finger, die außerhalb losgelassen wurden, blockierten sonst das Schieben)
+    if(e.pointerType === 'touch' && e.isPrimary){ pointers.clear(); lastPinchDist = null; drag = null; }
     pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
     if(pointers.size === 2){ lastPinchDist = pinchDist(); drag = null; return; }
-    if(e.target.closest('#tip')) return;
+    // Handy: auch auf dem Info-Fenster lässt sich der Baum verschieben (Knöpfe darin funktionieren normal)
+    if(e.target.closest('#tip')){ if(e.pointerType === 'touch' && !e.target.closest('button')) drag = {x:e.clientX, y:e.clientY, px:pan.x, py:pan.y, moved:false, node:true, id:null}; return; }
     // Handy: auch auf einem Knoten angefangenes Wischen verschiebt den Baum (ein kurzer Tipp öffnet weiter den Knoten)
     if(e.target.closest('.node')){ if(e.pointerType === 'touch') drag = {x:e.clientX, y:e.clientY, px:pan.x, py:pan.y, moved:false, node:true, id:e.target.closest('.node').dataset.id}; return; }
     drag = {x:e.clientX, y:e.clientY, px:pan.x, py:pan.y, moved:false};
@@ -1707,7 +1710,7 @@ function centerTree(){ const b = $('#treebox').getBoundingClientRect(); pan.x = 
     }
     if(!drag) return;
     const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
-    if(Math.abs(dx) + Math.abs(dy) > (drag.node ? 10 : 4)) drag.moved = true;
+    if(Math.abs(dx) + Math.abs(dy) > (drag.node ? 14 : 4)) drag.moved = true;
     if(drag.node && !drag.moved) return;
     pan.x = drag.px + dx; pan.y = drag.py + dy;
     applyTreeTransform();
@@ -1724,7 +1727,7 @@ function centerTree(){ const b = $('#treebox').getBoundingClientRect(); pan.x = 
     if(drag && drag.node){
       if(drag.moved) noClick = Date.now();
       else { // kurzer Tipp: Info sofort öffnen (auch wenn der Baum zwischendurch neu gezeichnet wurde)
-        const el = $('#tree').querySelector(`.node[data-id="${drag.id}"]`);
+        const el = drag.id && $('#tree').querySelector(`.node[data-id="${drag.id}"]`);
         if(el){ selNode = drag.id; showTip(selNode, el); }
       }
       drag = null; tb.classList.remove('drag'); return;
@@ -1735,6 +1738,9 @@ function centerTree(){ const b = $('#treebox').getBoundingClientRect(); pan.x = 
   // Nach einem Wisch, der auf einem Knoten begann, den Knoten nicht öffnen
   tb.addEventListener('click', e => { if(Date.now() - noClick < 400 && e.target.closest('.node')){ e.stopPropagation(); e.preventDefault(); } }, true);
   tb.addEventListener('pointerup', up); tb.addEventListener('pointercancel', up);
+  // Finger außerhalb des Baums losgelassen → trotzdem sauber beenden
+  window.addEventListener('pointerup', e => { if(pointers.has(e.pointerId) && !tb.contains(e.target)) up(e); }, true);
+  window.addEventListener('pointercancel', e => { if(pointers.has(e.pointerId) && !tb.contains(e.target)) up(e); }, true);
 
   // Mausrad Zoom
   tb.addEventListener('wheel', e => {

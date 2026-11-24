@@ -2100,26 +2100,28 @@ function augCard(c, k) { const T = AUGT[c.t];
   return `<button class="augc t${c.t}" data-ag="${k}" style="--ac:${T.c}"><i class="tier">${T.n}</i>${l ? `<i class="neu has">HAST: ${l}/${s.max}</i>` : '<i class="neu">NEU</i>'}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${s.ico}</svg><b>${s.n}</b><span>${SKTXT[c.id] || s.d}</span><em>${l ? skVal(c.id, l) + ' → ' : ''}${skVal(c.id, nl)}</em><small>Stufe ${l} → ${nl}/${s.max}</small></button>`; }
 
 // ================== „Was ist neu“: einmal pro größerem Update beim Start, gut sichtbar ==================
-const NEWS = [
-  ['🃏', 'Tageskarten', 'Nach der täglichen Belohnung ziehst du 1 von 3 verdeckten Karten mit Hangar-Teilen. Je öfter du spielst, desto höher der Rang und desto besser die Karten.'],
-  ['📊', 'Kisten-Chancen', 'Tipp im Shop auf eine Kiste und sieh genau, mit welcher Wahrscheinlichkeit du welches Teil bekommst.'],
-  ['🃏', 'Augmente statt Skills', 'Nach jedem Planeten wählst du 1 von 3 Augmenten. Jede Karte kannst du einmal neu würfeln. Gewöhnlich +1 Stufe, Silber +2, Gold +3.'],
-  ['✨', '3 neue Skills', 'Riesentöter (mehr Schaden auf Boss & Elite), Abrissbirne (fast kaputte Blöcke zerbröseln) und Krit-Wucht (härtere Krits).'],
-  ['⚒', 'Schmiede komplett', 'Neu: Bohrminen, Sternbumerang und die Dreier-Fusion Prisma-Railgun. Jede Waffe gehört zu genau einem Rezept – wer alle Waffen hat, kann alle verschmelzen.'],
-  ['🎯', '8 Fähigkeiten-Plätze + Autopilot', 'Deine Hotbar hat jetzt 8 statt 5 Plätze. Der Autopilot zündet alle Fähigkeiten automatisch – jetzt für alle frei (im Fähigkeiten-Tab ausschaltbar).'],
-  ['🌀', 'Warp-Tokens', 'Alle 5 Planeten bekommst du ein Warp-Token. Tokens kannst du aufsparen – wer 10 Planeten weiterspielt, hat 2 Warps übrig. Der Waffenslot-Warp startet direkt mit +1 Slot.'],
-  ['💥', 'Waffen überarbeitet', 'Neue Plasma-Nova, die Plasmapeitsche wird ab Stufe 50 deutlich länger. Ab Stufe 100 bekommen Kettenblitz, Nova, Minen und Wirbelsturm deutlich mehr Reichweite.'],
-  ['🔨', 'Schmiede-Plätze', 'Nach dem Schmieden landen neue Waffen ganz hinten – und sind damit stärker als alle davor.'],
-  ['☁', 'Spielstand-Sync', 'Spielst du auf zwei Geräten, fragt das Spiel jetzt, welchen Stand du willst. In den Einstellungen kannst du den Stand hoch- oder runterladen.'],
-  ['🪐', 'Fairere Planeten', 'Alle Planeten haben 40 % weniger Leben, bis zum ersten Warp sind die Planeten 6–10 noch leichter.'],
-  ['🚀', 'Eigene Standardattacke', 'Jedes Raumschiff schießt anders: Pfeil-Laser, Blattsalve, Sternsplitter, Geisterfeuer, Goldmünzen, Königslanze, Drachenfeuer …'],
-  ['⚖', 'Fähigkeiten ausbalanciert', 'Meteorschauer und Zeitsprung schwächer, Orbitalkanone, Supernova, Frostschock, Drohnen und Schwarzes Loch stärker. Der Kristallmagnet hat jetzt ein Limit pro Einsatz.'],
+const NEWS = [ // [Icon, Titel, Text, Version] – angezeigt wird nur, was der Spieler noch nicht gesehen hat
+  ['⚡', 'Neue Leisten', 'Die Kopfleiste schwebt jetzt frei über dem Spielfeld, alle 8 Fähigkeiten passen klein in eine Reihe, und der Boost zeigt blau, wie lange er noch läuft. Der Tagesbonus kommt jetzt immer ab 12 Uhr.', '2026-11-24'],
+  ['🌀', 'Warp-Fähigkeiten', 'Wenn du eine Warp-Fähigkeit ziehst, ist sie direkt auf Stufe 1.', '2026-11-24'],
+  ['🃏', 'Tageskarten', 'Nach der täglichen Belohnung ziehst du 1 von 3 verdeckten Karten mit Hangar-Teilen. Je öfter du spielst, desto höher der Rang und desto besser die Karten.', '2026-11-24'],
+  ['📊', 'Kisten-Chancen', 'Tipp im Shop auf eine Kiste und sieh genau, mit welcher Wahrscheinlichkeit du welches Teil bekommst.', '2026-11-24'],
+  ['🃏', 'Augmente statt Skills', 'Nach jedem Planeten wählst du 1 von 3 Augmenten. Jede Karte kannst du einmal neu würfeln. Gewöhnlich +1 Stufe, Silber +2, Gold +3.', '2026-11-20'],
+  ['✨', '3 neue Skills', 'Riesentöter (mehr Schaden auf Boss & Elite), Abrissbirne (fast kaputte Blöcke zerbröseln) und Krit-Wucht (härtere Krits).', '2026-11-20'],
+  ['⚒', 'Schmiede komplett', 'Neu: Bohrminen, Sternbumerang und die Dreier-Fusion Prisma-Railgun. Jede Waffe gehört zu genau einem Rezept – wer alle Waffen hat, kann alle verschmelzen.', '2026-11-20'],
+  ['🎯', '8 Fähigkeiten-Plätze + Autopilot', 'Deine Hotbar hat jetzt 8 statt 5 Plätze. Der Autopilot zündet alle Fähigkeiten automatisch – jetzt für alle frei (im Fähigkeiten-Tab ausschaltbar).', '2026-11-20c'],
+  ['🌀', 'Warp-Tokens', 'Alle 5 Planeten bekommst du ein Warp-Token. Tokens kannst du aufsparen – wer 10 Planeten weiterspielt, hat 2 Warps übrig. Der Waffenslot-Warp startet direkt mit +1 Slot.', '2026-11-21'],
+  ['💥', 'Waffen überarbeitet', 'Neue Plasma-Nova, die Plasmapeitsche wird ab Stufe 50 deutlich länger. Ab Stufe 100 bekommen Kettenblitz, Nova, Minen und Wirbelsturm deutlich mehr Reichweite.', '2026-11-20b'],
+  ['🔨', 'Schmiede-Plätze', 'Nach dem Schmieden landen neue Waffen ganz hinten – und sind damit stärker als alle davor.', '2026-11-20b'],
+  ['☁', 'Spielstand-Sync', 'Spielst du auf zwei Geräten, fragt das Spiel jetzt, welchen Stand du willst. In den Einstellungen kannst du den Stand hoch- oder runterladen.', '2026-11-20c'],
+  ['🪐', 'Fairere Planeten', 'Alle Planeten haben 40 % weniger Leben, bis zum ersten Warp sind die Planeten 6–10 noch leichter.', '2026-11-20b'],
+  ['🚀', 'Eigene Standardattacke', 'Jedes Raumschiff schießt anders: Pfeil-Laser, Blattsalve, Sternsplitter, Geisterfeuer, Goldmünzen, Königslanze, Drachenfeuer …', '2026-11-20b'],
+  ['⚖', 'Fähigkeiten ausbalanciert', 'Meteorschauer und Zeitsprung schwächer, Orbitalkanone, Supernova, Frostschock, Drohnen und Schwarzes Loch stärker. Der Kristallmagnet hat jetzt ein Limit pro Einsatz.', '2026-11-20b'],
   ['◆', 'Kristalle sind wertvoller', 'Es gibt deutlich weniger ◆ – sie sind jetzt nur noch für Kisten und Fähigkeiten da.']
 ];
-function showNews(done) {
+function showNews(done) { const NEW = NEWS.filter(n => n[3] > (S.newsV || '')); if (!NEW.length) { S.newsV = NEWSV; save('now'); return done && done(); }
   const d = document.createElement('div'); d.id = 'news';
   d.innerHTML = `<div class="nw"><div class="nw-top"><span class="nw-tag">UPDATE</span><h2>Was ist neu?</h2><small>Galaxie-Bohrer · 20.11.2026</small></div>
-    <div class="nw-list">${NEWS.map(([i, t, x], k) => `<div class="nw-it" style="animation-delay:${.08 * k}s"><span class="nw-i">${i}</span><div><b>${t}</b><p>${x}</p></div></div>`).join('')}</div>
+    <div class="nw-list">${NEW.map(([i, t, x], k) => `<div class="nw-it" style="animation-delay:${.08 * k}s"><span class="nw-i">${i}</span><div><b>${t}</b><p>${x}</p></div></div>`).join('')}</div>
     <button class="br nw-go" id="nwgo">LOS GEHT'S</button></div>`;
   $('app').appendChild(d); SND.fx.up();
   d.querySelector('#nwgo').onclick = () => { S.newsV = NEWSV; save('now'); d.classList.add('out'); setTimeout(() => { d.remove(); done && done(); }, 250); };

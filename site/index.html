@@ -102,6 +102,13 @@ h2{margin:0;font:700 17px/1.2 var(--hd);letter-spacing:-.1px}
 .gc .ft{margin-top:auto;padding-top:6px;display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:30px}
 .gc .ft .up{font-size:11px}
 .gc .ft .bst{font-size:11.5px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gc .acts{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.gc .acts span{display:flex;align-items:center;justify-content:center;gap:5px;min-height:34px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap}
+.gc .acts .pl{background:var(--ac);color:#0e1110}.gc .acts .pl svg{width:11px;height:11px}
+.gc .acts .lb,.top1 .lbx{background:var(--card2);color:var(--tx);border:1px solid var(--line)}
+.gc .acts .lb:hover,.top1 .lbx:hover{border-color:var(--gold);color:var(--gold)}
+.top1 .lbx{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:46px;padding:0 18px;border-radius:999px;font-size:15px;font-weight:600}
+@media (max-width:599px){.top1 .ft .btn,.top1 .lbx{flex:1 1 0;padding:0 12px}.top1 .ft .bsx{flex-basis:100%;text-align:center}}
 .gc .go{flex:none;width:32px;height:32px;border-radius:50%;background:var(--ac);color:#0e1110;display:flex;align-items:center;justify-content:center}.gc .go svg{width:14px;height:14px}
 @media (min-width:600px){.gg{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (min-width:900px){
@@ -271,6 +278,9 @@ function upF(t) {
 // Persönlich: wie oft der Spieler selbst ein Spiel gespielt hat (Konto-Statistik pl_<ordner>)
 const plMe = g => { try { return (window.BB && BB.plays) ? BB.plays(g.url.replace(/\/.*$/, '')) : 0; } catch (e) { return 0; } };
 fetch('updates.json?' + Math.floor(Date.now() / 60000), { cache: 'no-store' }).then(r => r.ok ? r.json() : {}).then(j => { UPD = j || {}; draw(); }).catch(() => {});
+// Bestenliste-Knopf an jeder Spiel-Kachel (nur für Spiele mit Bestenliste)
+const hasLb = g => { try { const b = window.BB; return !!(b && b.GAMES && b.GAMES[g.k] && !b.GAMES[g.k].off); } catch (e) { return false; } };
+['topG', 'games'].forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('click', e => { const t = e.target.closest('[data-lb]'); if (!t) return; e.preventDefault(); e.stopPropagation(); try { BB.open('board', t.dataset.lb); } catch (er) {} }); });
 const chev = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
 function draw() {
   const b = B(), P = b ? b.profile : null, bg = b && b.meta ? b.meta.bg || 0 : 0;
@@ -295,9 +305,9 @@ function draw() {
   const top = isHot ? hot : all[0], rest = all.filter(g => g !== top);
   const bsOf = g => { const bs = b && b.best(g.k); return bs ? b.fmt(g.k, bs.s) : ''; };
   const tb = bsOf(top);
-  $('topG').innerHTML = `<a class="top1" href="${top.url}"><div class="pic"><img src="${top.img}" alt="" style="object-position:${top.pos}"><div class="badge"><span>${isHot ? '⭐ Dein Lieblingsspiel' : upT(top) ? 'Neuestes Update' : 'Top-Spiel'}</span>${top.sec ? '<span class="sc">Geheim</span>' : ''}</div></div><div class="bd"><div class="kk">${esc(top.tag)}</div><h3>${esc(top.name)}</h3><p>${esc(top.text)}</p>${upT(top) ? `<span class="up">Zuletzt geupdatet: ${upF(upT(top))}</span>` : ''}<div class="ft"><span class="btn">${go.replace('<svg', '<svg width="16" height="16"')} Jetzt spielen</span>${isHot ? `<span class="bsx">Du hast es ${plMe(top)}× gespielt</span>` : ''}${tb ? `<span class="bsx">🏆 ${tb}</span>` : ''}</div></div></a>`;
+  $('topG').innerHTML = `<a class="top1" href="${top.url}"><div class="pic"><img src="${top.img}" alt="" style="object-position:${top.pos}"><div class="badge"><span>${isHot ? '⭐ Dein Lieblingsspiel' : upT(top) ? 'Neuestes Update' : 'Top-Spiel'}</span>${top.sec ? '<span class="sc">Geheim</span>' : ''}</div></div><div class="bd"><div class="kk">${esc(top.tag)}</div><h3>${esc(top.name)}</h3><p>${esc(top.text)}</p>${upT(top) ? `<span class="up">Zuletzt geupdatet: ${upF(upT(top))}</span>` : ''}<div class="ft"><span class="btn">${go.replace('<svg', '<svg width="16" height="16"')} Jetzt spielen</span>${hasLb(top) ? `<span class="lbx" data-lb="${top.k}">🏆 Bestenliste</span>` : ''}${isHot ? `<span class="bsx">Du hast es ${plMe(top)}× gespielt</span>` : ''}${tb ? `<span class="bsx">🏆 ${tb}</span>` : ''}</div></div></a>`;
   $('games').innerHTML = rest.map(g => { const bs = bsOf(g);
-    return `<a class="gc" href="${g.url}"><div class="pic"><img src="${g.img}" alt="" loading="lazy" style="object-position:${g.pos}"><div class="tg">${g.sec ? '<span class="sc">Geheim</span>' : ''}<span>${esc(g.tag.replace(/^Testphase · /, 'Test · '))}</span></div></div><div class="bd"><h3>${esc(g.name)}</h3><p>${esc(g.text)}</p><div class="ft">${bs ? `<span class="bst">🏆 ${bs}</span>` : upT(g) ? `<span class="up">${upF(upT(g))}</span>` : '<span></span>'}<span class="go">${go}</span></div></div></a>`; }).join('');
+    return `<a class="gc" href="${g.url}"><div class="pic"><img src="${g.img}" alt="" loading="lazy" style="object-position:${g.pos}"><div class="tg">${g.sec ? '<span class="sc">Geheim</span>' : ''}<span>${esc(g.tag.replace(/^Testphase · /, 'Test · '))}</span></div></div><div class="bd"><h3>${esc(g.name)}</h3><p>${esc(g.text)}</p><div class="ft">${bs ? `<span class="bst">🏆 ${bs}</span>` : upT(g) ? `<span class="up">${upF(upT(g))}</span>` : '<span></span>'}${hasLb(g) ? '' : `<span class="go">${go}</span>`}</div>${hasLb(g) ? `<div class="acts"><span class="pl">${go} Spielen</span><span class="lb" data-lb="${g.k}">🏆 Bestenliste</span></div>` : ''}</div></a>`; }).join('');
   $('nH').innerHTML = `${all.length} Spiele.<br><span>1 Bande.</span>`;
   $('allN').textContent = rest.length + ' weitere';
   // Deine Bestwerte

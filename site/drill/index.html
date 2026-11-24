@@ -608,12 +608,11 @@ html,body{overscroll-behavior:none;position:fixed;inset:0;width:100%}button,a{to
 .bfill{position:absolute;left:3px;right:3px;bottom:3px;height:0;max-height:calc(100% - 6px);background:linear-gradient(180deg,rgba(120,190,255,.85),rgba(40,110,255,.75));border-radius:4px;pointer-events:none;z-index:0;transition:height .5s linear}.hs.bst>*:not(.bfill){position:relative;z-index:1}
 
 /* ===== Kompakteres Panel: Hotbar + Menü über der Liste ===== */
-.hot{order:0}.nav{order:1}.list{order:2}
+.hot{order:0}.list{order:1}.nav{order:2} /* Menü wieder unten */
 @media (max-width:899px),(max-height:539px){
-  .nav{border-top:0!important;border-bottom:1px solid #1b2328;padding:4px 6px 5px!important;gap:4px}
+  .nav{border-top:1px solid #1b2328!important;border-bottom:0;padding:5px 6px max(6px,env(safe-area-inset-bottom))!important;gap:4px}
   .nav button{height:42px!important;font-size:9px!important;gap:1px;border-radius:9px}
   .nav button svg{width:16px;height:16px}
-  .panel{padding-bottom:env(safe-area-inset-bottom)}
 }
 .hot{align-items:center}
 .hot .hs.bst{flex:0 0 auto!important;max-width:none!important;aspect-ratio:auto!important;align-self:stretch;min-width:74px;padding:0 10px;flex-direction:row!important;gap:5px;font-size:10px!important;border-radius:9px;letter-spacing:.5px}

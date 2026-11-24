@@ -742,7 +742,9 @@ const HYB = {
   x_minen: { n: 'Bohrminen', p: ['drill', 'mine'], d: 'Bohrlanze und Minen im Doppelpack: +4 Minen pro Salve', c: '#ff8a5c' },
   x_bum: { n: 'Sternbumerang', p: ['star', 'boomer'], d: 'Kristall-Bumerangs: +2 Bumerangs pro Wurf', c: '#ff9ad8' }
 };
-const HYBM = 2.2, HYBLV = 100, HYBCOST = 30;
+const HYBM = 5, HYBLV = 100, HYBCOST = 30, HYBS = 25, HYBC = .3; /* Hybride: Anzeige startet bei Lv. 1, ×5 Schaden, alle 25 Stufen ein Extra-★, Upgrades 70 % billiger */
+const HB = h => ((S.hb || {})[h]) || HYBLV, HLV = h => Math.max(1, (S.w[h] || 0) - HB(h) + 1), HXS = h => Math.floor((HLV(h) - 1) / HYBS);
+const LVd = id => HYB[id] && S.w[id] ? HLV(id) : WL(id); /* angezeigte Stufe */
 let HP = {}; // Eltern-Waffe -> aktive Hybrid-Waffe
 function hybSync() { HP = {}; for (const h in HYB) if (S.w && S.w[h]) for (const p of HYB[h].p) HP[p] = h; }
 const HY = h => !!(S.w && S.w[h]);
@@ -816,7 +818,7 @@ let S = null;
 // Version des Spielstands: alles mit älterer Version wird verworfen (kompletter Neustart)
 const VER = 14; // interne Stand-Nummer (höher = einmaliger Reset)
 const VLABEL = '0.7'; // angezeigte Version: kleine Updates bleiben, größere Updates -> 0.6 usw.
-const NEWSV = '2026-11-24b'; // bei größerem Update hochsetzen → „Was ist neu“ erscheint einmal
+const NEWSV = '2026-11-24c'; // bei größerem Update hochsetzen → „Was ist neu“ erscheint einmal
 const fresh = () => ({ seed: (Math.random() * 1e6) | 0, v: VER, newsV: NEWSV, wq5b: 1, wp1: 1, slot1b: 1, aug1: 1, augQ: 1, cr: 0, cry: 0, wm: 1, p: 1, best: 1, w: { line: 1 }, sk: {}, boostEnd: 0, boostCd: 0, ema: 0, t: Date.now(), last: Date.now(), done: 0, dm: 0, dmAll: 0, pc: 0, wp: {}, own: '', ab: {}, hot: [], abT: {}, buf: {}, inv: { h_pfeil: 1, r_basis: 1, t_basis: 1 }, eq: { h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, wo: ['line'], offer: null, rr: null, wpu: [] });
 const norm = o => Object.assign(fresh(), o || {}, { wq5b: o ? o.wq5b : 1, wp1: o ? o.wp1 : 1, slot1b: o ? o.slot1b : 1, aug1: o ? o.aug1 : 1, newsV: o ? o.newsV : NEWSV, augQ: o ? o.augQ || 0 : 1, w: Object.assign({ line: 1 }, (o && o.w) || {}), sk: (o && o.sk) || {}, wp: (o && o.wp) || {}, ab: (o && o.ab) || {}, hot: (o && o.hot) || [], abT: (o && o.abT) || {}, buf: (o && o.buf) || {}, inv: (o && o.inv && Object.keys(o.inv).length) ? o.inv : { h_pfeil: 1, r_basis: 1, t_basis: 1 }, /* Start-Teile nur bei neuem Spielstand, sonst kämen eingeschmolzene Teile beim Laden zurück */ eq: Object.assign({ h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, (o && o.eq) || {}), wpu: (o && o.wpu) || [], wo: (o && o.wo) || ['line', 'star', 'drill', 'nova', 'scatter', 'drones'].filter(id => o && o.w && o.w[id]) });
 try { S = JSON.parse(localStorage.getItem('gb_save')); } catch (e) {}
@@ -969,7 +971,7 @@ function wpInfo(id, dir) { const w = WARP.find(x => x.id === id), l = WP(id), mx
   infoSheet({ dir, nav: navOf('data-wp', id, wpInfo), n: w.n, ico: w.ico, col: '#c9a2ff', sub: 'Warp-Fähigkeit · Stufe ' + l + '/' + w.max + ' · bleibt für immer', txt: WPTXT[id], rows: [['Wirkung', wpVal(id, l), mx ? null : wpVal(id, l + 1)], ['Kosten', mx ? 'MAX' : '✦' + c]],
     buy: [mx ? 'MAX' : 'Leveln · ✦' + c, mx || S.dm < c, () => { if (WP(id) >= w.max || S.dm < w.cost(WP(id))) return; S.dm -= w.cost(WP(id)); S.wp[id] = WP(id) + 1; save('now'); render(); wpInfo(id); }] }); }
 function wInfo(id, dir) { const w = WEAP.find(x => x.id === id), l = WL(id), m = MODS[id], ml = ML(id);
-  infoSheet({ dir, nav: navOf('data-wi', id, wInfo), n: w.n, ico: WICO[id], sub: 'Waffe · Lv. ' + l + (ST(id) ? ' · ★' + ST(id) : '') + ' · nächstes ★ bei Lv. ' + msNext(l), txt: w.d + '.' + (UPTXT[id] ? ' Jedes ★-Upgrade: x2 Schaden und ' + UPTXT[id] + '.' : ''),
+  infoSheet({ dir, nav: navOf('data-wi', id, wInfo), n: w.n, ico: WICO[id], sub: (HYB[id] ? 'Hybrid-Waffe' : 'Waffe') + ' · Lv. ' + LVd(id) + (ST(id) ? ' · ★' + ST(id) : '') + ' · nächstes ★ bei Lv. ' + (HYB[id] && S.w[id] ? (HXS(id) + 1) * HYBS + 1 : msNext(l)), txt: w.d + '.' + (UPTXT[id] ? ' Jedes ★-Upgrade: x2 Schaden und ' + UPTXT[id] + '.' : ''),
     rows: [['Schaden/s', fmt(wDps(w))], ['Mod', ml + '/' + MOD_MAX + (ml ? ' · +' + 50 * ml + ' %' : '')], ['Mod-Special', ml ? m.f(ml) : 'ab Mod 1'], ['Special', m.s]] }); }
 // Stufen-Boni der Bauteile: jedes ausgerüstete Teil schaltet auf Lv. 3, 6 und 10 Extra-Fähigkeiten frei
 const PERKS = {
@@ -984,9 +986,9 @@ const MS = [10, 25, 50, 100];
 const msN = l => MS.filter(m => l >= m).length + (l >= 200 ? Math.floor((l - 100) / 100) : 0);
 const msNext = l => { for (const m of MS) if (l < m) return m; return Math.max(200, (Math.floor(l / 100) + 1) * 100); };
 const msPrev = l => { let p = 0; for (const m of MS) if (l >= m) p = m; return l >= 200 ? Math.floor(l / 100) * 100 : p; };
-const ST = id => msN(WL(id));
+const ST = id => msN(WL(id)) + (HYB[id] && S.w[id] ? HXS(id) : 0);
 const UPTXT = { line: 'ein Schuss mehr', star: 'mehr Kristall-Laser', drill: 'breitere, schnellere Lanze', nova: 'größerer Explosionsradius', scatter: '2 Schüsse mehr', drones: 'neue Drohne', chain: 'Blitz springt weiter', saw: 'mehr Sägeblätter', mine: 'mehr Minen', sniper: 'schießt schneller', meteor: 'ein Meteor mehr', whip: 'längere Peitsche', x_komet: 'stärkerer Hagel', x_traeger: 'mehr Raketen', x_sturm: 'mehr Blitze', x_malstrom: 'stärkerer Sog', x_prisma: 'mehr Funken', x_geist: 'mehr Nova-Explosionen', x_minen: 'stärkere Bohrminen', x_bum: 'stärkere Sternbumerangs', x_frostblitz: 'stärkerer Frostblitz', x_rail: 'stärkere Railgun', x_schwer: 'stärkere Meteore', x_bohrsturm: 'stärkere Bohrstürme', x_saegenring: 'schärfere Sägen', x_novamine: 'stärkere Nova-Minen', rockets: 'eine Rakete mehr', grav: 'größerer Sog', tornado: 'ein Wirbel mehr', boomer: 'eine Sichel mehr', frost: 'ein Splitter mehr' };
-const wDps = w => { const l = S.w[w.id] || 0; return l ? (w.hyb ? HYBM * (HYB[w.id].p.length > 2 ? 1.5 : 1) : 1) * T_DPS[tier(w.id)] * l * Math.pow(2, msN(l)) * mult() * (1 + HAw(w.id)) * (1 + .5 * ML(w.id)) : 0; };
+const wDps = w => { const l = S.w[w.id] || 0; return l ? (w.hyb ? HYBM * (HYB[w.id].p.length > 2 ? 1.5 : 1) : 1) * T_DPS[tier(w.id)] * l * Math.pow(2, msN(l) + (w.hyb ? HXS(w.id) : 0)) * mult() * (1 + HAw(w.id)) * (1 + .5 * ML(w.id)) : 0; };
 // ================== Waffen-Mods: mit ⬢ Chips (1 Chip pro 5 geschaffte Planeten), bleiben für immer ==================
 const ML = id => HYB[id] ? Math.max(...HYB[id].p.map(p => (S.mod || {})[p] || 0)) : (S.mod || {})[id] || 0;
 const MOD_MAX = 5;
@@ -1012,10 +1014,10 @@ const MODS = {
 };
 for (const h in HYB) MODS[h] = { s: 'Mods der beiden Waffen zählen', f: l => '+' + 50 * l + ' %' };
 
-const wCost = (w, n = 1) => { const l = WL(w.id); let c = 0; for (let i = 0; i < n; i++) c += T_UP[tier(w.id)] * Math.pow(1.22, l - 1 + i); return c; };
+const wCost = (w, n = 1) => { const l = WL(w.id), cf = HYB[w.id] ? HYBC : 1; let c = 0; for (let i = 0; i < n; i++) c += cf * T_UP[tier(w.id)] * Math.pow(1.22, l - 1 + i); return c; };
 const skCost = id => 1 + SK(id); // Stufe 1 = ◆1 … Stufe 10 = ◆10 → eine Skill-Reihe voll ≈ Planet 8-9
 let buyN = 1;
-const maxBuy = w => { let n = 0, c = 0; while (n < 500) { const k = T_UP[tier(w.id)] * Math.pow(1.22, WL(w.id) - 1 + n); if (c + k > S.cr) break; c += k; n++; } return n; };
+const maxBuy = w => { let n = 0, c = 0; while (n < 500) { const k = (HYB[w.id] ? HYBC : 1) * T_UP[tier(w.id)] * Math.pow(1.22, WL(w.id) - 1 + n); if (c + k > S.cr) break; c += k; n++; } return n; };
 
 // ================== Planet ==================
 const cv = $('cv'), g = cv.getContext('2d');
@@ -2008,7 +2010,7 @@ function ui() {
   if ($('shdot')) $('shdot').hidden = !dlyOpen();
   $('skdot').hidden = !S.augQ;
   // Knöpfe aktualisieren, ohne die Liste neu zu bauen
-  document.querySelectorAll('[data-up]').forEach(el => { const w = WEAP.find(x => x.id === el.dataset.up), n = buyN === 'max' ? Math.max(1, maxBuy(w)) : buyN, c = wCost(w, n); el.disabled = S.cr < c; const l0 = WL(w.id), f = l => T_DPS[tier(w.id)] * l * Math.pow(2, msN(l)) * mult(), gn = f(l0 + n) - f(l0); el.innerHTML = (n > 1 ? `x${n} · ` : '') + fmt(c) + ' CR' + `<small class="gn">+${fmt(gn)} DPS${msN(l0 + n) > msN(l0) ? ' ★' : ''}</small>`; });
+  document.querySelectorAll('[data-up]').forEach(el => { const w = WEAP.find(x => x.id === el.dataset.up), n = buyN === 'max' ? Math.max(1, maxBuy(w)) : buyN, c = wCost(w, n); el.disabled = S.cr < c; const l0 = WL(w.id), f = l => { if (!HYB[w.id]) return T_DPS[tier(w.id)] * l * Math.pow(2, msN(l)) * mult(); const o = S.w[w.id]; S.w[w.id] = l; const v = wDps(w); S.w[w.id] = o; return v; }, sN = l => { if (!HYB[w.id]) return msN(l); const o = S.w[w.id]; S.w[w.id] = l; const v = ST(w.id); S.w[w.id] = o; return v; }, gn = f(l0 + n) - f(l0); el.innerHTML = (n > 1 ? `x${n} · ` : '') + fmt(c) + ' CR' + `<small class="gn">+${fmt(gn)} DPS${sN(l0 + n) > sN(l0) ? ' ★' : ''}</small>`; });
   document.querySelectorAll('[data-unl]').forEach(el => { el.disabled = S.cr < nextUnl(); });
   document.querySelectorAll('[data-dps]').forEach(el => { el.textContent = 'DPS ' + fmt(wDps(WEAP.find(x => x.id === el.dataset.dps))) + '/s'; });
 }
@@ -2039,8 +2041,8 @@ function render() { lineSync();
     const fgR = Object.keys(HYB).some(x => hybReady(x) && !HY(x));
     let h = `<button class="br${fgR ? ' again' : ''}" id="fgopen" style="margin:0 0 8px;width:100%">⚒ WAFFEN-SCHMIEDE${fgR ? ' · BEREIT!' : ' · HYBRID-WAFFEN'}</button><div class="mode">${[1, 10, 'max'].map(n => `<button data-n="${n}" class="${buyN === n ? 'on' : ''}">${n === 'max' ? 'Max' : 'x' + n}</button>`).join('')}</div>`;
     for (const id of owned()) {
-      const w = WEAP.find(x => x.id === id), l = WL(id);
-      h += `<div class="wp" style="--wc:${WCOL[w.id]}"><div class="wic" style="color:${WCOL[w.id]};border-color:${WCOL[w.id]}88;box-shadow:inset 0 0 8px ${WCOL[w.id]}40"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${WICO[w.id] || ""}</svg></div><div class="nm" data-wi="${w.id}" style="cursor:pointer"><b>${w.n} <span style="color:var(--cy);font-size:10px">ⓘ</span></b><div class="lv">Lv. ${l}${ST(id) ? ' <span class="stars">★' + ST(id) + '</span>' : ''} · ★ bei ${msNext(l)}</div><div class="dps" data-dps="${w.id}"></div></div><button class="br" data-up="${w.id}"></button><div class="pr"><i style="width:${(l - msPrev(l)) / (msNext(l) - msPrev(l)) * 100}%"></i></div></div>`;
+      const w = WEAP.find(x => x.id === id), l = WL(id), hy = !!HYB[id], dl = LVd(id), nx = hy ? (HXS(id) + 1) * HYBS + 1 : msNext(l), pv = hy ? HXS(id) * HYBS + 1 : msPrev(l);
+      h += `<div class="wp" style="--wc:${WCOL[w.id]}"><div class="wic" style="color:${WCOL[w.id]};border-color:${WCOL[w.id]}88;box-shadow:inset 0 0 8px ${WCOL[w.id]}40"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${WICO[w.id] || ""}</svg></div><div class="nm" data-wi="${w.id}" style="cursor:pointer"><b>${w.n} <span style="color:var(--cy);font-size:10px">ⓘ</span></b><div class="lv">${hy ? '<span style="color:' + HYB[id].c + '">HYBRID</span> · ' : ''}Lv. ${dl}${ST(id) ? ' <span class="stars">★' + ST(id) + '</span>' : ''} · ★ bei ${nx}</div><div class="dps" data-dps="${w.id}"></div></div><button class="br" data-up="${w.id}"></button><div class="pr"><i style="width:${(dl - pv) / (nx - pv) * 100}%"></i></div></div>`;
     }
     const of = offers(), full = owned().length >= maxWeapons();
     if (of.length && full) h += `<div class="wh" style="margin-top:12px"><p>🔒 Alle ${maxWeapons()} Waffenslots belegt.<br>Mehr Slots gibt's in der <b style="display:inline;font-size:12px;color:#c9a2ff">Warp-Werkstatt</b> (Warp-Fähigkeit „Waffenslots“).</p></div>`;
@@ -2101,7 +2103,7 @@ document.querySelectorAll('.nav [data-t]').forEach(b => b.onclick = () => {
   if (!fold && tab === b.dataset.t) { if (FULLT[tab] && !isDesk()) { goTab('w'); return; } setFold(true); return; }
   tab = b.dataset.t; $('list').scrollTop = 0; setFold(false); document.querySelectorAll('.nav [data-t]').forEach(x => x.classList.toggle('on', x === b)); render(); });
 function upgradeFx(w) { SND.fx.win(); const n = ST(w.id); fx.push({ k: 'nova', x: ship.x, y: ship.y, r: 90, t: .8, c: '255,233,77' }); for (let k = 0; k < 30; k++) parts.push({ x: ship.x, y: ship.y, vx: (Math.random() - .5) * 300, vy: (Math.random() - .5) * 300, t: .8, c: '#ffe94d' });
-  overlay(`<div class="crate" style="--rc:#ffe94d"><div class="cbox" style="font-size:44px;color:#ffe94d">★${n}</div></div><h2 style="color:#ffe94d">${w.n} aufgewertet!</h2><p>x2 Schaden${UPTXT[w.id] ? ' · ' + UPTXT[w.id] : ''}<br>Nächstes Upgrade bei Stufe ${msNext(WL(w.id))}</p>`, [['Stark', null]]); }
+  overlay(`<div class="crate" style="--rc:#ffe94d"><div class="cbox" style="font-size:44px;color:#ffe94d">★${n}</div></div><h2 style="color:#ffe94d">${w.n} aufgewertet!</h2><p>x2 Schaden${UPTXT[w.id] ? ' · ' + UPTXT[w.id] : ''}<br>Nächstes Upgrade bei Stufe ${HYB[w.id] ? (HXS(w.id) + 1) * HYBS + 1 : msNext(WL(w.id))}</p>`, [['Stark', null]]); }
 function boostClick() { if (boosting() || S.boostCd > Date.now()) return; S.boostEnd = Date.now() + (5 + 2 * WP('boost')) * 60e3 * (PK('r', 10) ? 1.5 : 1); S.boostDur = S.boostEnd - Date.now(); S.boostCd = S.boostEnd + 3 * 60e3; /* 3 min Abklingzeit nach dem Boost */ toast('Boost aktiv: doppelter Schaden und doppelte CR!'); save(true); ui(); }
 $('lb').onclick = () => window.BB && BB.open('board', 'drill');
 $('opt').onclick = openSettings;
@@ -2159,6 +2161,7 @@ function augCard(c, k) { const T = AUGT[c.t];
 
 // ================== „Was ist neu“: einmal pro größerem Update beim Start, gut sichtbar ==================
 const NEWS = [ // [Icon, Titel, Text, Version] – angezeigt wird nur, was der Spieler noch nicht gesehen hat
+  ['⚒', 'Hybride gehen ab', 'Geschmiedete Hybrid-Waffen starten jetzt bei Stufe 1 – aber mit ×5 statt ×2,2 Schaden, einem Extra-★ (x2) alle 25 Stufen und 70 % billigeren Upgrades. Deine bestehenden Hybride behalten ihre volle Stärke und zählen ab jetzt von Stufe 1.', '2026-11-24c'],
   ['💥', 'Nova repariert', 'Die Supernova verteilt ihren Schaden nicht mehr auf alle Blöcke, sondern trifft jeden Block im Radius voll – je höher die Stufe, desto größer das Loch. Auch die Plasma-Nova wird mit größerem Radius jetzt stärker statt schwächer.', '2026-11-24b'],
   ['⚡', 'Neue Leisten', 'Die Kopfleiste schwebt jetzt frei über dem Spielfeld, alle 8 Fähigkeiten passen klein in eine Reihe, und der Boost zeigt blau, wie lange er noch läuft. Der Tagesbonus kommt jetzt immer ab 12 Uhr.', '2026-11-24'],
   ['🌀', 'Warp-Fähigkeiten', 'Wenn du eine Warp-Fähigkeit ziehst, ist sie direkt auf Stufe 1.', '2026-11-24'],
@@ -2785,13 +2788,13 @@ function renderForge(L) {
     Object.keys(HYB).map(h => { const H = HYB[h], on = HY(h), ok = hybReady(h), lv = H.p.map(p => S.w[p] || 0), gone = H.p.some(p => HP[p] && HP[p] !== h);
       return `<div class="fg${on ? ' on' : ok ? ' rdy' : ''}" style="--hc:${H.c}"><div class="fg-r${H.p.length > 2 ? ' tri' : ''}">${H.p.map((p, k) => `${k ? '<b class="pl">+</b>' : ''}${ic(p)}<small>${on ? '✔' : Math.min(lv[k], HYBLV) + '/' + HYBLV}</small>`).join('')}<b class="pl">=</b>${ic(h, 1)}</div>
         <div class="fg-t"><b>${H.n}</b><span>${H.d}</span><em>${H.p.map(p => WEAP.find(w => w.id === p).n).join(' + ')}</em></div>
-        ${on ? `<div class="fg-on">AKTIV · Stufe ${S.w[h]}</div>` : `<button class="br${ok ? ' again' : ''}" data-fg="${h}" ${ok && !gone && S.cry >= HYBCOST ? '' : 'disabled'}>${gone ? 'Waffe schon verschmolzen' : ok ? '⚒ SCHMIEDEN · ◆' + HYBCOST : (H.p.length > 2 ? 'Alle drei' : 'Beide') + ' auf Stufe ' + HYBLV + ' bringen'}</button>`}</div>`; }).join('');
+        ${on ? `<div class="fg-on">AKTIV · Stufe ${HLV(h)}</div>` : `<button class="br${ok ? ' again' : ''}" data-fg="${h}" ${ok && !gone && S.cry >= HYBCOST ? '' : 'disabled'}>${gone ? 'Waffe schon verschmolzen' : ok ? '⚒ SCHMIEDEN · ◆' + HYBCOST : (H.p.length > 2 ? 'Alle drei' : 'Beide') + ' auf Stufe ' + HYBLV + ' bringen'}</button>`}</div>`; }).join('');
   L.querySelectorAll('[data-fg]').forEach(b => b.onclick = () => forge(b.dataset.fg));
 }
 function forge(h) {
   const H = HYB[h]; if (!hybReady(h) || S.cry < HYBCOST || HY(h)) return; const ix = H.p.map(p => S.wo.indexOf(p)); if (ix.some(i => i < 0)) return;
-  S.cry -= HYBCOST; const hi = Math.max(...ix); S.w[h] = Math.min(...H.p.map(p => S.w[p])); for (const p of H.p) delete S.w[p]; for (const i of ix) S.wo[i] = '_'; S.wo[hi] = h; S.offer = null; hybSync();
-  save('now'); SND.fx.win(); vib([60, 40, 120]); shake = 10; lflash(); render(); cele('HYBRID GESCHMIEDET!', H.n + ' · ×' + HYBM + ' Schaden');
+  S.cry -= HYBCOST; const hi = Math.max(...ix); S.w[h] = Math.min(...H.p.map(p => S.w[p])); S.hb = S.hb || {}; S.hb[h] = S.w[h]; for (const p of H.p) delete S.w[p]; for (const i of ix) S.wo[i] = '_'; S.wo[hi] = h; S.offer = null; hybSync();
+  save('now'); SND.fx.win(); vib([60, 40, 120]); shake = 10; lflash(); render(); cele('HYBRID GESCHMIEDET!', H.n + ' · Lv. 1 · ×' + HYBM + ' Schaden');
 }
 function renderStats(L) {
   const dr = S.dmgRun || {}, tot = Object.values(dr).reduce((a, b) => a + b, 0) || 1;
@@ -3117,6 +3120,7 @@ function cleanSave() {
   if (!S.wp1) { S.wp1 = 1; S.wp = S.wp || {}; for (const id of (S.wpu || [])) { const w = WARP.find(x => x.id === id); if (w && id !== 'slot') S.wp[id] = Math.min(w.max, (S.wp[id] || 0) + 1); } } // Warp-Fähigkeiten: Stufe 1 jetzt gratis → alle bekommen sie nach
   if (!S.slot1b) { S.slot1b = 1; if ((S.wpu || []).includes('slot') && WP('slot') < 8) S.wp.slot = WP('slot') + 1; } // Waffenslot-Warp: Stufe 1 jetzt gratis, alte Stände bekommen sie nach
   if (!S.wq5b) { S.wq5b = 1; if (S.wReq > 10) S.wReq = Math.max(10, S.wReq - (S.wReq >= 41 ? 15 : 5)); } // Hürde jetzt +5 statt +10/+20: alte Stände anpassen
+  S.hb = S.hb || {}; for (const h in HYB) if (S.w[h] && !S.hb[h]) S.hb[h] = S.w[h]; /* bestehende Hybride zeigen ab jetzt Lv. 1 */
   if (S.wTok == null) { S.wTok = 0; } tokSync(); // Warp-Tokens nachrechnen
   S.wo = (S.wo || ['line']).filter(id => id === '_' || WEAP.find(w => w.id === id)); hybSync(); if (!S.wo.length) S.wo = ['line'];
   for (const k in (S.mod || {})) if (!MODS[k]) delete S.mod[k];

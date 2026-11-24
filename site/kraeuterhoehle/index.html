@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Die Kräuterhöhle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
@@ -274,6 +274,9 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;displa
   .dbox th{font-size:14px}
   .dgrid{flex-direction:column;gap:8px}
 }
+/* Kein Zoomen durch Doppeltippen / Mehrfachtippen (wie in den anderen Spielen) */
+html,body,*{touch-action:manipulation}
+canvas{touch-action:none}
 /* Handy/Tablet (Touch): Vollbild-Knöpfe ausblenden – Vollbild startet automatisch beim ersten Tippen. Desktop unverändert. */
 @media (hover:none) and (pointer:coarse){
   button[onclick="toggleFS()"]{display:none!important}
@@ -353,6 +356,8 @@ document.addEventListener('MSFullscreenChange',updateFSBtn);
     try { const r = req.call(el, { navigationUI: 'hide' }); if(r && r.catch) r.catch(() => {}); } catch(e) {}
   };
   document.addEventListener('pointerup', go, true);
+  // iPhone ignoriert teils user-scalable=no → Pinch- und Doppeltipp-Zoom zusätzlich blocken
+  ['gesturestart','gesturechange','gestureend'].forEach(ev => document.addEventListener(ev, e => e.preventDefault(), { passive: false }));
   document.addEventListener('touchend', go, true);
 })();
 /* =====================================================================

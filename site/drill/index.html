@@ -709,11 +709,11 @@ const PAL = [
   ['#3f9a3a', '#1c4a1a', '#b5ff8a'], ['#c8344f', '#5e1222', '#ff9ab0'], ['#7aa8d8', '#28466a', '#e2f2ff'], ['#d9b22a', '#6e550c', '#fff0a0']
 ];
 // Alle Warp-Fähigkeiten kosten gleich: Stufe 1 = 25 ✦, dann 50, 75, 100 …
-const wpCost = l => 25 * (l + 1); // Stufe 1 = 25, Stufe 2 = 50, Stufe 3 = 75 …
+const wpCost = l => 25 * Math.max(1, l); // Stufe 1 gibt's beim Ziehen gratis, danach Stufe 2 = 25, Stufe 3 = 50 …
 const WARP = [
   { id: 'kraft', n: 'Dunkle Kraft', d: () => '+100 % Schaden und CR', max: 20, cost: wpCost, ico: '<path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/><circle cx="12" cy="12" r="2"/>' },
   { id: 'tempo', n: 'Schusstempo', d: () => '+8 % Schussgeschwindigkeit aller Waffen', max: 10, cost: wpCost, ico: '<path d="M3 12h10M9 7l5 5-5 5"/><path d="M15 7l5 5-5 5"/>' },
-  { id: 'slot', n: 'Waffenslots', d: () => '+1 Platz für eine Waffe', max: 8, cost: l => 25 * Math.max(1, l), /* Stufe 1 gibt's beim Ziehen gratis, danach 25, 50 … */ ico: '<rect x="3" y="6" width="7" height="12"/><rect x="14" y="6" width="7" height="12"/><path d="M17.5 10v4M15.5 12h4"/>' },
+  { id: 'slot', n: 'Waffenslots', d: () => '+1 Platz für eine Waffe', max: 8, cost: wpCost, ico: '<rect x="3" y="6" width="7" height="12"/><rect x="14" y="6" width="7" height="12"/><path d="M17.5 10v4M15.5 12h4"/>' },
   { id: 'start', n: 'Startkapital', d: l => 'Start mit ' + fmt(startCr(l + 1)) + ' CR', max: 10, cost: wpCost, ico: '<circle cx="12" cy="12" r="8"/><path d="M12 7v10M9 10h6"/>' },
   { id: 'keep', n: 'Kristallspeicher', d: l => 'Warp behält ' + keepPct(l) + ' % → ' + keepPct(l + 1) + ' % ◆', max: 6, cost: wpCost, ico: '<path d="M12 2l8 5v10l-8 5-8-5V7z"/><path d="M8 12h8M12 8v8"/>' },
   { id: 'kris', n: 'Kristallregen', d: () => '+2 ◆ pro Planet', max: 5, cost: wpCost, ico: '<path d="M12 2l8 5v10l-8 5-8-5V7z"/>' },
@@ -747,8 +747,8 @@ let S = null;
 const VER = 14; // interne Stand-Nummer (höher = einmaliger Reset)
 const VLABEL = '0.7'; // angezeigte Version: kleine Updates bleiben, größere Updates -> 0.6 usw.
 const NEWSV = '2026-11-21'; // bei größerem Update hochsetzen → „Was ist neu“ erscheint einmal
-const fresh = () => ({ seed: (Math.random() * 1e6) | 0, v: VER, newsV: NEWSV, wq5b: 1, slot1b: 1, aug1: 1, augQ: 1, cr: 0, cry: 0, wm: 1, p: 1, best: 1, w: { line: 1 }, sk: {}, boostEnd: 0, boostCd: 0, ema: 0, t: Date.now(), last: Date.now(), done: 0, dm: 0, dmAll: 0, pc: 0, wp: {}, own: '', ab: {}, hot: [], abT: {}, buf: {}, inv: { h_pfeil: 1, r_basis: 1, t_basis: 1 }, eq: { h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, wo: ['line'], offer: null, rr: null, wpu: [] });
-const norm = o => Object.assign(fresh(), o || {}, { wq5b: o ? o.wq5b : 1, slot1b: o ? o.slot1b : 1, aug1: o ? o.aug1 : 1, newsV: o ? o.newsV : NEWSV, augQ: o ? o.augQ || 0 : 1, w: Object.assign({ line: 1 }, (o && o.w) || {}), sk: (o && o.sk) || {}, wp: (o && o.wp) || {}, ab: (o && o.ab) || {}, hot: (o && o.hot) || [], abT: (o && o.abT) || {}, buf: (o && o.buf) || {}, inv: (o && o.inv && Object.keys(o.inv).length) ? o.inv : { h_pfeil: 1, r_basis: 1, t_basis: 1 }, /* Start-Teile nur bei neuem Spielstand, sonst kämen eingeschmolzene Teile beim Laden zurück */ eq: Object.assign({ h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, (o && o.eq) || {}), wpu: (o && o.wpu) || [], wo: (o && o.wo) || ['line', 'star', 'drill', 'nova', 'scatter', 'drones'].filter(id => o && o.w && o.w[id]) });
+const fresh = () => ({ seed: (Math.random() * 1e6) | 0, v: VER, newsV: NEWSV, wq5b: 1, wp1: 1, slot1b: 1, aug1: 1, augQ: 1, cr: 0, cry: 0, wm: 1, p: 1, best: 1, w: { line: 1 }, sk: {}, boostEnd: 0, boostCd: 0, ema: 0, t: Date.now(), last: Date.now(), done: 0, dm: 0, dmAll: 0, pc: 0, wp: {}, own: '', ab: {}, hot: [], abT: {}, buf: {}, inv: { h_pfeil: 1, r_basis: 1, t_basis: 1 }, eq: { h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, wo: ['line'], offer: null, rr: null, wpu: [] });
+const norm = o => Object.assign(fresh(), o || {}, { wq5b: o ? o.wq5b : 1, wp1: o ? o.wp1 : 1, slot1b: o ? o.slot1b : 1, aug1: o ? o.aug1 : 1, newsV: o ? o.newsV : NEWSV, augQ: o ? o.augQ || 0 : 1, w: Object.assign({ line: 1 }, (o && o.w) || {}), sk: (o && o.sk) || {}, wp: (o && o.wp) || {}, ab: (o && o.ab) || {}, hot: (o && o.hot) || [], abT: (o && o.abT) || {}, buf: (o && o.buf) || {}, inv: (o && o.inv && Object.keys(o.inv).length) ? o.inv : { h_pfeil: 1, r_basis: 1, t_basis: 1 }, /* Start-Teile nur bei neuem Spielstand, sonst kämen eingeschmolzene Teile beim Laden zurück */ eq: Object.assign({ h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, (o && o.eq) || {}), wpu: (o && o.wpu) || [], wo: (o && o.wo) || ['line', 'star', 'drill', 'nova', 'scatter', 'drones'].filter(id => o && o.w && o.w[id]) });
 try { S = JSON.parse(localStorage.getItem('gb_save')); } catch (e) {}
 if (S && S.v !== VER) { try { localStorage.removeItem('gb_intro'); } catch (e) {} } // neuer Start: Intro nochmal zeigen
 S = S && typeof S.cr === 'number' && S.v === VER ? norm(S) : fresh();
@@ -2455,9 +2455,9 @@ const CRATES = [
 ];
 // Fähigkeit aus einer Kiste: neu oder eine Stufe hoch
 // Neue Warp-Fähigkeit ziehen – mit „Nochmal ziehen“, solange noch welche fehlen und ✦ reicht
-function wpUnlock() { const c = wpUnlCost(), left = WARP.filter(w => !wpOpen(w.id)); if (!left.length || S.dm < c) return; S.dm -= c; const w = left[(Math.random() * left.length) | 0]; S.wpu = (S.wpu || []).concat(w.id); if (w.id === 'slot') S.wp.slot = Math.max(1, S.wp.slot || 0); save('now');
+function wpUnlock() { const c = wpUnlCost(), left = WARP.filter(w => !wpOpen(w.id)); if (!left.length || S.dm < c) return; S.dm -= c; const w = left[(Math.random() * left.length) | 0]; S.wpu = (S.wpu || []).concat(w.id); S.wp[w.id] = Math.max(1, S.wp[w.id] || 0); save('now');
   const more = left.length > 1;
-  overlay(`<div class="crate" style="--rc:#c9a2ff"><div class="cbox"><svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#c9a2ff" stroke-width="1.6">${w.ico}</svg></div></div><h2 style="color:#c9a2ff">${w.n}</h2><p>${w.id === 'slot' ? 'Freigeschaltet! Stufe 1 gratis: +1 Waffenslot.<br>Nächste Stufe kostet ✦25.' : 'Freigeschaltet! Startet bei Stufe 0.<br>Erste Stufe kostet ✦25.'}</p>`, (more ? [['Nochmal ziehen ✦' + c, () => { render(); wpUnlock(); }]] : []).concat([['Nice', () => render()]]));
+  overlay(`<div class="crate" style="--rc:#c9a2ff"><div class="cbox"><svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#c9a2ff" stroke-width="1.6">${w.ico}</svg></div></div><h2 style="color:#c9a2ff">${w.n}</h2><p>Freigeschaltet! Stufe 1 gibt's direkt gratis.<br>Nächste Stufe kostet ✦25.</p>`, (more ? [['Nochmal ziehen ✦' + c, () => { render(); wpUnlock(); }]] : []).concat([['Nice', () => render()]]));
   if (more) { const b0 = $('ovb').querySelector('[data-k="0"]'); b0.classList.add('again'); if (S.dm < c) b0.disabled = true; } }
 function rollAbility() {
   const a = ABIL[(Math.random() * ABIL.length) | 0], l = AL(a.id);
@@ -2955,6 +2955,7 @@ function cleanSave() {
   for (const h of ['x_frostblitz', 'x_rail', 'x_schwer', 'x_bohrsturm', 'x_saegenring', 'x_novamine']) if (S.w && S.w[h]) { const P = { x_frostblitz: ['chain', 'frost'], x_rail: ['sniper', 'line'], x_schwer: ['meteor', 'grav'], x_bohrsturm: ['drill', 'tornado'], x_saegenring: ['saw', 'drones'], x_novamine: ['mine', 'nova'] }[h], l = S.w[h]; delete S.w[h];
     const i = S.wo.indexOf(h); S.wo[i] = P[0]; const j = S.wo.indexOf('_'); if (j >= 0) S.wo[j] = P[1]; else S.wo.push(P[1]); for (const p of P) S.w[p] = Math.max(S.w[p] || 0, l); } // Rezept gibt's nicht mehr
   if (S.wp && S.wp.auto) { S.dm = (S.dm || 0) + 25; delete S.wp.auto; } if (S.wpu) S.wpu = S.wpu.filter(x => x !== 'auto'); // Autopilot ist jetzt für alle frei
+  if (!S.wp1) { S.wp1 = 1; S.wp = S.wp || {}; for (const id of (S.wpu || [])) { const w = WARP.find(x => x.id === id); if (w && id !== 'slot') S.wp[id] = Math.min(w.max, (S.wp[id] || 0) + 1); } } // Warp-Fähigkeiten: Stufe 1 jetzt gratis → alle bekommen sie nach
   if (!S.slot1b) { S.slot1b = 1; if ((S.wpu || []).includes('slot') && WP('slot') < 8) S.wp.slot = WP('slot') + 1; } // Waffenslot-Warp: Stufe 1 jetzt gratis, alte Stände bekommen sie nach
   if (!S.wq5b) { S.wq5b = 1; if (S.wReq > 10) S.wReq = Math.max(10, S.wReq - (S.wReq >= 41 ? 15 : 5)); } // Hürde jetzt +5 statt +10/+20: alte Stände anpassen
   if (S.wTok == null) { S.wTok = 0; } tokSync(); // Warp-Tokens nachrechnen

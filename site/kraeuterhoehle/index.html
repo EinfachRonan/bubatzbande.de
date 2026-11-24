@@ -5059,6 +5059,29 @@ function drawHeroReveal(ctx, W, H){
   // „Aufwerten“ auf dem Handy immer mittig öffnen
   const nav = document.getElementById('mnav');
   if(nav) nav.addEventListener('click', e => { const b = e.target.closest('button[data-mn="tree"]'); if(b) document.getElementById('hub')._treeCentered = false; }, true);
+  // Handy: Baum kann nicht mehr komplett aus dem Bild gewischt werden (mind. ein Stück bleibt sichtbar)
+  if(typeof applyTreeTransform === 'function' && window.matchMedia && matchMedia('(pointer: coarse)').matches){
+    const orig = applyTreeTransform;
+    applyTreeTransform = function(){
+      try {
+        const tb = document.getElementById('treebox'), W = tb.clientWidth, H = tb.clientHeight, ns = document.querySelectorAll('#tree .node');
+        if(W && H && ns.length){
+          let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+          ns.forEach(n => { const x = n.offsetLeft, y = n.offsetTop; if(x < x0) x0 = x; if(y < y0) y0 = y; if(x + n.offsetWidth > x1) x1 = x + n.offsetWidth; if(y + n.offsetHeight > y1) y1 = y + n.offsetHeight; });
+          const mx = Math.min(140, W * .35), my = Math.min(160, H * .3), k = treeScale;
+          pan.x = Math.min(W - mx - x0 * k, Math.max(mx - x1 * k, pan.x));
+          pan.y = Math.min(H - my - y0 * k, Math.max(my - y1 * k, pan.y));
+          // Mindestens ein Knoten bleibt im Bild – sonst zum nächsten Knoten zurückschieben
+          const m = 70; let best = null;
+          ns.forEach(n => { if(!n.offsetWidth) return; const cx = (n.offsetLeft + n.offsetWidth / 2) * k + pan.x, cy = (n.offsetTop + n.offsetHeight / 2) * k + pan.y;
+            const dx = cx < m ? m - cx : cx > W - m ? W - m - cx : 0, dy = cy < m ? m - cy : cy > H - m ? H - m - cy : 0, d = Math.hypot(dx, dy);
+            if(!best || d < best.d) best = { d, dx, dy }; });
+          if(best && best.d > 0){ pan.x += best.dx; pan.y += best.dy; }
+        }
+      } catch (e) {}
+      return orig.apply(this, arguments);
+    };
+  }
 })();
 </script>
 </body>

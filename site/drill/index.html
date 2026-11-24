@@ -1508,6 +1508,10 @@ function planetCols() {
   const dark = mixH(mixH(p0, p2, .3), '#05060c', .84), mid = mixH(mixH(p0, p2, .4), '#05060c', .42), hi = mixH(mixH(p0, p2, .6), '#ffffff', .12);
   G.ramp = Array.from({ length: 9 }, (_, k) => k < 5 ? mixH(dark, mid, k / 4) : mixH(mid, hi, (k - 4) / 4 * .8));
   G.hiE = mixH(hi, '#ffffff', .25); G.loE = mixH(dark, '#000000', .45);
+  { // Schadensfarbe je Planet: Farbton etwas gedreht, kräftiger und heller – klarer Kontrast, aber passend zum Planeten
+    const hx = mid.replace('#', ''), R = parseInt(hx.slice(0, 2), 16) / 255, Gc = parseInt(hx.slice(2, 4), 16) / 255, B = parseInt(hx.slice(4, 6), 16) / 255, mx = Math.max(R, Gc, B), mn = Math.min(R, Gc, B), L = (mx + mn) / 2;
+    let H = 0; if (mx !== mn) { const dd = mx - mn; H = mx === R ? ((Gc - B) / dd + (Gc < B ? 6 : 0)) : mx === Gc ? (B - R) / dd + 2 : (R - Gc) / dd + 4; H *= 60; }
+    G.dmgC = `hsl(${Math.round((H + 38) % 360)}, 78%, ${Math.round(Math.max(52, Math.min(68, L * 100 + 30)))}%)`; }
   G.ty = ty;
   G.crust = { n: mixH(p2, '#9dff6a', .35), lava: '#ff7a1a', eis: '#f2fbff', gold: '#fff1a0', kris: '#e6d2ff', boss: '#ff9ab0' }[ty] || mixH(p2, '#ffffff', .5);
   G.tex = { n: mixH(dark, '#000000', .25), lava: '#ffb347', eis: 'rgba(255,255,255,.55)', gold: '#fff3b0', kris: mixH(p2, '#ffffff', .55), boss: '#c3cad8' }[ty];
@@ -1525,7 +1529,7 @@ function drawCell(i) {
   const up = r > 0 && A[i - COLS], dn = r < ROWS - 1 && A[i + COLS], lf = c > 0 && A[i - 1], rt = c < COLS - 1 && A[i + 1];
   const lv = Math.max(0, Math.min(8, Math.round(3.2 + G.lit[i] * 3.6 - G.dep[i] * 3.4 + ((h >>> 3) % 3 - 1) * .55)));
   tg.fillStyle = G.ramp[lv]; tg.fillRect(x, y, CELL, CELL);
-  if (st) { tg.fillStyle = '#fff'; tg.globalAlpha = st * .11; tg.fillRect(x, y, CELL, CELL); tg.globalAlpha = 1; } // je kaputter, desto heller
+  if (st) { tg.fillStyle = G.dmgC || '#fff'; tg.globalAlpha = st * .075; tg.fillRect(x, y, CELL, CELL); tg.globalAlpha = 1; } // je kaputter, desto mehr verfärbt sich der Block (Farbe je Planet)
   const b = Math.max(1, CELL / 7 | 0);
   // gemeißelte Kante: oben/links Licht, unten/rechts Schatten (leicht, damit es nach Blöcken aussieht, nicht nach Gitter)
   tg.globalAlpha = .2; tg.fillStyle = G.ramp[Math.min(8, lv + 2)]; tg.fillRect(x, y, CELL, b); tg.globalAlpha = .1; tg.fillRect(x, y, b, CELL);
@@ -2306,10 +2310,10 @@ function abStats(id, lv) {
   else if (id === 'gold') r.push(['Effekt', 'x2 CR'], ['Dauer', dur.toFixed(1) + ' s']);
   else if (id === 'meteor') r.push(['Meteore', '14'], ['Schaden je Meteor', fmt(D * .5 * P)], ['Schaden gesamt', fmt(D * .5 * P * 14)]);
   else if (id === 'kanone') r.push(['Laser-Schaden', fmt(D * 9 * P)], ['Breite', '11 Blöcke']);
-  else if (id === 'loch') r.push(['Radius', (3.2 + lv * .3).toFixed(2) + ' Blöcke'], ["Schaden", fmt(D * 3.6 * P)], ['Dauer', '2.2 s']);
+  else if (id === 'loch') r.push(['Radius', (3.2 + lv * .15).toFixed(2) + ' Blöcke'], ["Schaden", fmt(D * 3.6 * P)], ['Dauer', '2.2 s']);
   else if (id === 'erz') r.push(['Neue Erze', Math.round(10 * P) + ' Blöcke']);
   else if (id === 'drohne') r.push(['Dauer', (15 * (1 + .1 * (lv - 1))).toFixed(1) + ' s'], ['Schaden/s', fmt(D * 1.2 * P)]);
-  else if (id === 'nova') r.push(['Radius', (8 + lv * .7).toFixed(1) + ' Blöcke'], ['Schaden pro Block', fmt(D * 2 * P)]);
+  else if (id === 'nova') r.push(['Radius', (8 + lv * .3).toFixed(1) + ' Blöcke'], ['Schaden pro Block', fmt(D * .12 * P)]);
   else if (id === 'frost') r.push(['Effekt', 'x2 Schaden'], ['Dauer', (12 * (1 + .1 * (lv - 1))).toFixed(1) + ' s']);
   else if (id === 'blitz') r.push(['Blitze', '24'], ['Schaden je Blitz', fmt(D * .4 * P)]);
   else if (id === 'kmag') r.push(['Chance je Block', (2 + lv * .3).toFixed(1) + ' %'], ['Max. ◆ pro Einsatz', 4 + lv], ['Dauer', '20 s']);
@@ -2350,11 +2354,11 @@ function cast(id, auto) {
   else if (id === 'gold') S.buf.cr = Date.now() + 12000 * (1 + .1 * (AL(id) - 1));
   else if (id === 'meteor') { for (let k = 0; k < 14; k++) { const i = randAlive(); if (i < 0) break; const [x, y] = cellXY(i); meteors.push({ x: x + (Math.random() - .5) * 120, y: cam.y - H / 2 - 20 - k * 30, tx: x, ty: y, d: D * .5 * P, v: 210 + Math.random() * 120, tr: ABT('meteor') }); } }
   else if (id === 'kanone') { const a2 = Math.atan2(G.cy - ship.y, G.cx - ship.x); lanceShot(a2, D * 9 * P, 5); }
-  else if (id === 'loch') { const i = randAlive(); if (i >= 0) { const [x, y] = cellXY(i); bhole = { x, y, t: 2.2, r: CELL * (3.2 + AL(id) * .3), d: D * 3.6 * P, tr: ABT('loch') }; } }
+  else if (id === 'loch') { const i = randAlive(); if (i >= 0) { const [x, y] = cellXY(i); bhole = { x, y, t: 2.2, r: CELL * (3.2 + AL(id) * .15), d: D * 3.6 * P, tr: ABT('loch') }; } }
   else if (id === 'erz') { let n = Math.round(10 * P); while (n-- > 0) { const i = randAlive(); if (i >= 0 && G.ore[i] < 3) G.ore[i] = Math.random() < .2 ? 2 : 1; } tDirty = true; }
   else if (id === 'drohne') { S.buf.dr = Date.now() + 15000 * (1 + .1 * (AL(id) - 1)); S.bufP = Object.assign(S.bufP || {}, { dr: D * 1.2 * P, drT: ABT(id) }); }
-  else if (id === 'nova') { const n = Math.round(8 + AL(id) * .7), tr = ABT(id); let cells = 0; for (let a = -n; a <= n; a++) for (let b = -n; b <= n; b++) if (a * a + b * b <= n * n) cells++;
-    boomAt(G.cx, G.cy, n, D * 2 * P, abc(id, 1)); /* jeder Block im Radius bekommt den vollen Schaden (vorher auf alle Blöcke verteilt → höhere Stufe = weniger pro Block) */ for (let q = 0; q <= tr; q++) fx.push({ k: 'nova', x: G.cx, y: G.cy, r: CELL * (n + 2 + q * 3), t: .7 + q * .15, c: abc(id, 1), thick: 1 }); shake = 18 + tr * 4; SND.fx.boom(); }
+  else if (id === 'nova') { const n = Math.round(8 + AL(id) * .3), tr = ABT(id); let cells = 0; for (let a = -n; a <= n; a++) for (let b = -n; b <= n; b++) if (a * a + b * b <= n * n) cells++;
+    boomAt(G.cx, G.cy, n, D * .12 * P, abc(id, 1)); /* pro Block (Gesamtschaden wie die anderen Fähigkeiten) */ /* jeder Block im Radius bekommt den vollen Schaden (vorher auf alle Blöcke verteilt → höhere Stufe = weniger pro Block) */ for (let q = 0; q <= tr; q++) fx.push({ k: 'nova', x: G.cx, y: G.cy, r: CELL * (n + 2 + q * 3), t: .7 + q * .15, c: abc(id, 1), thick: 1 }); shake = 18 + tr * 4; SND.fx.boom(); }
   else if (id === 'frost') { S.buf.frz = Date.now() + 12000 * (1 + .1 * (AL(id) - 1)); S.bufP = Object.assign(S.bufP || {}, { frzT: ABT(id) }); }
   else if (id === 'blitz') { const tr = ABT(id); for (let q = 0; q < 24; q++) storms.push({ t: q * .12, d: D * .4 * P, tr }); }
   else if (id === 'kmag') { S.buf.mag = Date.now() + 20000; S.bufP = Object.assign(S.bufP || {}, { mag: .02 + AL(id) * .003, magN: 4 + AL(id) }); }
@@ -2717,7 +2721,7 @@ setInterval(() => { try { if (!$('elc') && !$('aug')) loginCheck(); } catch (e) 
 function startScreen() {
   if (/[?&]tr\b/.test(location.search)) return; // Trailer-Aufnahme ohne Startbild
   const d = document.createElement('div'); d.id = 'start';
-  d.innerHTML = `<canvas id="stc"></canvas><div class="st-t"><small>DIE BUBATZBANDE PRÄSENTIERT</small><h1>GALAXIE<br>BOHRER</h1></div><div class="st-go" id="stgo">TIPPEN ZUM BOHREN</div><button class="st-skip" id="stskip">Überspringen ›</button>`;
+  d.innerHTML = `<canvas id="stc"></canvas><div class="st-t"><small>DIE BUBATZBANDE PRÄSENTIERT</small><h1>GALAXIE<br>BOHRER</h1></div><div class="st-go" id="stgo">TIPP AUF DEN PLANETEN</div>`;
   document.body.appendChild(d);
   const cv2 = d.querySelector('#stc'), x = cv2.getContext('2d'); let w = 0, h = 0, dpr = Math.min(2, devicePixelRatio || 1);
   const fit = () => { w = innerWidth; h = innerHeight; cv2.width = w * dpr; cv2.height = h * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0); x.imageSmoothingEnabled = false; }; fit(); addEventListener('resize', fit);
@@ -2731,8 +2735,7 @@ function startScreen() {
   const go = () => { if (phase) return; phase = 1; pt = 0; d.querySelector('#stgo').style.display = 'none'; d.querySelector('.st-t').style.transition = 'opacity .6s'; d.querySelector('.st-t').style.opacity = '0'; try { SND.fx.warp(); } catch (e) {} vib && vib([30, 40, 80]);
     for (const c of cells) { const a = Math.atan2(c.v, c.u) + (Math.random() - .5) * .6, sp = .6 + Math.random() * 1.6 + (1 - c.rr) * .6; c.vx = Math.cos(a) * sp; c.vy = Math.sin(a) * sp; c.vz = .8 + Math.random() * 2.2; c.vr = (Math.random() - .5) * 8; } };
   const end = () => { if (done) return; done = true; d.classList.add('out'); setTimeout(() => { d.remove(); removeEventListener('resize', fit); }, 450); };
-  d.querySelector('#stc').onclick = go; d.querySelector('#stgo').onclick = go; d.querySelector('#stskip').onclick = e => { e.stopPropagation(); end(); };
-  setTimeout(() => { if (!phase) go(); }, 9000); // von selbst weiter, falls niemand tippt
+  d.querySelector('#stc').onclick = e => { const R = Math.min(w, h * .8) * .26, dx = e.clientX - w / 2, dy = e.clientY - h * .53; if (dx * dx + dy * dy <= (R * 1.5) ** 2) go(); }; // nur der Planet in der Mitte startet
   const frame = now => { if (done) return; const T = (now - t0) / 1000; const dt = 1 / 60; if (phase) pt += dt;
     x.fillStyle = '#03050b'; x.fillRect(0, 0, w, h);
     const cx = w / 2, cy = h * .53, R = Math.min(w, h * .8) * .26, warp = phase ? Math.min(1, pt / .9) : 0;

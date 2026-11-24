@@ -640,6 +640,12 @@ html,body{overscroll-behavior:none;position:fixed;inset:0;width:100%}button,a{to
 .hot .hs.abt2::after{border-color:#b98cff;box-shadow:0 0 9px rgba(185,140,255,.7)}
 .hot .hs.abt3::after{border-color:#ffd23f;box-shadow:0 0 12px rgba(255,210,63,.85);animation:abt3b 1.6s ease-in-out infinite}
 @keyframes abt3b{50%{box-shadow:0 0 20px rgba(255,210,63,1)}}
+
+/* Fähigkeiten-Leiste ohne Hintergrund: schwebt unten über dem Spielfeld (Handy) */
+@media (max-width:899px),(max-height:539px){
+  .panel{position:relative}
+  .hot{position:absolute!important;left:0;right:0;bottom:100%;z-index:6;background:transparent!important;border:0!important;box-shadow:none!important;padding:4px 6px!important}
+}
 </style>
 </head>
 <body data-bbtoast="top">

@@ -2511,8 +2511,13 @@ function openCrate(k) {
   overlay(`<div class="flip" id="flip" style="--rc:${RAR[r].c};--kc:${k.c}"><div class="fc"><div class="ff"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="${k.c}" stroke-width="1.4"><rect x="3" y="8" width="18" height="12" rx="1"/><path d="M3 12h18M10 8V5h4v3M12 12v3"/></svg><span>${k.n}</span><small>Tippen zum Aufdecken</small></div>
       <div class="fb">${itemSvg(it, 84)}<span>${RAR[r].n.toUpperCase()}</span></div></div><div class="fx-p" id="fxp"></div></div>
     <div id="frev" class="frev">${r2 ? `<div class="ultab">${abIco(r2.a, ` width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#c9a2ff" stroke-width="1.8"`)}<span><b>${r2.a.n}</b><br>${r2.txt}</span></div>` : ''}<h2 style="color:${RAR[r].c}">${it.n}</h2><p>[${RAR[r].n}] · ${SLOT[it.s].n}<br>${had ? '' : 'Neu im Hangar!'}${extra}<br><b style="color:var(--txt)">+${Math.round(itemVal(it, ILV(it.id)) * 100)} % ${SLOT[it.s].st}</b>${HATK[it.id] ? '<br><span style="color:var(--li)">⚔ ' + HATK[it.id].n + ': ' + HATK[it.id].d + '</span>' : ''}</p></div>`,
-    [k.noAgain ? ['Super!', () => render()] : ['Nochmal ziehen ◆' + k.cost, () => { render(); openCrate(k); }], ['Ausrüsten', () => { S.eq[it.s] = it.id; save('now'); render(); }], ['Weiter', () => render()]]);
+    [k.noAgain ? ['Super!', () => render()] : ['Nochmal ziehen ◆' + k.cost, () => { render(); openCrate(k); }], ['Ausrüsten', () => { S.eq[it.s] = it.id; save('now'); render(); }], ['🚀 Zum Hangar', () => { render(); goTab('h'); }], ['Weiter', () => render()]]);
   const ovb = $('ovb'), btns = ovb.querySelectorAll('[data-k]'); btns.forEach(x => x.style.visibility = 'hidden');
+  { const cur = eqItem(it.s), vNew = itemVal(it, ILV(it.id)), vCur = cur ? itemVal(cur, ILV(cur.id)) : 0, b = btns[1]; // besser oder schlechter als das ausgerüstete Teil?
+    if (cur && cur.id === it.id) { b.textContent = 'Schon ausgerüstet'; b.disabled = true; }
+    else if (vNew > vCur) b.innerHTML = 'Ausrüsten <b style="color:#5dff7a">▲ +' + Math.round((vNew - vCur) * 100) + ' %</b>';
+    else if (vNew < vCur) b.innerHTML = 'Ausrüsten <b style="color:#ff5a6a">▼ ' + Math.round((vNew - vCur) * 100) + ' %</b>';
+    else b.innerHTML = 'Ausrüsten <b style="color:#9fb3bb">= gleich</b>'; }
   if (!k.noAgain) { if (S.cry < k.cost) btns[0].disabled = true; btns[0].classList.add('again'); }
   const fl = $('flip'); let done = false;
   const reveal = () => { if (done) return; done = true; fl.classList.add('on'); SND.fx.up();

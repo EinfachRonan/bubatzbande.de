@@ -984,13 +984,15 @@
     get profile() { return P; }, get loggedIn() { return logged(); }, GAMES, ACH, CHAR, AV,
     FRAMES, avH, home: () => { addCss(); return `<a class="bb-home" href="${ROOT}">🏠 Zur Startseite</a>`; }, record, unlock, stat, open, close, chip, showUser: id => { open('board'); showUser(id); }, invite, roomReady, gate, toast, fmt, avatar: () => avUrl(P), onChange: f => listeners.push(f),
     best: g => P.best[g] || null, has: id => !!P.ach[id],
-    plays: dir => P.stats['pl_' + dir] || 0
+    plays: dir => P.stats['pl_' + dir] || 0,
+    lastPlayed: dir => { let l = 0; try { l = +localStorage.getItem('bb_lp_' + dir) || 0; } catch (e) {} return Math.max(l, P.stats['lp_' + dir] ? P.stats['lp_' + dir] * 60000 + 1767225600000 : 0); }
   };
   // Spiel als „gespielt“ zählen (für „Dein meistgespieltes Spiel“ auf der Startseite): erst nach 15 Sek.
   try {
     const g = location.href.slice(ROOT.length).split(/[/?#]/)[0];
     if (/^[a-z0-9_-]{2,20}$/.test(g) && g !== 'bande' && g !== 'api') setTimeout(() => {
       stat('pl_' + g); // persönlich: wie oft DU dieses Spiel gespielt hast (im Konto, geräteübergreifend)
+      { const now = Math.floor((Date.now() - 1767225600000) / 60000); stat('lp_' + g, Math.max(0, now - (P.stats['lp_' + g] || 0))); try { localStorage.setItem('bb_lp_' + g, String(Date.now())); } catch (e) {} } // zuletzt gespielt (Minuten seit 1.1.2026, im Konto)
       try { if (!sessionStorage.getItem('bb_play_' + g)) { sessionStorage.setItem('bb_play_' + g, '1'); fetch(API + '?a=play&g=' + g, { keepalive: true }).catch(() => {}); } } catch (e) {}
     }, 15000);
   } catch (e) {}

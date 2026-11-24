@@ -278,6 +278,7 @@ function upF(t) {
   return diff === 0 ? 'heute, ' + hm : diff === 1 ? 'gestern, ' + hm : d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }) + ', ' + hm;
 }
 // Persönlich: wie oft der Spieler selbst ein Spiel gespielt hat (Konto-Statistik pl_<ordner>)
+const lpMe = g => { try { return (window.BB && BB.lastPlayed) ? BB.lastPlayed(g.url.replace(/\/.*$/, '')) : 0; } catch (e) { return 0; } };
 const plMe = g => { try { return (window.BB && BB.plays) ? BB.plays(g.url.replace(/\/.*$/, '')) : 0; } catch (e) { return 0; } };
 fetch('updates.json?' + Math.floor(Date.now() / 60000), { cache: 'no-store' }).then(r => r.ok ? r.json() : {}).then(j => { UPD = j || {}; draw(); }).catch(() => {});
 // Bestenliste-Knopf an jeder Spiel-Kachel (nur für Spiele mit Bestenliste)
@@ -301,13 +302,13 @@ function draw() {
   const go = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>';
   const sec = SECRET.filter(g => b && b.secret && b.secret(g.k));
   const all = GAMES.concat(sec).map((g, i) => ({ g, i })).sort((x, y) => (upT(y.g) - upT(x.g)) || (x.i - y.i)).map(x => x.g);
-  // Ganz oben: DEIN meistgespieltes Spiel (persönlich, nicht allgemein). Noch nichts gespielt → neuestes Update
-  const hot = all.slice().sort((x, y) => plMe(y) - plMe(x))[0];
-  const isHot = hot && plMe(hot) > 0;
+  // Ganz oben: das Spiel, das DU zuletzt gespielt hast (im Konto, geräteübergreifend). Noch nichts gespielt → neuestes Update
+  const hot = all.slice().sort((x, y) => (lpMe(y) - lpMe(x)) || (plMe(y) - plMe(x)))[0];
+  const isHot = hot && (lpMe(hot) > 0 || plMe(hot) > 0);
   const top = isHot ? hot : all[0], rest = all.filter(g => g !== top);
   const bsOf = g => { const bs = b && b.best(g.k); return bs ? b.fmt(g.k, bs.s) : ''; };
   const tb = bsOf(top);
-  $('topG').innerHTML = `<a class="top1" href="${top.url}"><div class="pic">${media(top)}<div class="badge"><span>${isHot ? '⭐ Dein Lieblingsspiel' : upT(top) ? 'Neuestes Update' : 'Top-Spiel'}</span>${top.sec ? '<span class="sc">Geheim</span>' : ''}</div></div><div class="bd"><div class="kk">${esc(top.tag)}</div><h3>${esc(top.name)}</h3><p>${esc(top.text)}</p>${upT(top) ? `<span class="up">Zuletzt geupdatet: ${upF(upT(top))}</span>` : ''}<div class="ft"><span class="btn">${go.replace('<svg', '<svg width="16" height="16"')} Jetzt spielen</span>${hasLb(top) ? `<span class="lbx" data-lb="${top.k}">🏆 Bestenliste</span>` : ''}${isHot ? `<span class="bsx">Du hast es ${plMe(top)}× gespielt</span>` : ''}${tb ? `<span class="bsx">🏆 ${tb}</span>` : ''}</div></div></a>`;
+  $('topG').innerHTML = `<a class="top1" href="${top.url}"><div class="pic">${media(top)}<div class="badge"><span>${isHot ? '▶ Zuletzt gespielt' : upT(top) ? 'Neuestes Update' : 'Top-Spiel'}</span>${top.sec ? '<span class="sc">Geheim</span>' : ''}</div></div><div class="bd"><div class="kk">${esc(top.tag)}</div><h3>${esc(top.name)}</h3><p>${esc(top.text)}</p>${upT(top) ? `<span class="up">Zuletzt geupdatet: ${upF(upT(top))}</span>` : ''}<div class="ft"><span class="btn">${go.replace('<svg', '<svg width="16" height="16"')} Jetzt spielen</span>${hasLb(top) ? `<span class="lbx" data-lb="${top.k}">🏆 Bestenliste</span>` : ''}${isHot && lpMe(top) ? `<span class="bsx">Zuletzt: ${upF(lpMe(top) / 1000)}</span>` : ''}${tb ? `<span class="bsx">🏆 ${tb}</span>` : ''}</div></div></a>`;
   $('games').innerHTML = rest.map(g => { const bs = bsOf(g);
     return `<a class="gc" href="${g.url}"><div class="pic">${media(g, 1)}<div class="tg">${g.sec ? '<span class="sc">Geheim</span>' : ''}<span>${esc(g.tag.replace(/^Testphase · /, 'Test · '))}</span></div></div><div class="bd"><h3>${esc(g.name)}</h3><p>${esc(g.text)}</p><div class="ft">${bs ? `<span class="bst">🏆 ${bs}</span>` : upT(g) ? `<span class="up">${upF(upT(g))}</span>` : '<span></span>'}${hasLb(g) ? '' : `<span class="go">${go}</span>`}</div>${hasLb(g) ? `<div class="acts"><span class="pl">${go} Spielen</span><span class="lb" data-lb="${g.k}">🏆 Bestenliste</span></div>` : ''}</div></a>`; }).join('');
   $('nH').innerHTML = `${all.length} Spiele.<br><span>1 Bande.</span>`;
@@ -377,7 +378,7 @@ addEventListener('bb-lofi', draw);
 if (window.BB) {
   BB.chip($('bbChip'));
   let last = '';
-  BB.onChange(P => { const k = JSON.stringify([P.name, P.rh, P.av, P.img, Object.keys(P.ach).length, P.best, Object.keys(P.stats).filter(k => k.indexOf('pl_') === 0).map(k => P.stats[k])]); if (k !== last) { last = k; draw(); } });
+  BB.onChange(P => { const k = JSON.stringify([P.name, P.rh, P.av, P.img, Object.keys(P.ach).length, P.best, Object.keys(P.stats).filter(k => k.indexOf('pl_') === 0 || k.indexOf('lp_') === 0).map(k => P.stats[k])]); if (k !== last) { last = k; draw(); } });
   if (BB.onMeta) BB.onMeta(draw);
   BB.gate();
 }

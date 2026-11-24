@@ -900,7 +900,7 @@ const boosting = () => S.boostEnd > Date.now();
 const reqStep = at => 5, wLbl = n => 'Universum ' + uniOf(n) + ' · Planet ' + pInU(n);
 const wReq = () => S.wReq || 10, wTok = () => S.wTok || 0, canWarp = () => wTok() > 0 && dmGain() > 0;
 // Warp-Tokens: jede 5-Planeten-Marke gibt ein Token, Tokens kann man aufsparen
-function tokSync() { let n = 0; while (S.p >= wReq() && n < 100) { S.wTok = wTok() + 1; S.wReq = wReq() + 5; n++; } return n; }
+function tokSync() { S.wReq = Math.max(10, Math.floor(wReq() / 5) * 5); /* Marken immer auf glatten 5ern (alte Stände hatten z. B. 26, 31, 36) */ let n = 0; while (S.p >= wReq() && n < 100) { S.wTok = wTok() + 1; S.wReq = wReq() + 5; n++; } return n; }
 const wmGain = () => Math.round(Math.max(.02, .01 * dmGain()) * 100) / 100;
 const dmBonus = () => (S.wm || 1) * (1 + WP('kraft'));
 // ✦ beim Warp: ab Planet 3 = 1, jeder weitere Planet +1 (Planet 10 = 8), ab Universum 2 (Planet 11+) +2 pro Planet

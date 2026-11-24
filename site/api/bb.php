@@ -15,7 +15,20 @@ $GAMES = [
   'hof'    => ['asc' => false, 'min' => 1, 'max' => 1e18],
   'drill'  => ['asc' => false, 'min' => 1, 'max' => 100000],
   'ernte'  => ['asc' => false, 'min' => 1, 'max' => 10000000],
+  'kh'     => ['asc' => false, 'min' => 1, 'max' => 100000], // Kräuterhöhle: kein eigener Bestwert – wird aus dem Konto-Spielstand gelesen (khAug)
 ];
+// Kräuterhöhle (Marios Spiel) meldet keine Bestwerte. Für die Bestenliste wird der Fortschritt aus dem
+// Cloud-Spielstand gelesen (nur beim Anzeigen, wird nicht gespeichert): Wert = Kapitel × 100 + Helden.
+function khAug(&$d) {
+  foreach ($d['users'] as $id => &$u) {
+    $x = $u['gs']['kh'] ?? null; if (!$x || !isset($x['d'])) continue;
+    $j = json_decode($x['d'], true); if (!is_array($j)) continue;
+    $ch = max(1, min(99, (int) ($j['chapter'] ?? 1)));
+    $hs = 0; foreach (($j['owned'] ?? []) as $k => $v) if (strpos((string) $k, 'h_') === 0 && $v) $hs++;
+    $u['best']['kh'] = ['s' => $ch * 100 + min(99, $hs), 'm' => ['ch' => $ch, 'h' => $hs], 't' => 0];
+  }
+  unset($u);
+}
 $ACH = ['profil', 'krieg_win', 'krieg_hart', 'krieg_fast', 'krieg_kills', 'match_3', 'match_10', 'match_30', 'match_boss', 'match_25', 'match_50', 'quiz_10', 'quiz_perfekt', 'quiz_party', 'duell_win', 'duell_hart', 'duell_null', 'duell_prost', 'schach_win', 'schach_duelle', 'allrounder', 'runner_20k', 'runner_x20', 'match_100', 'krieg_kampagne', 'krieg_sterne', 'hof_mrd', 'quiz_marathon', 'karten_gold', 'reich', 'duell_meister', 'runner_1000', 'runner_5000', 'runner_gold', 'hof_klick', 'hof_10k', 'hof_mio', 'hof_bande', 'karten_10', 'karte_max', 'karten_alle', 'drill_1', 'drill_10', 'drill_waffen', 'drill_100', 'drill_warp', 'drill_legende', 'ernte_w5', 'ernte_w10', 'ernte_w20', 'ernte_toni', 'ernte_friedhof', 'ernte_head', 'ernte_hacke', 'ernte_kills'];
 $AV = ['artur', 'kobold', 'nille', 'geist', 'molly', 'lg3', 'fokuhila', 'kraeuter', 'don', 'koenig', 'allan', 'marwin'];
 
@@ -155,11 +168,14 @@ if ($a === 'user') {
 
 if ($a === 'gstat') {
   // Detail-Werte eines Spielers für ein Spiel (zum Vergleichen in der Bestenliste)
-  flock($h, LOCK_SH); $d = load($h); flock($h, LOCK_UN); fclose($h);
+  flock($h, LOCK_SH); $d = load($h); flock($h, LOCK_UN); fclose($h); khAug($d);
   $id = (string) ($_GET['u'] ?? ''); $g = (string) ($_GET['g'] ?? '');
   if (!isset($d['users'][$id]) || !isset($GAMES[$g])) fail('nouser', 404);
   $u = $d['users'][$id]; $b = $u['best'][$g] ?? null; $x = $u['gs'][$g] ?? null; $j = $x ? json_decode($x['d'], true) : null; $st = [];
   $num = fn($v) => is_numeric($v) ? $v + 0 : 0; $sum = fn($a) => is_array($a) ? array_sum(array_map(fn($v) => is_numeric($v) ? $v + 0 : 0, $a)) : 0;
+  if ($b && $g === 'kh') { $st[] = ['Kapitel', $b['m']['ch']]; $st[] = ['Helden', $b['m']['h']]; $b = null;
+    if (is_array($j)) $st[] = ['Kämpfe', (int) array_sum(array_map(fn($v) => is_numeric($v) ? $v + 0 : 0, is_array($j['tries'] ?? null) ? $j['tries'] : []))];
+    $j = null; }
   if ($b) $st[] = ['Bestwert', $b['s']];
   if (is_array($j)) {
     if ($g === 'drill') {
@@ -191,6 +207,7 @@ if ($a === 'gstat') {
 if ($a === 'overall') {
   // Gesamt-Rangliste über alle Spiele: Punkte nach Platzierung (wie Formel 1)
   flock($h, LOCK_SH); $d = load($h); flock($h, LOCK_UN); fclose($h);
+  khAug($d);
   $PTS = [25, 18, 15, 12, 10, 8, 6, 4, 2]; $pts = []; $ng = [];
   $OFF = ['krieg', 'match', 'quiz', 'duell', 'hof']; // archivierte Spiele zählen nicht mehr
   foreach ($GAMES as $g => $G) {
@@ -210,7 +227,7 @@ if ($a === 'overall') {
 }
 
 if ($a === 'top') {
-  flock($h, LOCK_SH); $d = load($h); flock($h, LOCK_UN); fclose($h);
+  flock($h, LOCK_SH); $d = load($h); flock($h, LOCK_UN); fclose($h); khAug($d);
   $g = $_GET['g'] ?? '';
   if (!isset($GAMES[$g])) fail('game');
   $asc = $GAMES[$g]['asc']; $rows = [];

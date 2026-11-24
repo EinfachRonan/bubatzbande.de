@@ -623,6 +623,23 @@ html,body{overscroll-behavior:none;position:fixed;inset:0;width:100%}button,a{to
 @media (max-width:899px),(max-height:539px){.list{zoom:.88}}
 
 .toast{top:calc(var(--hudh,92px) + 8px)!important}
+
+/* Entwicklungsstufen der Fähigkeiten auf der Hotbar */
+.hot .hs.abt1{border-color:#5dff7a!important;box-shadow:0 0 0 1.5px #050912,0 0 6px rgba(93,255,122,.45)}
+.hot .hs.abt2{border-color:#b98cff!important;box-shadow:0 0 0 1.5px #050912,0 0 9px rgba(185,140,255,.6)}
+.hot .hs.abt3{border-color:#ffd23f!important;box-shadow:0 0 0 1.5px #050912,0 0 12px rgba(255,210,63,.75);animation:abt3 1.8s ease-in-out infinite}
+@keyframes abt3{50%{box-shadow:0 0 0 1.5px #050912,0 0 18px rgba(255,210,63,.95)}}
+
+.augo-l span{cursor:pointer}.augo-l span.sel{border-color:#5ce8f0;background:#12283a}
+.augo-i{margin-top:8px;padding:8px 10px;border-radius:8px;background:#0b1622;border:1.5px solid #5ce8f0;font:12px/1.4 var(--mono);color:#cfe3ea;text-align:left}
+.augo-i b{color:#fff}.augo-i em{font-style:normal;color:#9dff6a}
+
+.hot .hs[class*=abt]{overflow:visible}
+.hot .hs.abt1::after,.hot .hs.abt2::after,.hot .hs.abt3::after{content:"";position:absolute;inset:-2px;border-radius:9px;border:2px solid;pointer-events:none;z-index:3}
+.hot .hs.abt1::after{border-color:#5dff7a;box-shadow:0 0 6px rgba(93,255,122,.5)}
+.hot .hs.abt2::after{border-color:#b98cff;box-shadow:0 0 9px rgba(185,140,255,.7)}
+.hot .hs.abt3::after{border-color:#ffd23f;box-shadow:0 0 12px rgba(255,210,63,.85);animation:abt3b 1.6s ease-in-out infinite}
+@keyframes abt3b{50%{box-shadow:0 0 20px rgba(255,210,63,1)}}
 </style>
 </head>
 <body data-bbtoast="top">
@@ -1491,6 +1508,7 @@ function drawCell(i) {
   const up = r > 0 && A[i - COLS], dn = r < ROWS - 1 && A[i + COLS], lf = c > 0 && A[i - 1], rt = c < COLS - 1 && A[i + 1];
   const lv = Math.max(0, Math.min(8, Math.round(3.2 + G.lit[i] * 3.6 - G.dep[i] * 3.4 + ((h >>> 3) % 3 - 1) * .55)));
   tg.fillStyle = G.ramp[lv]; tg.fillRect(x, y, CELL, CELL);
+  if (st) { tg.fillStyle = '#fff'; tg.globalAlpha = st * .11; tg.fillRect(x, y, CELL, CELL); tg.globalAlpha = 1; } // je kaputter, desto heller
   const b = Math.max(1, CELL / 7 | 0);
   // gemeißelte Kante: oben/links Licht, unten/rechts Schatten (leicht, damit es nach Blöcken aussieht, nicht nach Gitter)
   tg.globalAlpha = .2; tg.fillStyle = G.ramp[Math.min(8, lv + 2)]; tg.fillRect(x, y, CELL, b); tg.globalAlpha = .1; tg.fillRect(x, y, b, CELL);
@@ -1766,7 +1784,7 @@ function draw(now) {
   if (S.buf && S.buf.dr > Date.now()) { const tr = (S.bufP || {}).drT || 0, n = 5 + tr * 2; for (let k = 0; k < n; k++) { const a = performance.now() / 300 + k * 6.283 / n, x = ship.x + Math.cos(a) * 44, y = ship.y + Math.sin(a) * 44; g.fillStyle = ABCOL.drohne[tr][0]; g.beginPath(); g.moveTo(x, y - 5); g.lineTo(x + 4, y + 3); g.lineTo(x - 4, y + 3); g.fill(); } }
   for (const m of meteors) { const tr = m.tr || 0, [c, rgb] = ABCOL.meteor[tr], r = 6 + tr * 2.5, l = Math.hypot(m.tx - m.x, m.ty - m.y) || 1, ux = (m.tx - m.x) / l, uy = (m.ty - m.y) / l;
     for (let k = 1; k <= 4 + tr * 3; k++) { g.fillStyle = `rgba(${rgb},${.55 - k * .05})`; g.beginPath(); g.arc(m.x - ux * k * (5 + tr), m.y - uy * k * (5 + tr), Math.max(1, r - k * .6), 0, 7); g.fill(); }
-    if (tr >= 2) { g.shadowColor = c; g.shadowBlur = 14; } g.fillStyle = c; g.beginPath(); g.arc(m.x, m.y, r, 0, 7); g.fill(); g.shadowBlur = 0; g.fillStyle = '#fff'; g.beginPath(); g.arc(m.x - ux * 2, m.y - uy * 2, r * .4, 0, 7); g.fill();
+    if (tr >= 2) { g.globalAlpha = .35; g.fillStyle = c; g.beginPath(); g.arc(m.x, m.y, r * 1.9, 0, 7); g.fill(); g.globalAlpha = 1; } g.fillStyle = c; g.beginPath(); g.arc(m.x, m.y, r, 0, 7); g.fill(); g.fillStyle = '#fff'; g.beginPath(); g.arc(m.x - ux * 2, m.y - uy * 2, r * .4, 0, 7); g.fill();
     if (tr >= 3) { g.strokeStyle = `rgba(${rgb},.8)`; g.lineWidth = 1.5; g.beginPath(); g.arc(m.x, m.y, r + 4 + Math.sin(performance.now() / 60) * 2, 0, 7); g.stroke(); } }
   if (bhole) { const r = bhole.r * Math.min(1, (2.2 - bhole.t) * 2); g.globalCompositeOperation = 'source-over'; const gr = g.createRadialGradient(bhole.x, bhole.y, 0, bhole.x, bhole.y, r * 1.4); const bt = bhole.tr || 0, [bc, brgb] = ABCOL.loch[bt], tn = performance.now(); gr.addColorStop(0, '#000'); gr.addColorStop(.55, `rgba(${brgb},.6)`); gr.addColorStop(1, `rgba(${brgb},0)`); g.fillStyle = gr; g.beginPath(); g.arc(bhole.x, bhole.y, r * (1.4 + bt * .15), 0, 7); g.fill();
     for (let q = 0; q <= bt; q++) { g.strokeStyle = bc; g.globalAlpha = 1 - q * .2; g.lineWidth = 2 + (bt >= 3 && !q ? 2 : 0); g.beginPath(); g.arc(bhole.x, bhole.y, r * (.6 + q * .22 + .08 * Math.sin(tn / 80 + q)), 0, 7); g.stroke(); } g.globalAlpha = 1;
@@ -2148,7 +2166,7 @@ function showNews(done) { const NEW = NEWS.filter(n => n[3] > (S.newsV || '')); 
 function augBoot() { if (!$('ov').classList.contains('hide') || $('aug') || $('news') || travel > 0) return setTimeout(augBoot, 1000); if (S.newsV !== NEWSV) return showNews(augBoot); if (S.augMsg != null) { const b = S.augMsg; delete S.augMsg; save('now'); overlay(`<h2>Neu: Augmente!</h2><p>Skills kaufst du nicht mehr mit ◆. Nach jedem Planeten wählst du 1 von 3 Augmenten, jedes kannst du einmal neu würfeln.<br><br>${b ? `Deine Skills wurden zurückgesetzt, dafür bekommst du <b style="color:#fff">◆${b}</b> zurück.<br>` : ''}Für deinen aktuellen Lauf darfst du jetzt <b style="color:#ffe94d">${S.augQ} Augmente</b> nachwählen.</p>`, [['Los geht\'s', () => { render(); setTimeout(augShow, 60); }]]); } else if (S.augQ) augShow(); }
 const augDone = () => SKILLS.every(s => SK(s.id) >= s.max); // erst wenn alle Skills voll sind, kommen keine Augmente mehr
 function augOwned() { const own = SKILLS.filter(s => SK(s.id));
-  return `<div class="augo"><div class="augo-h">Deine Skills · ${own.length}/${SKILLS.length}</div>${own.length ? `<div class="augo-l">${own.map(s => `<span title="${s.n}"${SK(s.id) >= s.max ? ' class="mx"' : ''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${s.ico}</svg><em>${s.n}</em><b>${SK(s.id)}</b><i>/${s.max}</i></span>`).join('')}</div>` : '<div class="augo-e">Noch keine – das ist dein erster!</div>'}</div>`; }
+  return `<div class="augo"><div class="augo-h">Deine Skills · ${own.length}/${SKILLS.length}</div>${own.length ? `<div class="augo-l">${own.map(s => `<span data-ski="${s.id}" title="${s.n}"${SK(s.id) >= s.max ? ' class="mx"' : ''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${s.ico}</svg><em>${s.n}</em><b>${SK(s.id)}</b><i>/${s.max}</i></span>`).join('')}</div>` : '<div class="augo-e">Noch keine – das ist dein erster!</div>'}<div class="augo-i" hidden></div></div>`; }
 function augShow() {
   if (S.augQ && augDone()) { S.augQ = 0; S.augO = null; save('now'); render(); } if (!S.augQ || $('aug') || BON) return; if ($('elc')) return setTimeout(augShow, 1200); if (!$('ov').classList.contains('hide')) return setTimeout(augShow, 1200);
   if (S.augO) S.augO = S.augO.filter(c => c.id !== '_cry' && SK(c.id) < (SKILLS.find(x => x.id === c.id) || { max: 0 }).max); if (!S.augO || !S.augO.length) { S.augO = augOffer(); save('now'); }
@@ -2156,7 +2174,9 @@ function augShow() {
   const draw = () => { d.innerHTML = `<div class="augw"><h2>Augment wählen</h2><p>Planet geschafft! Such dir eins aus.${S.augQ > 1 ? ` <b>Noch ${S.augQ - 1} weitere</b>` : ''}</p><div class="augr" style="grid-template-columns:repeat(${S.augO.length},minmax(0,${S.augO.length < 3 ? '210px' : '1fr'}));justify-content:center">${S.augO.map((c, k) => `<div class="augs">${augCard(c, k)}<button class="augrr" data-rr="${k}" ${c.rr ? 'disabled' : ''}>${c.rr ? 'Neu gewürfelt' : '↻ Neu würfeln'}</button></div>`).join('')}</div>${augOwned()}<button class="augl" id="augl">Später</button></div>`;
     d.querySelectorAll('[data-ag]').forEach(b => b.onclick = () => augPick(+b.dataset.ag));
     d.querySelectorAll('[data-rr]').forEach(b => b.onclick = () => { const k = +b.dataset.rr, c = S.augO[k]; if (c.rr) return; let n = augRoll(S.augO.filter((_, j) => j !== k).map(x => x.id).concat(c.id)); if (n.id === '_cry') n = augRoll(S.augO.filter((_, j) => j !== k).map(x => x.id)); /* nichts anderes mehr da → gleicher Skill, neue Stufe */ S.augO[k] = { ...n, rr: 1 }; SND.fx.up(); save('now'); draw(); d.querySelectorAll('.augs')[k].classList.add('spin'); });
-    d.querySelector('#augl').onclick = () => { d.remove(); render(); }; };
+    d.querySelector('#augl').onclick = () => { d.remove(); render(); };
+    d.querySelectorAll('[data-ski]').forEach(el => el.onclick = () => { const s2 = SKILLS.find(x => x.id === el.dataset.ski), l = SK(s2.id), box = d.querySelector('.augo-i'); d.querySelectorAll('[data-ski]').forEach(x => x.classList.toggle('sel', x === el));
+      box.hidden = false; box.innerHTML = `<b>${s2.n}</b> · Stufe ${l}/${s2.max}<br>${SKTXT[s2.id] || s2.d}<br><em>Jetzt: ${skVal(s2.id, l)}${l < s2.max ? ' · nächste Stufe: ' + skVal(s2.id, l + 1) : ' · MAX'}</em>`; }); };
   draw(); $('app').appendChild(d); SND.fx.up();
 }
 function augPick(k) { const c = S.augO[k], T = AUGT[c.t];
@@ -2593,11 +2613,11 @@ const better = it => { const e = eqItem(it.s); return S.eq[it.s] !== it.id && it
 let hotSig = ''; let hotX = true; // Hotbar: alle Fähigkeiten als kleine Knöpfe in einer Reihe
 function hotbar(force) {
   const el = $('hot'); if (!el) return;
-  const now = Date.now(), sig = S.hot.join() + '|' + Object.keys(S.ab).length;
+  const now = Date.now(), sig = S.hot.map(id => id ? id + ABT(id) : '').join() + '|' + Object.keys(S.ab).length;
   if (force || sig !== hotSig) {
     hotSig = sig;
     const ab = k => { const id = S.hot[k], a = id && ABIL.find(x => x.id === id);
-      return a ? `<button class="hs" data-cast="${id}" aria-label="${a.n}">${abIco(a, ` viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"`)}<i class="cd"></i><span class="ct"></span></button>`
+      return a ? `<button class="hs abt${ABT(id)}" data-cast="${id}" aria-label="${a.n}">${abIco(a, ` viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"`)}<i class="cd"></i><span class="ct"></span></button>`
         : `<button class="hs empty" data-goab="1" aria-label="Fähigkeit hinzufügen">+</button>`; };
     const tg = `<button class="hs tgl" id="hotx" aria-label="${hotX ? 'Hotbar einklappen' : 'Alle Fähigkeiten zeigen'}">${hotX ? '▴' : '▾<small>+' + S.hot.slice(3).filter(Boolean).length + '</small>'}</button>`;
     el.classList.toggle('x', hotX);

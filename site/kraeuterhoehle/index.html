@@ -5032,6 +5032,24 @@ function drawHeroReveal(ctx, W, H){
     if(bt.classList.contains('intr-full') !== !!on) bt.classList.toggle('intr-full', !!on);
     requestAnimationFrame(watch);
   })();
+  // Artefakte auf dem Handy ausrüsten: 1. Tipp = Info (wie bisher), 2. Tipp aufs selbe Artefakt = aus-/abrüsten
+  // (vorher blockte das Antippen den Klick, man konnte auf dem Handy gar nicht ausrüsten)
+  if(typeof artTouchTap === 'function' && typeof toggleEquip === 'function'){
+    const origTap = artTouchTap;
+    window.artTouchTap = artTouchTap = function(e, el, artId){
+      const tip = document.getElementById('art-tip');
+      const open = _artTipEl === el && tip && tip.style.display !== 'none';
+      if(open && (S.arts || []).includes(artId)){ e.preventDefault(); hideArtTip(); _artTipEl = null; toggleEquip(artId); return; }
+      origTap(e, el, artId);
+      if((S.arts || []).includes(artId) && tip && tip.style.display !== 'none')
+        tip.insertAdjacentHTML('beforeend', `<br><span style="color:#ffd84d;font-size:15px">👆 Nochmal tippen zum ${(S.artEquip || []).includes(artId) ? 'Abrüsten' : 'Ausrüsten'}</span>`);
+    };
+  }
+  // Nach einem Fingertipp simuliert das Handy ein Maus-Drüberfahren → Artefakt-Infos würden hängen bleiben
+  let lastPT = 'mouse';
+  document.addEventListener('pointerdown', e => { lastPT = e.pointerType; }, true);
+  ['mouseenter', 'mouseover', 'mouseleave', 'mouseout'].forEach(t => document.addEventListener(t, e => {
+    if(lastPT === 'touch' && e.target && e.target.closest && e.target.closest('.art-hex')) e.stopPropagation(); }, true));
   // „Aufwerten“ auf dem Handy immer mittig öffnen
   const nav = document.getElementById('mnav');
   if(nav) nav.addEventListener('click', e => { const b = e.target.closest('button[data-mn="tree"]'); if(b) document.getElementById('hub')._treeCentered = false; }, true);

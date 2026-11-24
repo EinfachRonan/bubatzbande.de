@@ -3603,7 +3603,10 @@ function draw(){
   if(B.shake) ctx.translate((Math.random()-.5)*5, (Math.random()-.5)*5);
   if(GROUND instanceof HTMLImageElement && GROUND.complete && GROUND.width){
     ctx.imageSmoothingEnabled = true;
-    ctx.drawImage(GROUND, -VW/2, -VH/2, VW, VH);
+    if(VH > VW){ // Handy-Hochformat: Bild nicht verzerren, sondern seitenrichtig füllen (Querformat/PC unverändert)
+      const gs = Math.max(VW / GROUND.width, VH / GROUND.height), gw = GROUND.width * gs, gh = GROUND.height * gs;
+      ctx.drawImage(GROUND, -gw/2, -gh/2, gw, gh);
+    } else ctx.drawImage(GROUND, -VW/2, -VH/2, VW, VH);
     ctx.imageSmoothingEnabled = false;
   } else {
     ctx.fillStyle = groundPat || '#0f1814'; ctx.fillRect(-VW/2 - 10, -VH/2 - 10, VW + 20, VH + 20);
@@ -4997,6 +5000,13 @@ function drawHeroReveal(ctx, W, H){
       const over = tr.bottom - (fr.top - 8);
       if(over > 0) tip.style.top = Math.max(6, tr.top - box.top - over) + 'px';
     };
+  }
+  // Zeichenfläche neu anpassen, wenn sich ihr Platz ändert (z. B. Leiste oben wird höher) – sonst wird alles gestaucht/verzerrt
+  const wrap = document.getElementById('cvwrap');
+  if(wrap && window.ResizeObserver && typeof resize === 'function'){
+    let lw = 0, lh = 0;
+    new ResizeObserver(() => { const w = wrap.clientWidth, h = wrap.clientHeight; if(!w || !h || (w === lw && h === lh)) return; lw = w; lh = h;
+      try { if(typeof B !== 'undefined' && B) resize(); } catch(e) {} }).observe(wrap);
   }
   // „Aufwerten“ auf dem Handy immer mittig öffnen
   const nav = document.getElementById('mnav');

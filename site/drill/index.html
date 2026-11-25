@@ -1287,7 +1287,7 @@ const novas = [], waves = [];
 const sawPat = () => { const n = ML('saw') >= 3 ? 2 : ML('saw') ? 1.5 : 1, o = []; for (let a = -2; a <= 2; a++) for (let b = -2; b <= 2; b++) if (Math.hypot(a, b) <= n) o.push([a * CELL, b * CELL]); return o; };
 let sawB = 0; const SAWR = 78; // Sägen kreisen ums Schiff und reichen bis in die Blöcke
 let cdBlast = 0, cdChain = 0, sawA = 0, cdMine = 0, cdSnip = 0; const saws = [], mines = [];
-let geistT = 0, cdMet = 0, cdBoo = 0, cdFro = 0, clk = 0, cdWh = 0, cdRk = 0, cdGr = 0, cdTo = 0; const klPos = () => { const d = Math.max(1, Math.hypot(ship.x - G.cx, ship.y - G.cy)), a = Math.atan2(ship.y - G.cy, ship.x - G.cx) + Math.min(1.1, 105 / d) * (1 + .12 * Math.sin(performance.now() / 900)); return [G.cx + Math.cos(a) * d, G.cy + Math.sin(a) * d]; }; /* Schattenklon fliegt versetzt neben dir um den Planeten */
+let geistT = 0, cdMet = 0, cdBoo = 0, cdFro = 0, clk = 0, cdWh = 0, cdRk = 0, cdGr = 0, cdTo = 0; const klOn = () => !!(S.buf && S.buf.kl > Date.now()), klPos = () => [2 * G.cx - ship.x, 2 * G.cy - ship.y]; /* Schattenklon fliegt versetzt neben dir um den Planeten */
 const mets = [], boos = [], whips = [], rkts = [], gravs = [], tors = [], orbs = [], acids = [], quakes = []; let cdOrb = 0, cdAc = 0, cdKl = 0;
 function freezeAt(i, n) { if (i < 0) return; if (!G.frz) G.frz = new Float32Array(G.alive.length); const c = i % COLS, r = i / COLS | 0; for (let a = -n; a <= n; a++) for (let b = -n; b <= n; b++) { const cc = c + a, rr = r + b; if (cc >= 0 && cc < COLS && rr >= 0 && rr < ROWS) { const j = rr * COLS + cc; if (G.alive[j]) { G.frz[j] = clk + 3; (G.frL || (G.frL = new Set())).add(j); } } } }
 const bats = [], fogs = []; let drillMax = 4, starA = 0, cdDrill = 0, cdNova = 0, cdScatter = 0, lineTarget = -1, surfR = 0, surfT = 0;
@@ -1689,6 +1689,7 @@ function overlays() {
 }
 // ---------- Pixel-Schiff ----------
 const SC = document.createElement('canvas'), scg = SC.getContext('2d'); SC.width = SC.height = 44;
+const KC = document.createElement('canvas'), kcg = KC.getContext('2d'); KC.width = KC.height = 44; let klonT0 = 12;
 // Schiff-Sprites (Higgsfield-Pixel-Art), falls vorhanden: ships/<id>.png, Nase zeigt nach oben
 const SPR = {};
 function shipSpr(id) { if (!(id in SPR)) { const im = new Image(); im.onload = () => im.ok = true; im.onerror = () => {}; im.src = 'ships/' + id + '.png'; SPR[id] = im; } return SPR[id].ok ? SPR[id] : null; }
@@ -1731,16 +1732,27 @@ function drawShip() {
   scg.restore();
   const z = 1.1, sz = 44 * z; g.imageSmoothingEnabled = false;
   g.globalCompositeOperation = 'lighter'; g.globalAlpha = .35; g.drawImage(SC, ship.x - sz / 2 - 1, ship.y - sz / 2 - 1, sz + 2, sz + 2); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
-  g.drawImage(SC, ship.x - sz / 2, ship.y - sz / 2, sz, sz); g.imageSmoothingEnabled = true;
+  g.drawImage(SC, ship.x - sz / 2, ship.y - sz / 2, sz, sz);
+  if (klOn()) { /* Schattenklon: transparente, blau leuchtende Kopie direkt gegenüber */
+    const [kx, ky] = klPos(), tr = (S.bufP || {}).klT || 0, [c, rgb] = ABCOL.klon[tr], tq = performance.now() / 1000, left = (S.buf.kl - Date.now()) / 1000, fa = Math.min(1, left * 2, (klonT0 - left) * 3 + .05);
+    kcg.globalCompositeOperation = 'source-over'; kcg.clearRect(0, 0, 44, 44); kcg.drawImage(SC, 0, 0); kcg.globalCompositeOperation = 'source-atop'; kcg.fillStyle = `rgba(${rgb},.62)`; kcg.fillRect(0, 0, 44, 44); kcg.globalCompositeOperation = 'source-over';
+    const kz = sz * 1.15 / Math.sqrt(Math.max(.35, cam.z)), au = g.createRadialGradient(kx, ky, 0, kx, ky, kz * 1.3); au.addColorStop(0, `rgba(${rgb},${.32 * fa})`); au.addColorStop(1, `rgba(${rgb},0)`); g.fillStyle = au; g.beginPath(); g.arc(kx, ky, kz * 1.3, 0, 7); g.fill();
+    g.save(); g.translate(kx, ky); g.rotate(Math.PI); g.shadowColor = c; g.shadowBlur = 24;
+    g.globalCompositeOperation = 'lighter'; g.globalAlpha = .45 * fa; g.drawImage(KC, -kz / 2 - 2, -kz / 2 - 2, kz + 4, kz + 4);
+    g.globalCompositeOperation = 'source-over'; g.globalAlpha = (.55 + .1 * Math.sin(tq * 7)) * fa; g.drawImage(KC, -kz / 2, -kz / 2, kz, kz);
+    g.restore(); g.globalAlpha = 1; }
+  g.imageSmoothingEnabled = true;
 }
 const hex = h => [1, 3, 5].map(k => parseInt(h.slice(k, k + 2), 16));
 function mix(a, b, t) { const A = hex(a), B = hex(b); return `rgb(${A.map((v, k) => Math.round(v + (B[k] - v) * t)).join(',')})`; }
 const stars = Array.from({ length: 60 }, () => [Math.random(), Math.random(), Math.random()]);
 let tLast = 0, terrT = 0;
-const cam = { x: 0, y: 0 };
+const cam = { x: 0, y: 0, z: 1 };
 function camStep(dt) {
   const a = Math.atan2(G.cy - ship.y, G.cx - ship.x), look = Math.min(90, H * .22);
-  const tx = ship.x + Math.cos(a) * look, ty = ship.y + Math.sin(a) * look, k = Math.min(1, dt * 3);
+  let tx = ship.x + Math.cos(a) * look, ty = ship.y + Math.sin(a) * look, tz = 1; const k = Math.min(1, dt * 3);
+  if (klOn() && !travel) { tx = G.cx; ty = G.cy; tz = Math.min(1, Math.min(W, H) * .86 / (2 * (Math.hypot(ship.x - G.cx, ship.y - G.cy) + 34))); } /* Schattenklon: rauszoomen, ganzer Planet im Bild */
+  cam.z += (tz - cam.z) * Math.min(1, dt * 2.4); if (Math.abs(cam.z - tz) < .002) cam.z = tz;
   cam.x += (tx - cam.x) * k; cam.y += (ty - cam.y) * k;
 }
 function draw(now) {
@@ -1754,7 +1766,7 @@ function draw(now) {
     g.globalAlpha = tw * (l ? .9 : .5); g.fillStyle = st.c; g.fillRect(x, y, sz, sz); if (l === 2 && tw > .85) { g.fillRect(x - 2, y, 1, 1); g.fillRect(x + 3, y, 1, 1); g.fillRect(x, y - 2, 1, 1); g.fillRect(x, y + 3, 1, 1); } } });
   g.globalAlpha = 1;
   if (warpT > 0) { const k = Math.min(1, warpT); g.strokeStyle = `rgba(201,162,255,${k * .8})`; g.lineWidth = 2; g.beginPath(); for (const [x, y, s] of stars) { const px = x * W, py = y * H, dx = px - W / 2, dy = py - H / 2; g.moveTo(px, py); g.lineTo(px + dx * (1.6 - k) * .6, py + dy * (1.6 - k) * .6); } g.stroke(); }
-  g.save(); g.translate(Math.round((W / 2 - cam.x) * DPR) / DPR, Math.round((H / 2 - cam.y) * DPR) / DPR);
+  g.save(); if (cam.z === 1) g.translate(Math.round((W / 2 - cam.x) * DPR) / DPR, Math.round((H / 2 - cam.y) * DPR) / DPR); else { g.translate(W / 2, H / 2); g.scale(cam.z, cam.z); g.translate(-cam.x, -cam.y); }
   g.save(); g.translate(0, pOff);
   // Atmosphäre: heller Rand direkt am Planeten + weicher Schein nach außen
   { const ac = G.boss ? '#ff6f91' : G.pal[2]; let gr = g.createRadialGradient(G.cx, G.cy, G.R * .9, G.cx, G.cy, G.R * 1.08); gr.addColorStop(0, ac + '00'); gr.addColorStop(.75, ac + '40'); gr.addColorStop(1, ac + '00'); g.fillStyle = gr; g.beginPath(); g.arc(G.cx, G.cy, G.R * 1.08, 0, 7); g.fill();
@@ -1871,18 +1883,10 @@ function draw(now) {
     const fa = Math.min(1, a.t * 3, (a.T - a.t) * 1.5), T = lvTier(a.lv || 0), col = a.pud ? '200,255,74' : T >= 3 ? '170,255,60' : '125,255,58';
     const gr = g.createRadialGradient(a.x, a.y, 0, a.x, a.y, a.r); gr.addColorStop(0, `rgba(${col},${.32 * fa})`); gr.addColorStop(.7, `rgba(${col},${.16 * fa})`); gr.addColorStop(1, `rgba(${col},0)`); g.fillStyle = gr; g.beginPath(); g.arc(a.x, a.y, a.r, 0, 7); g.fill();
     for (let q = 0; q < (a.pud ? 3 : 6 + T); q++) { const an = q * 2.4 + tq * (.6 + q * .1), rr = a.r * (.25 + .5 * ((q * .37 + tq * .25) % 1)), bx = a.x + Math.cos(an) * rr, by = a.y + Math.sin(an) * rr * .8 - ((tq * 20 + q * 7) % 12); g.strokeStyle = `rgba(${col},${.8 * fa})`; g.lineWidth = 1.5; g.beginPath(); g.arc(bx, by, 2 + (q % 3), 0, 7); g.stroke(); } }
-  for (const o of orbs) { if (o.t < 0) continue; const k = o.t / o.T, fa = Math.min(1, o.t * 8, (o.T - o.t) * 5), top = cam.y - H / 2 - 40, T = lvTier(o.lv || 0), w = CELL * o.r * 1.3, col = T >= 3 ? '255,120,220' : '255,207,74';
+  for (const o of orbs) { if (o.t < 0) continue; const k = o.t / o.T, fa = Math.min(1, o.t * 8, (o.T - o.t) * 5), top = cam.y - H / 2 / cam.z - 40, T = lvTier(o.lv || 0), w = CELL * o.r * 1.3, col = T >= 3 ? '255,120,220' : '255,207,74';
     const gr = g.createLinearGradient(o.x - w, 0, o.x + w, 0); gr.addColorStop(0, `rgba(${col},0)`); gr.addColorStop(.5, `rgba(${col},${.55 * fa})`); gr.addColorStop(1, `rgba(${col},0)`); g.fillStyle = gr; g.fillRect(o.x - w, top, w * 2, o.y - top);
     g.fillStyle = `rgba(255,255,240,${.9 * fa})`; g.fillRect(o.x - w * .18, top, w * .36, o.y - top);
     g.strokeStyle = `rgba(${col},${fa})`; g.lineWidth = 3; g.beginPath(); g.arc(o.x, o.y, w * (.9 + .25 * Math.sin(o.t * 30)), 0, 7); g.stroke(); g.fillStyle = `rgba(255,255,230,${.8 * fa})`; g.beginPath(); g.arc(o.x, o.y, w * .45, 0, 7); g.fill(); }
-  if (S.buf && S.buf.kl > Date.now()) { const tr = (S.bufP || {}).klT || 0, [gx, gy] = klPos(), an = Math.atan2(G.cy - gy, G.cx - gx) - Math.PI / 2, [c, rgb] = ABCOL.klon[tr], tq = performance.now() / 1000, sc = 1.35 + tr * .1;
-    /* Schattenklon: groß, leuchtend, mit Aura und Nachbildern – klar sichtbar */
-    const au = g.createRadialGradient(gx, gy, 0, gx, gy, 46 * sc); au.addColorStop(0, `rgba(${rgb},.45)`); au.addColorStop(1, `rgba(${rgb},0)`); g.fillStyle = au; g.beginPath(); g.arc(gx, gy, 46 * sc, 0, 7); g.fill();
-    g.strokeStyle = `rgba(${rgb},${.6 + .3 * Math.sin(tq * 6)})`; g.lineWidth = 2.5; g.setLineDash([6, 6]); g.lineDashOffset = -tq * 40; g.beginPath(); g.arc(gx, gy, 26 * sc, 0, 7); g.stroke(); g.setLineDash([]);
-    const shp = (x, y, a, al, s2) => { g.save(); g.translate(x, y); g.rotate(a); g.scale(s2, s2); g.globalAlpha = al; g.shadowColor = c; g.shadowBlur = 22; g.fillStyle = c; g.beginPath(); g.moveTo(0, 16); g.lineTo(-11, -11); g.lineTo(0, -5); g.lineTo(11, -11); g.closePath(); g.fill(); g.shadowBlur = 0; g.strokeStyle = '#ffffff'; g.lineWidth = 1.6 / s2; g.stroke(); g.restore(); };
-    for (let k = 3; k >= 1; k--) { const pa = Math.atan2(gy - G.cy, gx - G.cx) - k * .045, d = Math.hypot(gx - G.cx, gy - G.cy); shp(G.cx + Math.cos(pa) * d, G.cy + Math.sin(pa) * d, an - k * .045, .18 / k + .06, sc); }
-    shp(gx, gy, an, .85 + .15 * Math.sin(tq * 9), sc); g.globalAlpha = 1;
-    g.font = '700 10px monospace'; g.textAlign = 'center'; g.fillStyle = c; g.fillText('KLON', gx, gy - 30 * sc); }
   for (const q of quakes) if (q.t > 0 && q.r > 0) { const fa = Math.max(0, 1 - q.r / (G.R * 1.15)); g.strokeStyle = `rgba(${ABCOL.beben[q.tr][1]},${.85 * fa})`; g.lineWidth = 6 + q.tr * 3; g.beginPath(); g.arc(G.cx, G.cy, q.r, 0, 7); g.stroke(); g.strokeStyle = `rgba(255,255,255,${.5 * fa})`; g.lineWidth = 2; g.beginPath(); g.arc(G.cx, G.cy, q.r * .96, 0, 7); g.stroke(); }
   for (const m of meteors) { const tr = m.tr || 0, [c, rgb] = ABCOL.meteor[tr], r = 6 + tr * 2.5, l = Math.hypot(m.tx - m.x, m.ty - m.y) || 1, ux = (m.tx - m.x) / l, uy = (m.ty - m.y) / l;
     for (let k = 1; k <= 4 + tr * 3; k++) { g.fillStyle = `rgba(${rgb},${.55 - k * .05})`; g.beginPath(); g.arc(m.x - ux * k * (5 + tr), m.y - uy * k * (5 + tr), Math.max(1, r - k * .6), 0, 7); g.fill(); }
@@ -1977,7 +1981,7 @@ function drawMini(now) {
   m.fillStyle = G.cols ? G.cols[2] : '#3b6d78';
   for (let i = 0; i < G.alive.length; i++) if (G.alive[i]) { const c = i % COLS, r = i / COLS | 0; m.fillRect(c * sc, r * sc, Math.ceil(sc), Math.ceil(sc)); }
   for (let i = 0; i < G.alive.length; i++) if (G.alive[i] && G.ore[i]) { m.fillStyle = G.ore[i] === 3 ? '#ffffff' : G.ore[i] === 4 ? '#c9a2ff' : '#ffd23f'; const c = i % COLS, r = i / COLS | 0; m.fillRect(c * sc, r * sc, Math.ceil(sc), Math.ceil(sc)); }
-  const k = sc / CELL; m.strokeStyle = 'rgba(255,255,255,.7)'; m.lineWidth = 1; m.strokeRect((cam.x - W / 2) * k, (cam.y - H / 2) * k, W * k, H * k);
+  const k = sc / CELL; m.strokeStyle = 'rgba(255,255,255,.7)'; m.lineWidth = 1; m.strokeRect((cam.x - W / 2 / cam.z) * k, (cam.y - H / 2 / cam.z) * k, W / cam.z * k, H / cam.z * k);
   m.fillStyle = '#5ce8f0'; m.fillRect(ship.x * k - 2, ship.y * k - 2, 4, 4);
 }
 // Laser mit Stufen-Look: Stufe 10 dicker + Flackern, 25 Energie-Spiralen drumrum (Kamehameha), 50 wird er blau-weiß, 100 riesig mit 3 Spiralen + Funken
@@ -2374,7 +2378,7 @@ const ABIL = [
   { id: 'frost', n: 'Frostschock', d: 'Planet friert: x2 Schaden für 12 s', cd: 42, ico: '<path d="M12 2v20M4 6l16 12M20 6L4 18"/><path d="M9 4l3 2 3-2M9 20l3-2 3 2"/>' },
   { id: 'blitz', n: 'Gewitter', d: '24 Blitze schlagen ein', cd: 35, ico: '<path d="M7 14a5 5 0 1 1 1-9.9A6 6 0 0 1 19 7a4 4 0 0 1-1 7.9"/><path d="M13 12l-3 5h4l-2 5"/>' },
   { id: 'kmag', n: 'Kristallmagnet', d: 'Blöcke geben 20 s lang öfter ◆', cd: 60, ico: '<path d="M6 3v8a6 6 0 0 0 12 0V3M6 7h4M14 7h4"/><path d="M12 19l2 2-2 2-2-2z"/>' },
-  { id: 'klon', n: 'Schattenklon', d: 'Ein Klon greift 12 s lang mit an', cd: 45, ico: '<path d="M7 20l-4-12 4 3 3-6"/><path d="M17 4l4 12-4-3-3 6" stroke-dasharray="2 2"/>' },
+  { id: 'klon', n: 'Schattenklon', d: 'Die Kamera zoomt raus – gegenüber greift 12 s dein Klon an', cd: 45, ico: '<path d="M7 20l-4-12 4 3 3-6"/><path d="M17 4l4 12-4-3-3 6" stroke-dasharray="2 2"/>' },
   { id: 'beben', n: 'Planetenbeben', d: '3 Schockwellen erschüttern den ganzen Planeten', cd: 40, ico: '<path d="M2 12h4l2-5 3 10 3-12 3 9 2-2h3"/>' }
 ];
 // Gemalte Fähigkeiten-Icons (ab/<id>.png) – solange ein Bild fehlt, bleibt das Linien-Symbol
@@ -2392,7 +2396,7 @@ const ABTXT = {
   loch: 'Öffnet ein schwarzes Loch an einer zufälligen Stelle. Es zieht 2 Sekunden lang alles im Radius ein und frisst die Blöcke Stück für Stück.',
   erz: 'Scannt den Planeten und verwandelt zufällige Blöcke in Erz. Erz bringt 10-mal so viele CR, manche werden sogar zu wertvollem pinkem Erz (40-mal).',
   drohne: 'Ein Schwarm Kampfdrohnen umkreist dein Schiff und feuert 15 Sekunden lang Blitze auf nahe Blöcke.', nova: 'Mitten im Planeten zündet eine Supernova. Die Explosion reißt ein riesiges Loch, je höher die Stufe, desto größer.', frost: 'Der ganze Planet friert ein. 12 Sekunden lang machen alle Treffer doppelten Schaden. Perfekt zusammen mit Meteoren oder der Kanone.', blitz: 'Ein Gewitter zieht über den Planeten: 24 Blitze schlagen nacheinander an zufälligen Stellen ein und sprengen je 3×3 Blöcke.', kmag: '20 Sekunden lang bringt jeder zerstörte Block mit etwas Glück einen ◆ Kristall.',
-  klon: 'Neben dir taucht ein Schattenklon deines Schiffs auf und ballert 12 Sekunden lang Laser auf den Planeten. So greifst du an zwei Stellen gleichzeitig an.',
+  klon: 'Die Kamera zoomt raus, und direkt gegenüber auf der anderen Seite des Planeten erscheint eine blau leuchtende Kopie deines Schiffs. Sie ballert 12 Sekunden lang mit, danach zoomt die Kamera wieder zurück.',
   beben: 'Drei Schockwellen rasen vom Kern aus nach außen und treffen dabei jeden einzelnen Block des Planeten. Mit höherer Stufe werden die Wellen stärker.',
   zeit: 'Spult die Zeit vor: Du bekommst sofort so viele CR, wie du sonst in rund 25 Sekunden verdienen würdest (mehr mit höherer Stufe). Ohne dass du warten musst.'
 };
@@ -2441,7 +2445,7 @@ const ABCOL = {
   blitz: [['#a8c8ff', '168,200,255'], ['#ffe94d', '255,233,77'], ['#c06bff', '192,107,255'], ['#ffffff', '255,255,255']],
   kmag: [['#ffffff', '255,255,255'], ['#9fefff', '159,239,255'], ['#c9a2ff', '201,162,255'], ['#ffe94d', '255,233,77']],
   zeit: [['#9dff6a', '157,255,106'], ['#5ce8f0', '92,232,240'], ['#c9a2ff', '201,162,255'], ['#ffe94d', '255,233,77']],
-  klon: [['#c9a2ff', '201,162,255'], ['#8f6bff', '143,107,255'], ['#ff5fe0', '255,95,224'], ['#ffffff', '255,255,255']],
+  klon: [['#6fc8ff', '111,200,255'], ['#4aa8ff', '74,168,255'], ['#3f7bff', '63,123,255'], ['#bfe8ff', '191,232,255']],
   beben: [['#ffbe5a', '255,190,90'], ['#ff8a3a', '255,138,58'], ['#ff4f7a', '255,79,122'], ['#ffe94d', '255,233,77']]
 };
 const abc = (id, k) => (ABCOL[id] || ABCOL.meteor)[ABT(id)][k || 0];
@@ -2462,7 +2466,7 @@ function cast(id, auto) {
   else if (id === 'frost') { S.buf.frz = Date.now() + 12000 * (1 + .1 * (AL(id) - 1)); S.bufP = Object.assign(S.bufP || {}, { frzT: ABT(id) }); }
   else if (id === 'blitz') { const tr = ABT(id); for (let q = 0; q < 24; q++) storms.push({ t: q * .12, d: D * .4 * P, tr }); }
   else if (id === 'kmag') { S.buf.mag = Date.now() + 20000; S.bufP = Object.assign(S.bufP || {}, { mag: .02 + AL(id) * .003, magN: 4 + AL(id) }); }
-  else if (id === 'klon') { S.buf.kl = Date.now() + 12000 * (1 + .1 * (AL(id) - 1)); S.bufP = Object.assign(S.bufP || {}, { kl: D * 1.6 * P, klT: ABT(id) }); }
+  else if (id === 'klon') { klonT0 = 12 * (1 + .1 * (AL(id) - 1)); S.buf.kl = Date.now() + klonT0 * 1000; S.bufP = Object.assign(S.bufP || {}, { kl: D * 1.6 * P, klT: ABT(id) }); }
   else if (id === 'beben') { const tr = ABT(id); for (let q = 0; q < 3; q++) quakes.push({ t: -q * .5, r: 0, d: D * .015 * P, tr, done: new Set() }); shake = 14 + tr * 3; }
   else if (id === 'zeit') { const v = Math.max(S.ema || 0, G.v0 * crMult() * 3) * 25 * P; S.cr += v; earnedSec += v; floats.push({ x: ship.x, y: ship.y - 30, t: 1.6, s: '+' + fmt(v) + ' CR', c: '#9dff6a' }); }
   fx.push({ k: 'cast', x: ship.x, y: ship.y, t: .5, c: abc(id, 1), tr: ABT(id) });
@@ -2828,7 +2832,7 @@ setInterval(() => { try { if (!$('elc') && !$('aug')) loginCheck(); } catch (e) 
 // Update-Trailer: läuft einmal pro großem Update direkt nach dem Start-Planeten, Vollbild, „Überspringen“ ab 5 s
 function updVid() { try { if (!S || S.updV === UPDV) return; } catch (e) { return; }
   const pc = innerWidth > innerHeight, v = document.createElement('div'); v.id = 'updv';
-  v.innerHTML = `<video playsinline autoplay preload="auto" src="update${pc ? '_pc' : ''}.mp4?v=${UPDV}"></video><button id="updsk">Überspringen ▶▶</button>`;
+  v.innerHTML = `<video playsinline autoplay preload="auto" src="update${pc ? '_pc' : ''}.mp4?v=${UPDV}k"></video><button id="updsk">Überspringen ▶▶</button>`;
   document.body.appendChild(v); const vid = v.querySelector('video'), sk = v.querySelector('#updsk');
   const fin = () => { if (v.dataset.x) return; v.dataset.x = 1; S.updV = UPDV; try { save('now'); } catch (e) {} v.classList.add('out'); try { vid.pause(); } catch (e) {} setTimeout(() => v.remove(), 400); };
   vid.onended = fin; vid.onerror = fin; sk.onclick = fin; setTimeout(() => sk.classList.add('on'), 5000);

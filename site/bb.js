@@ -622,7 +622,7 @@
   { id: 'saw', n: 'LG3s Kräutersäge', d: '2 große Sägeblätter kreisen ums Schiff' },
   { id: 'mine', n: 'Allans Minenwerfer', d: 'Minen explodieren auf der Oberfläche' },
   { id: 'sniper', n: 'Königsschuss', d: 'Ein Riesenschuss auf das wertvollste Erz' },
-  { id: 'meteor', n: 'Meteorregen' }, { id: 'whip', n: 'Plasmapeitsche' }, { id: 'rockets', n: 'Raketenschwarm' }, { id: 'grav', n: 'Gravitonbombe' }, { id: 'tornado', n: 'Wirbelsturm' }, { id: 'x_komet', n: 'Kometenhagel' }, { id: 'x_traeger', n: 'Drohnenträger' }, { id: 'x_sturm', n: 'Sturmpeitsche' }, { id: 'x_malstrom', n: 'Mahlstrom' }, { id: 'x_prisma', n: 'Prisma-Blaster' }, { id: 'x_geist', n: 'Nova-Säge' }, { id: 'x_minen', n: 'Bohrminen' }, { id: 'x_bum', n: 'Sternbumerang' }, { id: 'x_frostblitz', n: 'Frostblitz' }, { id: 'x_rail', n: 'Railgun' }, { id: 'x_schwer', n: 'Schwerkraft-Meteor' }, { id: 'x_bohrsturm', n: 'Bohrsturm' }, { id: 'x_saegenring', n: 'Sägenring' }, { id: 'x_novamine', n: 'Nova-Minen' }, { id: 'boomer', n: 'Sichelbumerang' }, { id: 'frost', n: 'Frostkanone' }, { id: 'orbit', n: 'Orbitalstrahl' }, { id: 'acid', n: 'Säurewolke' }
+  { id: 'meteor', n: 'Meteorregen' }, { id: 'whip', n: 'Plasmapeitsche' }, { id: 'rockets', n: 'Raketenschwarm' }, { id: 'grav', n: 'Gravitonbombe' }, { id: 'tornado', n: 'Wirbelsturm' }, { id: 'x_komet', n: 'Kometenhagel' }, { id: 'x_traeger', n: 'Drohnenträger' }, { id: 'x_sturm', n: 'Sturmpeitsche' }, { id: 'x_malstrom', n: 'Mahlstrom' }, { id: 'x_prisma', n: 'Prisma-Blaster' }, { id: 'x_geist', n: 'Nova-Säge' }, { id: 'x_minen', n: 'Bohrminen' }, { id: 'x_bum', n: 'Sternbumerang' }, { id: 'x_aetz', n: 'Ätzstrahl' }, { id: 'x_frostblitz', n: 'Frostblitz' }, { id: 'x_rail', n: 'Railgun' }, { id: 'x_schwer', n: 'Schwerkraft-Meteor' }, { id: 'x_bohrsturm', n: 'Bohrsturm' }, { id: 'x_saegenring', n: 'Sägenring' }, { id: 'x_novamine', n: 'Nova-Minen' }, { id: 'boomer', n: 'Sichelbumerang' }, { id: 'frost', n: 'Frostkanone' }, { id: 'orbit', n: 'Orbitalstrahl' }, { id: 'acid', n: 'Säurewolke' }
 ]; const R = { g: { n: 'Gewöhnlich', c: '#c9d1d3', b: .1 }, s: { n: 'Selten', c: '#8dff5a', b: .25 }, e: { n: 'Episch', c: '#ff5fe0', b: .6 }, l: { n: 'Legendär', c: '#ffe94d', b: 1.5 } }; const A = {"over": "Hyperschub", "gold": "Goldrausch", "meteor": "Meteorschauer", "kanone": "Orbitalkanone", "loch": "Schwarzes Loch", "erz": "Erzradar", "zeit": "Zeitsprung"}; return { I, W, R, A }; })();
   function shipCard(s) {
     if (!s || !s.eq) return '';
@@ -631,10 +631,13 @@
     const ws = DR.W.filter(w => s.w && s.w[w.id]).map(w => `<span>${esc(w.n)} <b>Lv.${s.w[w.id]}</b>${s.mod && s.mod[w.id] ? ` <em>⬢${s.mod[w.id]}</em>` : ''}</span>`).join('');
     const ab = Object.keys(s.ab || {}).filter(k => DR.A[k]).map(k => `<span>${esc(DR.A[k])} <b>Lv.${s.ab[k]}</b></span>`).join('');
     const hc = DR.R[h.r].c;
-    return `<div class="bb-ship"><div class="bb-shv" style="--rc:${hc}"><img src="/drill/ships/${h.id}.png" onerror="this.onerror=null;this.src='/drill/ships/pix/${h.id}.png'" width="96" height="96" alt="${esc(h.n)}" style="display:block;margin:7px auto;image-rendering:pixelated;filter:drop-shadow(0 0 10px ${hc}55)"><span>Rumpf Lv. ${lv(h.id)}</span></div>
-      <div class="bb-spp">${part('h', 'Rumpf')}${part('r', 'Reaktor')}${part('t', 'Triebwerk')}</div></div>
-      ${ws ? `<div class="bb-shl"><small>Waffen</small>${ws}</div>` : ''}${ab ? `<div class="bb-shl"><small>Fähigkeiten</small>${ab}</div>` : ''}`;
+    /* Live-Vorschau: das Schiff feuert alle seine Waffen ins All (drill/showcase.js), darunter die Waffenliste im Spiel-Look */
+    return `<canvas class="dsc" data-dshow style="display:block;width:100%;height:230px;background:#03060c;border:1px solid #1d3a40;margin:2px 0 8px"></canvas>
+      <div class="bb-spp" style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:4px">${part('h', 'Rumpf')}${part('r', 'Reaktor')}${part('t', 'Triebwerk')}</div>
+      <div data-dlist>${ws ? `<div class="bb-shl"><small>Waffen</small>${ws}</div>` : ''}${ab ? `<div class="bb-shl"><small>Fähigkeiten</small>${ab}</div>` : ''}</div>`;
   }
+  let dsP = null; const dsLoad = () => dsP || (dsP = new Promise((ok, no) => { if (window.DrillShow) return ok(); const sc = document.createElement('script'); sc.src = '/drill/showcase.js?v=20261125c'; sc.onload = ok; sc.onerror = no; document.head.appendChild(sc); }));
+  function dshow(box, s) { dsLoad().then(() => { const cv = box.querySelector('[data-dshow]'), li = box.querySelector('[data-dlist]'); if (cv) window.DrillShow.mount(cv, s); if (li) li.innerHTML = window.DrillShow.list(s); }).catch(() => {}); }
   async function detail(row, g, id) {
     const anc = row.closest('.bb-pod') || row, nx = anc.nextElementSibling, had = nx && nx.classList.contains('bb-det') && nx.dataset.for === id;
     anc.parentNode.querySelectorAll('.bb-det').forEach(x => x.remove()); if (had) return;
@@ -648,6 +651,7 @@
           return `<tr><td>${esc(lbl(k))}</td><td class="${win > 0 ? 'w' : ''}">${val(k, v)}</td>${mine ? `<td class="${win < 0 ? 'w' : ''}">${m == null ? '–' : val(k, m)}</td>` : ''}</tr>`; }).join('')}</table>` : '<div class="bb-mut">Noch keine Details gespeichert.</div>')
         + `${a.ls ? `<div class="bb-mut" style="padding:6px 0 0">🕒 zuletzt ${lastSeen(a.ls)}</div>` : ''}<button class="bb-skip" data-prof="${id}">Profil ansehen ›</button>`;
       box.querySelector('[data-prof]').onclick = () => showUser(id);
+      if (g === 'drill' && a.ship && a.ship.eq) dshow(box, a.ship);
     } catch (e) { box.innerHTML = '<div class="bb-mut">Details gerade nicht erreichbar.</div>'; }
   }
   // „zuletzt gespeichert“: heute 07:31 · gestern 22:10 · 12.11. 18:00

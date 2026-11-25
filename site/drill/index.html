@@ -689,7 +689,7 @@ html,body{overscroll-behavior:none;position:fixed;inset:0;width:100%}button,a{to
   </div>
   <div class="ov hide" id="ov"><div class="bx" id="ovb"></div></div>
 </div>
-<script src="../bb.js?v=20261125a"></script>
+<script src="../bb.js?v=20261125c"></script>
 <script>
 'use strict';
 // ================== Daten ==================
@@ -748,7 +748,8 @@ const HYB = {
   x_prisma: { n: 'Prisma-Railgun', p: ['line', 'scatter', 'sniper'], d: 'Dreier-Fusion aller Schusswaffen: Blaster-Schüsse zersplittern in Funken, Scharfschüsse +35 % Krit', c: '#fff07a' },
   x_geist: { n: 'Nova-Säge', p: ['saw', 'nova'], d: 'Die Sägeblätter zünden kleine Nova-Explosionen', c: '#b8ffb0' },
   x_minen: { n: 'Bohrminen', p: ['drill', 'mine'], d: 'Bohrlanze und Minen im Doppelpack: +4 Minen pro Salve', c: '#ff8a5c' },
-  x_bum: { n: 'Sternbumerang', p: ['star', 'boomer'], d: 'Kristall-Bumerangs: +2 Bumerangs pro Wurf', c: '#ff9ad8' }
+  x_bum: { n: 'Sternbumerang', p: ['star', 'boomer'], d: 'Kristall-Bumerangs: +2 Bumerangs pro Wurf', c: '#ff9ad8' },
+  x_aetz: { n: 'Ätzstrahl', p: ['orbit', 'acid'], d: 'Säure-Orbitalstrahl: 50 % breiter, und wo er aufhört, bleibt eine große Säurewolke liegen', c: '#d4ff3a' }
 };
 const HYBM = 5, HYBLV = 100, HYBCOST = 30, HYBS = 25, HYBC = .3; /* Hybride: Anzeige startet bei Lv. 1, ×5 Schaden, alle 25 Stufen ein Extra-★, Upgrades 70 % billiger */
 const HB = h => ((S.hb || {})[h]) || HYBLV, HLV = h => Math.max(1, (S.w[h] || 0) - HB(h) + 1), HXS = h => Math.floor((HLV(h) - 1) / HYBS);
@@ -846,7 +847,7 @@ let S = null;
 // Version des Spielstands: alles mit älterer Version wird verworfen (kompletter Neustart)
 const VER = 14; // interne Stand-Nummer (höher = einmaliger Reset)
 const VLABEL = '0.7'; // angezeigte Version: kleine Updates bleiben, größere Updates -> 0.6 usw.
-const NEWSV = '2026-11-25b', UPDV = '2026-11-25b'; /* UPDV: Update-Trailer einmal zeigen */ // bei größerem Update hochsetzen → „Was ist neu“ erscheint einmal
+const NEWSV = '2026-11-25c', UPDV = '2026-11-25b'; /* UPDV: Update-Trailer einmal zeigen */ // bei größerem Update hochsetzen → „Was ist neu“ erscheint einmal
 const fresh = () => ({ updV: UPDV, seed: (Math.random() * 1e6) | 0, v: VER, newsV: NEWSV, wq5b: 1, wp1: 1, slot1b: 1, aug1: 1, augQ: 1, cr: 0, cry: 0, wm: 1, p: 1, best: 1, w: { line: 1 }, sk: {}, boostEnd: 0, boostCd: 0, ema: 0, t: Date.now(), last: Date.now(), done: 0, dm: 0, dmAll: 0, pc: 0, wp: {}, own: '', ab: {}, hot: [], abT: {}, buf: {}, inv: { h_pfeil: 1, r_basis: 1, t_basis: 1 }, eq: { h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, wo: ['line'], offer: null, rr: null, wpu: [] });
 const norm = o => Object.assign(fresh(), o || {}, { updV: o ? o.updV : UPDV, wq5b: o ? o.wq5b : 1, wp1: o ? o.wp1 : 1, slot1b: o ? o.slot1b : 1, aug1: o ? o.aug1 : 1, newsV: o ? o.newsV : NEWSV, augQ: o ? o.augQ || 0 : 1, w: Object.assign({ line: 1 }, (o && o.w) || {}), sk: (o && o.sk) || {}, wp: (o && o.wp) || {}, ab: (o && o.ab) || {}, hot: (o && o.hot) || [], abT: (o && o.abT) || {}, buf: (o && o.buf) || {}, inv: (o && o.inv && Object.keys(o.inv).length) ? o.inv : { h_pfeil: 1, r_basis: 1, t_basis: 1 }, /* Start-Teile nur bei neuem Spielstand, sonst kämen eingeschmolzene Teile beim Laden zurück */ eq: Object.assign({ h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, (o && o.eq) || {}), wpu: (o && o.wpu) || [], wo: (o && o.wo) || ['line', 'star', 'drill', 'nova', 'scatter', 'drones'].filter(id => o && o.w && o.w[id]) });
 try { S = JSON.parse(localStorage.getItem('gb_save')); } catch (e) {}
@@ -1515,8 +1516,8 @@ function step(dt) {
   curW = 'orbit';
   const dOr = WD('orbit') * Rd;
   if (dOr && (cdOrb -= dt * Rv * sp75('orbit')) <= 0) { cdOrb = 3; const nb = Math.min(3, 1 + Math.floor(ST('orbit') / 2)), tg = nearList(ship.x, ship.y, 14);
-    for (let k = 0; k < nb && tg.length; k++) { const i = tg[(Math.random() * tg.length) | 0], [x, y] = cellXY(i); orbs.push({ x, y, dir: Math.random() < .5 ? -1 : 1, t: -k * .25, T: 1.4, r: (1.2 + .2 * ST('orbit')) * (1 + .3 * ML('orbit')) * Math.sqrt(OV('orbit')), d: dOr * 3 / nb * critMul(), lv: WL('orbit') }); } SND.fx.zap(); }
-  for (let k = orbs.length - 1; k >= 0; k--) { const o = orbs[k]; o.t += dt; if (o.t < 0) continue; if (o.t > o.T) { orbs.splice(k, 1); continue; } o.x += o.dir * CELL * 4.5 * dt;
+    for (let k = 0; k < nb && tg.length; k++) { const i = tg[(Math.random() * tg.length) | 0], [x, y] = cellXY(i); orbs.push({ x, y, dir: Math.random() < .5 ? -1 : 1, t: -k * .25, T: 1.4, r: (1.2 + .2 * ST('orbit')) * (1 + .3 * ML('orbit')) * Math.sqrt(OV('orbit')) * (HY('x_aetz') ? 1.5 : 1), d: dOr * 3 / nb * critMul(), lv: WL('orbit') }); } SND.fx.zap(); }
+  for (let k = orbs.length - 1; k >= 0; k--) { const o = orbs[k]; o.t += dt; if (o.t < 0) continue; if (o.t > o.T) { if (HY('x_aetz')) acids.push({ x: o.x, y: o.y, t: 0, T: 3.5, fly: 0, r: CELL * 2.8, d: o.d * .8, pud: 1 }); orbs.splice(k, 1); continue; } o.x += o.dir * CELL * 4.5 * dt;
     const c0 = cellAt(o.x, o.y); let cc0, rr0; if (c0 >= 0) { cc0 = c0 % COLS; rr0 = c0 / COLS | 0; } else { const j = nearest(o.x, o.y, 9 * CELL * CELL); if (j < 0) continue; cc0 = j % COLS; rr0 = j / COLS | 0; o.y = cellXY(j)[1]; }
     const n = Math.ceil(o.r), cl = []; for (let a = -n; a <= n; a++) for (let b2 = -n; b2 <= n; b2++) { if (a * a + b2 * b2 > o.r * o.r + .5) continue; const cc = cc0 + a, rr = rr0 + b2; if (cc < 0 || cc >= COLS || rr < 0 || rr >= ROWS) continue; const j = rr * COLS + cc; if (G.alive[j]) cl.push(j); }
     for (const j of cl) hit(j, o.d * dt / o.T / Math.max(2, cl.length));
@@ -2251,6 +2252,7 @@ function augCard(c, k) { const T = AUGT[c.t];
 
 // ================== „Was ist neu“: einmal pro größerem Update beim Start, gut sichtbar ==================
 const NEWS = [ // [Icon, Titel, Text, Version] – angezeigt wird nur, was der Spieler noch nicht gesehen hat
+  ['⚒', 'Neuer Hybrid: Ätzstrahl', 'Orbitalstrahl + Säurewolke lassen sich jetzt in der Waffen-Schmiede verschmelzen: 50 % breiterer Strahl, und am Ende bleibt eine große Säurewolke liegen.', '2026-11-25c'],
   ['🛰', '2 neue Waffen', 'Der Orbitalstrahl feuert aus dem All und fegt über die Oberfläche. Die Säurewolke legt sich auf den Planeten und zersetzt alles darin.', '2026-11-25b'],
   ['✨', '2 neue Fähigkeiten', 'Schattenklon: ein zweites Schiff greift 12 s lang mit an. Planetenbeben: 3 Schockwellen treffen jeden Block des Planeten.', '2026-11-25b'],
   ['🔗', 'Waffen-Synergien', 'Bestimmte Waffen-Paare verstärken sich gegenseitig, z. B. Frostkanone + Kettenblitz = Supraleiter. Alles dazu findest du im neuen Tab „Synergie“ unten – zusammen mit den Waffen-Mods. Klappt auch mit verschmolzenen Hybrid-Waffen.', '2026-11-25b'],

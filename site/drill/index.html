@@ -824,7 +824,7 @@ const WARP = [
   { id: 'off', n: 'Überstunden', d: l => 'Offline ' + offH(l) + ' h → ' + offH(l + 1) + ' h', max: 5, cost: wpCost, ico: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>' },
   { id: 'chips', n: 'Chip-Fabrik', d: l => '+' + l + ' ⬢ extra alle 5 Planeten', max: 3, cost: wpCost, ico: '<path d="M12 2l8 5v10l-8 5-8-5V7z"/><path d="M9 10h6v4H9z"/>' },
   { id: 'elite', n: 'Elite-Jäger', d: () => 'Elite-Planeten öfter', max: 4, cost: wpCost, ico: '<path d="M12 3l9 16H3z"/><path d="M12 9v5M12 17h.01"/>' },
-  { id: 'kiste', n: 'Kistenglück', d: () => 'Episch und Legendär öfter', max: 5, cost: wpCost, ico: '<rect x="3" y="8" width="18" height="12" rx="1"/><path d="M3 12h18M12 4l1.5 2.5L16 7l-2 2 .5 3L12 10.5 9.5 12l.5-3-2-2 2.5-.5z"/>' },
+  { id: 'kiste', n: 'Kistenglück', d: () => 'Episch öfter, Legendär bis 10 % (volle Stufe)', max: 5, cost: l => 45 * Math.max(1, l), ico: '<rect x="3" y="8" width="18" height="12" rx="1"/><path d="M3 12h18M12 4l1.5 2.5L16 7l-2 2 .5 3L12 10.5 9.5 12l.5-3-2-2 2.5-.5z"/>' },
   { id: 'dkrit', n: 'Dunkler Krit', d: () => 'Krit-Schaden +100 %', max: 5, cost: wpCost, ico: '<path d="M12 2v6M12 16v6M4 12h4M16 12h4"/><circle cx="12" cy="12" r="3"/>' },
   { id: 'meister', n: 'Fähigkeiten-Meister', d: () => 'Fähigkeiten laden 8 % schneller', max: 5, cost: wpCost, ico: '<path d="M12 2l3 7 7 .5-5.5 4.5 2 7L12 17l-6.5 4 2-7L2 9.5 9 9z"/><circle cx="12" cy="12" r="2"/>' },
   { id: 'magnet', n: 'Materie-Magnet', d: () => '+20 % ✦ beim Warp', max: 5, cost: wpCost, ico: '<path d="M6 3v8a6 6 0 0 0 12 0V3M6 7h4M14 7h4"/>' },
@@ -2717,8 +2717,11 @@ function openShopCrate(k) {
   openCrate(k);
 }
 // Ein Schiffsteil aus einer Kiste ziehen und in den Hangar legen
+/* Kistenglück: Episch öfter; Legendär (Gold) steigt bis 10 % auf voller Stufe */
+function crateW(k) { const L = WP('kiste'), mx = WARP.find(w => w.id === 'kiste').max, b = k.w.l / (k.w.g + k.w.s + k.w.e + k.w.l), ww = { g: k.w.g, s: k.w.s, e: k.w.e * (1 + .25 * L), l: 0 };
+  const p = L ? b + (.10 - b) * Math.pow(L / mx, 1.6) : b, o = ww.g + ww.s + ww.e; ww.l = o * p / (1 - p); return ww; }
 function rollItem(k) {
-  const L = WP('kiste'), ww = { g: k.w.g, s: k.w.s, e: k.w.e * (1 + .25 * L), l: k.w.l * (1 + .6 * L) }, tot = ww.g + ww.s + ww.e + ww.l;
+  const ww = crateW(k), tot = ww.g + ww.s + ww.e + ww.l;
   let roll = Math.random() * tot, r = Object.keys(ww).find(x => ww[x] > 0) || 'g'; for (const [rr, w] of Object.entries(ww)) { if ((roll -= w) < 0) { r = rr; break; } }
   const pool = ITEMS.filter(x => x.r === r), it = pool[(Math.random() * pool.length) | 0], had = S.inv[it.id] || 0;
   S.dup = S.dup || {}; if (had) S.dup[it.id] = (S.dup[it.id] || 0) + 1; else S.inv[it.id] = 1;
@@ -2746,8 +2749,8 @@ function openMulti(k, n) {
 }
 function crateOdds(k) { // Wahrscheinlichkeiten einer Kiste: je Seltenheit und je Teil
   let h = '';
-  if (k.w) { const tot = Object.values(k.w).reduce((a, b) => a + b, 0);
-    for (const r of ['l', 'e', 's', 'g']) { if (!k.w[r]) continue; const its = ITEMS.filter(i => i.r === r), pr = k.w[r] / tot * 100;
+  if (k.w) { const kw = crateW(k), tot = Object.values(kw).reduce((a, b) => a + b, 0);
+    for (const r of ['l', 'e', 's', 'g']) { if (!kw[r]) continue; const its = ITEMS.filter(i => i.r === r), pr = kw[r] / tot * 100;
       h += `<div class="odh" style="color:${RAR[r].c}">${RAR[r].n} · ${pr.toFixed(pr < 1 ? 2 : 1).replace('.', ',')} %</div><div class="odl">${its.map(i => `<span>${itemSvg(i, 22)}<em>${i.n}</em><b>${(pr / its.length).toFixed(pr / its.length < 1 ? 3 : 2).replace('.', ',')} %</b></span>`).join('')}</div>`; } }
   if (k.ab) h += `<div class="odh" style="color:#c9a2ff">Fähigkeit · ${k.w ? 'zusätzlich' : '100 %'}</div><p style="margin:4px 0 0;font-size:12px">Jede der ${ABIL.length} Fähigkeiten gleich wahrscheinlich (je ${(100 / ABIL.length).toFixed(1).replace('.', ',')} %): neu freischalten oder +1 Stufe.</p>`;
   overlay(`<h2 style="color:${k.c}">${k.n} · Chancen</h2><div class="odds2">${h}</div>`, [['Schließen', null]]); }

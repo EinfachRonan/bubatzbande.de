@@ -271,7 +271,7 @@ html,body{height:100%;background:var(--bg);color:var(--txt);font:600 14px var(--
 .mods{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
 .mod{display:flex;align-items:center;gap:9px;padding:8px;background:linear-gradient(90deg,#140e07,#0a0805);box-shadow:inset 3px 0 0 #6b4a22,inset 0 0 0 1px #2a1e10}
 .mod.on{box-shadow:inset 3px 0 0 #ff9f43,inset 0 0 0 1px #4a3216,0 0 10px rgba(255,159,67,.12)}
-.mod.nw{opacity:.6}
+.mod.mnw{opacity:.6}
 .mod .wic{flex:none;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:1.5px solid #ff9f43;color:#ff9f43;background:#0a0703}.mod .wic svg{width:22px;height:22px}
 .mod .nm{flex:1;min-width:0}.mod b{display:block;font:400 11px Silkscreen,var(--mono);color:#ffd9a8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mod small{display:block;font-size:10px;color:#ff9f43;margin-top:2px;letter-spacing:.05em}.mod em{display:block;font-style:normal;font-size:10.5px;color:#e9dccb;margin-top:3px;line-height:1.3}.mod em.nx{color:#9a8a76}
@@ -500,6 +500,8 @@ html,body{overscroll-behavior:none;position:fixed;inset:0;width:100%}button,a{to
 .fg{margin:0 0 9px;padding:11px 12px;border-style:solid;border-image:url(ui/panel.png) 36 54 36 54 fill / 11px 15px 11px 15px stretch}
 .fg.rdy{box-shadow:0 0 14px color-mix(in srgb,var(--hc) 45%,transparent)}.fg.on{box-shadow:inset 0 0 22px color-mix(in srgb,var(--hc) 30%,transparent)}
 .fg-r{display:flex;align-items:center;gap:4px;margin-bottom:8px;min-width:0}.fg-r small{font:600 9.5px var(--mono);color:var(--mut);min-width:0;white-space:nowrap}.fg-r .pl{font:700 16px var(--mono);color:#7f9196;margin:0 2px}
+.syns{display:flex;flex-direction:column;gap:6px;margin:6px 0 4px}.syn{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid #ffffff1a;border-radius:10px;background:#0a0f16cc;opacity:.62}.syn.on{opacity:1;border-color:var(--sc);box-shadow:0 0 12px -4px var(--sc),inset 0 0 14px -8px var(--sc)}.syn-ic{display:flex;align-items:center;gap:3px;flex:none}.syn-ic b{color:#ffffff80;font-size:12px}.syn-ic .fg-ic{width:26px;height:26px}.syn-ic .fg-ic svg{width:18px;height:18px}.syn-ic .miss{filter:grayscale(1);opacity:.45}.syn-t{min-width:0}.syn-t b{font-size:12px;color:var(--sc)}.syn-t i{font-style:normal;font-size:9px;margin-left:6px;padding:1px 5px;border-radius:4px;background:var(--sc);color:#05080c;font-weight:700;letter-spacing:.05em}.syn-t small{display:block;font-size:10px;line-height:1.35;color:#c8d4e0;margin-top:2px}
+#updv{position:fixed;inset:0;z-index:100000;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity .4s}#updv.out{opacity:0}#updv video{width:100%;height:100%;object-fit:contain;background:#000}#updsk{position:absolute;right:max(16px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));padding:10px 16px;font:700 13px var(--mono);letter-spacing:.06em;color:#fff;background:rgba(5,8,12,.72);border:1.5px solid #ffffff66;border-radius:10px;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .35s,transform .35s}#updsk.on{opacity:1;pointer-events:auto;transform:none}#updsk:hover{border-color:#5ce8f0;color:#5ce8f0}
 .fg-ic{flex:none;width:30px;height:30px;border:1.5px solid;border-radius:8px;background:#05080c;display:flex;align-items:center;justify-content:center}.fg-ic svg{width:21px;height:21px}
 .fg-ic.big{width:42px;height:42px;margin-left:auto;box-shadow:0 0 12px currentColor}.fg-ic.big svg{width:26px;height:26px}
 .fg-t b{display:block;font:400 15px Silkscreen,var(--mono);color:var(--hc)}.fg-t span{display:block;font-size:12px;color:#cfd8da;margin:2px 0}.fg-t em{font-style:normal;font-size:10.5px;color:var(--mut)}
@@ -677,6 +679,7 @@ html,body{overscroll-behavior:none;position:fixed;inset:0;width:100%}button,a{to
     <div class="list" id="list"></div>
     <nav class="nav">
       <button data-t="w" class="on" aria-label="Waffen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20l7-7M14 4l6 6-8 8-6-6z"/></svg>Waffen</button>
+      <button data-t="y" aria-label="Synergien"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>Synergie</button>
       <button data-t="s" aria-label="Skills"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7 7 .5-5.5 4.5 2 7L12 17l-6.5 4 2-7L2 9.5 9 9z"/></svg>Skills<span class="dot" id="skdot" hidden></span></button>
       <button data-t="a" aria-label="Fähigkeiten"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l7-3-4 7M5 12l9-4-3 8M8 6l13-3-5 13z"/></svg>Fähigk.<span class="dot" id="abdot" hidden></span></button>
       <button data-t="h" aria-label="Hangar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l5 14-5-3-5 3z"/><path d="M8 19l4 3 4-3"/></svg>Hangar<span class="dot" id="hgdot" hidden></span></button>
@@ -706,10 +709,12 @@ const WICO = {
   grav: '<circle cx="12" cy="12" r="3"/><path d="M12 3a9 9 0 0 1 9 9M12 21a9 9 0 0 1-9-9M19 5a12 12 0 0 1-3 13M5 19A12 12 0 0 1 8 6"/>',
   tornado: '<path d="M3 5h18M5 9h14M7 13h10M9 17h6M11 21h2"/>',
   boomer: '<path d="M4 20C6 10 12 5 20 4c-5 3-8 8-9 16z"/>',
-  frost: '<path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/><path d="M9.5 3.5L12 6l2.5-2.5M9.5 20.5L12 18l2.5 2.5"/>'
+  frost: '<path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/><path d="M9.5 3.5L12 6l2.5-2.5M9.5 20.5L12 18l2.5 2.5"/>',
+  orbit: '<rect x="9" y="2" width="6" height="5" rx="1"/><path d="M4 4.5h5M15 4.5h5M12 7v9"/><path d="M9 16l3 6 3-6z"/>',
+  acid: '<path d="M12 3c3 5 6 8 6 12a6 6 0 0 1-12 0c0-4 3-7 6-12z"/><circle cx="10" cy="15" r="1.5"/><circle cx="14" cy="12" r="1"/>'
 };
 // Signaturfarbe je Waffe: jede Attacke hat ihre eigene Farbe, damit man auch bei vollem Feuer alles auseinanderhält
-const WCOL = { line: '#5ce8f0', star: '#ff4f7a', drill: '#4fc3ff', nova: '#8cff9a', scatter: '#ff9a3a', drones: '#c8ff5a', chain: '#a8a8ff', saw: '#e8eef2', mine: '#ff3a5c', sniper: '#ffd23f', meteor: '#ff7a2a', whip: '#3affc0', rockets: '#ff9b7a', grav: '#ff5fd0', tornado: '#8fb8ff', boomer: '#b98cff', frost: '#bfefff' };
+const WCOL = { line: '#5ce8f0', star: '#ff4f7a', drill: '#4fc3ff', nova: '#8cff9a', scatter: '#ff9a3a', drones: '#c8ff5a', chain: '#a8a8ff', saw: '#e8eef2', mine: '#ff3a5c', sniper: '#ffd23f', meteor: '#ff7a2a', whip: '#3affc0', rockets: '#ff9b7a', grav: '#ff5fd0', tornado: '#8fb8ff', boomer: '#b98cff', frost: '#bfefff', orbit: '#ffcf4a', acid: '#7dff3a' };
 const INK = '#050912';
 const WEAP = [
   { id: 'line', n: 'Kobold-Blaster', d: 'Schießt Energie-Kugeln auf den nächsten Block' },
@@ -728,7 +733,9 @@ const WEAP = [
   { id: 'grav', n: 'Gravitonbombe', d: 'Mini-Singularität zieht Blöcke in sich hinein' },
   { id: 'tornado', n: 'Wirbelsturm', d: 'Ein Tornado wandert über die Oberfläche und frisst sich durch die Blöcke' },
   { id: 'boomer', n: 'Sichelbumerang', d: 'Leuchtende Sichel schneidet hin und zurück durch die Blöcke' },
-  { id: 'frost', n: 'Frostkanone', d: 'Eissplitter frieren Blöcke ein – gefrorene Blöcke nehmen +30 % Schaden' }
+  { id: 'frost', n: 'Frostkanone', d: 'Eissplitter frieren Blöcke ein – gefrorene Blöcke nehmen +30 % Schaden' },
+  { id: 'orbit', n: 'Orbitalstrahl', d: 'Ein Satellit feuert einen Strahl aus dem All, der über die Oberfläche fegt' },
+  { id: 'acid', n: 'Säurewolke', d: 'Ätzende Säurewolken legen sich auf den Planeten und zersetzen Blöcke' }
 ];
 // Stärke hängt davon ab, als wievielte Waffe sie gekauft wurde, nicht welche es ist
 // ===== Waffen-Schmiede: zwei Waffen auf Stufe 100 verschmelzen zu einer Hybrid-Waffe =====
@@ -748,6 +755,23 @@ const LVd = id => HYB[id] && S.w[id] ? HLV(id) : WL(id); /* angezeigte Stufe */
 let HP = {}; // Eltern-Waffe -> aktive Hybrid-Waffe
 function hybSync() { HP = {}; for (const h in HYB) if (S.w && S.w[h]) for (const p of HYB[h].p) HP[p] = h; }
 const HY = h => !!(S.w && S.w[h]);
+/* Waffen-Synergien: zwei bestimmte Waffen gleichzeitig besitzen (auch verschmolzen) → Bonus. Jede Waffe hat genau einen Partner. */
+const SYN = [
+  { id: 'supra', p: ['frost', 'chain'], n: 'Supraleiter', c: '#9fe8ff', b: { chain: .3, frost: .2 }, d: 'Eis leitet Strom: Der Kettenblitz springt 40 % weiter und macht auf gefrorenen Blöcken doppelten Schaden.' },
+  { id: 'schwer', p: ['grav', 'meteor'], n: 'Schwerkraft-Regen', c: '#ff9ae8', b: { meteor: .3, grav: .2 }, d: 'Die Gravitation zieht Meteore an: Krater werden ein Feld größer, Meteore +30 % Schaden.' },
+  { id: 'saegew', p: ['saw', 'tornado'], n: 'Sägewirbel', c: '#9dff6a', b: { saw: .4, tornado: .4 }, d: 'Der Wirbelsturm schleudert Splitter in die Sägen: beide Waffen +40 % Schaden.' },
+  { id: 'spreng', p: ['rockets', 'mine'], n: 'Sprengkopf', c: '#ff7a2a', b: { rockets: .5, mine: .25 }, d: 'Raketen mit Minen-Ladung: Raketen +50 %, Minen +25 % Schaden.' },
+  { id: 'fokus', p: ['star', 'sniper'], n: 'Kristallfokus', c: '#ff4f7a', b: { sniper: .6, star: .2 }, d: 'Der Kristallstern bündelt den Königsschuss: Königsschuss +60 %, Kristallstern +20 % Schaden.' },
+  { id: 'kern', p: ['drill', 'nova'], n: 'Kernschmelze', c: '#6effaa', b: { drill: .4, nova: .4 }, d: 'Die Bohrlanze bringt das Plasma tief rein: beide Waffen +40 % Schaden.' },
+  { id: 'schwarm', p: ['drones', 'scatter'], n: 'Schwarmfeuer', c: '#ffd23f', b: { drones: .35, scatter: .35 }, d: 'Drohnen markieren Ziele fürs Streufeuer: beide Waffen +35 % Schaden.' },
+  { id: 'linse', p: ['line', 'orbit'], n: 'Fokuslinse', c: '#ffcf4a', b: { orbit: .4, line: .3 }, d: 'Der Kobold-Blaster lenkt den Orbitalstrahl: Strahl +40 %, Blaster +30 % Schaden.' },
+  { id: 'gift', p: ['acid', 'tornado'], n: 'Giftsturm', c: '#7dff3a', b: { acid: .3, tornado: .2 }, d: 'Der Wirbelsturm verteilt die Säure: Säurewolken 40 % größer, Säure +30 %, Wirbel +20 % Schaden.' },
+  { id: 'regen', p: ['orbit', 'acid'], n: 'Säureregen', c: '#c8ff4a', b: { orbit: .25, acid: .25 }, d: 'Der Orbitalstrahl verdampft Säure: Er hinterlässt ätzende Pfützen, beide Waffen +25 % Schaden.' },
+  { id: 'sichel', p: ['whip', 'boomer'], n: 'Sichelpeitsche', c: '#b8fff0', b: { whip: .35, boomer: .35 }, d: 'Die Peitsche schleudert den Bumerang schneller zurück: beide Waffen +35 % Schaden.' }
+];
+const synOn = sy => sy.p.every(p => WL(p) > 0), SY = id => { const x = SYN.find(q => q.id === id); return !!(x && synOn(x)); };
+const SYB = id => SYN.reduce((a, sy) => a + (sy.b[id] && synOn(sy) ? sy.b[id] : 0), 0);
+const SYBw = id => HYB[id] ? HYB[id].p.reduce((a, p) => a + SYB(p), 0) / HYB[id].p.length : SYB(id);
 for (const h in HYB) { const H = HYB[h]; WEAP.push({ id: h, n: H.n, d: H.d, hyb: 1 }); }
 const T_DPS = [2, 9, 34, 120, 450, 1800, 7000, 28000, 110000, 450000];
 const T_UP = [10, 350, 5e3, 9e4, 1.8e6, 3.5e7, 7e8, 1.4e10, 2.8e11, 5.6e12];
@@ -785,7 +809,7 @@ const wpCost = l => 25 * Math.max(1, l); // Stufe 1 gibt's beim Ziehen gratis, d
 const WARP = [
   { id: 'kraft', n: 'Dunkle Kraft', d: () => '+100 % Schaden und CR', max: 20, cost: wpCost, ico: '<path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/><circle cx="12" cy="12" r="2"/>' },
   { id: 'tempo', n: 'Schusstempo', d: () => '+8 % Schussgeschwindigkeit aller Waffen', max: 10, cost: wpCost, ico: '<path d="M3 12h10M9 7l5 5-5 5"/><path d="M15 7l5 5-5 5"/>' },
-  { id: 'slot', n: 'Waffenslots', d: () => '+1 Platz für eine Waffe', max: 8, cost: wpCost, ico: '<rect x="3" y="6" width="7" height="12"/><rect x="14" y="6" width="7" height="12"/><path d="M17.5 10v4M15.5 12h4"/>' },
+  { id: 'slot', n: 'Waffenslots', d: () => '+1 Platz für eine Waffe', max: 10, cost: wpCost, ico: '<rect x="3" y="6" width="7" height="12"/><rect x="14" y="6" width="7" height="12"/><path d="M17.5 10v4M15.5 12h4"/>' },
   { id: 'start', n: 'Startkapital', d: l => 'Start mit ' + fmt(startCr(l + 1)) + ' CR', max: 10, cost: wpCost, ico: '<circle cx="12" cy="12" r="8"/><path d="M12 7v10M9 10h6"/>' },
   { id: 'keep', n: 'Kristallspeicher', d: l => 'Warp behält ' + keepPct(l) + ' % → ' + keepPct(l + 1) + ' % ◆', max: 6, cost: wpCost, ico: '<path d="M12 2l8 5v10l-8 5-8-5V7z"/><path d="M8 12h8M12 8v8"/>' },
   { id: 'kris', n: 'Kristallregen', d: () => '+2 ◆ pro Planet', max: 5, cost: wpCost, ico: '<path d="M12 2l8 5v10l-8 5-8-5V7z"/>' },
@@ -806,6 +830,9 @@ const startCr = l => l ? 300 * Math.pow(8, l - 1) : 0;
 const wpOpen = id => id === 'kraft' || id === 'tempo' || (S.wpu || []).includes(id);
 const wpUnlCost = () => 10; /* neue Warp-Fähigkeit freischalten: immer 10 ✦ */
 const maxWeapons = () => 2 + WP('slot');
+/* Slots „voll“: alle gekauft ODER es gibt keine Waffe mehr, die noch einen Platz bräuchte (Rest ist verschmolzen) */
+const slotFull = () => WP('slot') >= 10 || maxWeapons() >= owned().length + WEAP.filter(w => !w.hyb && !WL(w.id)).length;
+const wpMx = (id, l) => l >= WARP.find(x => x.id === id).max || (id === 'slot' && slotFull());
 const NAMES = ['Kräuterhöhle', 'Rostrot', 'Violettia', 'Moosmond', 'Spießerstern', 'Frostkugel', 'Goldader'];
 // Große Zahlen abkürzen: 1.2K, 3.4M, 5.6B … danach aa, ab, ac … (wie in Idle-Spielen)
 const FMTU = ['K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc'].concat(Array.from({ length: 26 * 26 }, (_, i) => String.fromCharCode(97 + (i / 26 | 0)) + String.fromCharCode(97 + i % 26)));
@@ -818,9 +845,9 @@ let S = null;
 // Version des Spielstands: alles mit älterer Version wird verworfen (kompletter Neustart)
 const VER = 14; // interne Stand-Nummer (höher = einmaliger Reset)
 const VLABEL = '0.7'; // angezeigte Version: kleine Updates bleiben, größere Updates -> 0.6 usw.
-const NEWSV = '2026-11-25'; // bei größerem Update hochsetzen → „Was ist neu“ erscheint einmal
-const fresh = () => ({ seed: (Math.random() * 1e6) | 0, v: VER, newsV: NEWSV, wq5b: 1, wp1: 1, slot1b: 1, aug1: 1, augQ: 1, cr: 0, cry: 0, wm: 1, p: 1, best: 1, w: { line: 1 }, sk: {}, boostEnd: 0, boostCd: 0, ema: 0, t: Date.now(), last: Date.now(), done: 0, dm: 0, dmAll: 0, pc: 0, wp: {}, own: '', ab: {}, hot: [], abT: {}, buf: {}, inv: { h_pfeil: 1, r_basis: 1, t_basis: 1 }, eq: { h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, wo: ['line'], offer: null, rr: null, wpu: [] });
-const norm = o => Object.assign(fresh(), o || {}, { wq5b: o ? o.wq5b : 1, wp1: o ? o.wp1 : 1, slot1b: o ? o.slot1b : 1, aug1: o ? o.aug1 : 1, newsV: o ? o.newsV : NEWSV, augQ: o ? o.augQ || 0 : 1, w: Object.assign({ line: 1 }, (o && o.w) || {}), sk: (o && o.sk) || {}, wp: (o && o.wp) || {}, ab: (o && o.ab) || {}, hot: (o && o.hot) || [], abT: (o && o.abT) || {}, buf: (o && o.buf) || {}, inv: (o && o.inv && Object.keys(o.inv).length) ? o.inv : { h_pfeil: 1, r_basis: 1, t_basis: 1 }, /* Start-Teile nur bei neuem Spielstand, sonst kämen eingeschmolzene Teile beim Laden zurück */ eq: Object.assign({ h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, (o && o.eq) || {}), wpu: (o && o.wpu) || [], wo: (o && o.wo) || ['line', 'star', 'drill', 'nova', 'scatter', 'drones'].filter(id => o && o.w && o.w[id]) });
+const NEWSV = '2026-11-25b', UPDV = '2026-11-25b'; /* UPDV: Update-Trailer einmal zeigen */ // bei größerem Update hochsetzen → „Was ist neu“ erscheint einmal
+const fresh = () => ({ updV: UPDV, seed: (Math.random() * 1e6) | 0, v: VER, newsV: NEWSV, wq5b: 1, wp1: 1, slot1b: 1, aug1: 1, augQ: 1, cr: 0, cry: 0, wm: 1, p: 1, best: 1, w: { line: 1 }, sk: {}, boostEnd: 0, boostCd: 0, ema: 0, t: Date.now(), last: Date.now(), done: 0, dm: 0, dmAll: 0, pc: 0, wp: {}, own: '', ab: {}, hot: [], abT: {}, buf: {}, inv: { h_pfeil: 1, r_basis: 1, t_basis: 1 }, eq: { h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, wo: ['line'], offer: null, rr: null, wpu: [] });
+const norm = o => Object.assign(fresh(), o || {}, { updV: o ? o.updV : UPDV, wq5b: o ? o.wq5b : 1, wp1: o ? o.wp1 : 1, slot1b: o ? o.slot1b : 1, aug1: o ? o.aug1 : 1, newsV: o ? o.newsV : NEWSV, augQ: o ? o.augQ || 0 : 1, w: Object.assign({ line: 1 }, (o && o.w) || {}), sk: (o && o.sk) || {}, wp: (o && o.wp) || {}, ab: (o && o.ab) || {}, hot: (o && o.hot) || [], abT: (o && o.abT) || {}, buf: (o && o.buf) || {}, inv: (o && o.inv && Object.keys(o.inv).length) ? o.inv : { h_pfeil: 1, r_basis: 1, t_basis: 1 }, /* Start-Teile nur bei neuem Spielstand, sonst kämen eingeschmolzene Teile beim Laden zurück */ eq: Object.assign({ h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, (o && o.eq) || {}), wpu: (o && o.wpu) || [], wo: (o && o.wo) || ['line', 'star', 'drill', 'nova', 'scatter', 'drones'].filter(id => o && o.w && o.w[id]) });
 try { S = JSON.parse(localStorage.getItem('gb_save')); } catch (e) {}
 if (S && S.v !== VER) { try { localStorage.removeItem('gb_intro'); } catch (e) {} } // neuer Start: Intro nochmal zeigen
 S = S && typeof S.cr === 'number' && S.v === VER ? norm(S) : fresh();
@@ -967,9 +994,9 @@ const WPTXT = {
   skip: 'Nach dem Warp startest du ein paar Planeten weiter.', comet: 'Kometen tauchen öfter auf und bringen mehr CR.', off: 'Wie lange dein Schiff weiter CR sammelt, wenn du nicht im Spiel bist. Bleibt für immer.', chips: 'Für jeden 5. Planeten gibt es zusätzliche ⬢ Waffen-Chips.', elite: 'Elite-Planeten (doppelt so hart, Kiste garantiert) tauchen öfter auf.', kiste: 'Epische und legendäre Teile kommen in allen Kisten öfter.', dkrit: 'Kritische Treffer machen mehr Schaden: x3 → x4 → x5 …', meister: 'Alle Fähigkeiten auf der Hotbar laden schneller.', magnet: 'Jeder Warp bringt mehr Dunkle Materie ✦.', erbe: 'Beim Warp verlierst du nicht alle Skill-Stufen: pro Stufe bleibt in jedem Skill eine Stufe erhalten.', auto: 'Zündet deine Fähigkeiten von der Hotbar automatisch, sobald sie bereit sind.'
 };
 const wpVal = (id, l) => ({ kraft: '+' + 100 * l + ' % Schaden & CR', slot: (2 + l) + ' Waffenslots', start: fmt(startCr(l)) + ' CR', keep: keepPct(l) + ' % ◆', kris: '+' + 2 * l + ' ◆ pro Planet', boost: (5 + 2 * l) + ' min Boost', skip: 'Start ab Planet ' + (1 + 2 * l), comet: '+' + 50 * l + ' % Kometen', off: offH(l) + ' h offline', chips: '+' + l + ' ⬢ alle 5 Planeten', elite: Math.round((.12 + .05 * l) * 100) + ' % Elite', kiste: 'Episch x' + (1 + .25 * l).toFixed(2) + ' · Legendär x' + (1 + .6 * l).toFixed(1), dkrit: 'Krit x' + (3 + l), meister: '-' + 8 * l + ' % Abklingzeit', magnet: '+' + 20 * l + ' % ✦', erbe: l + ' Stufen bleiben', auto: l ? 'an' : 'aus' })[id];
-function wpInfo(id, dir) { const w = WARP.find(x => x.id === id), l = WP(id), mx = l >= w.max, c = w.cost(l);
+function wpInfo(id, dir) { const w = WARP.find(x => x.id === id), l = WP(id), mx = wpMx(id, l), c = w.cost(l);
   infoSheet({ dir, nav: navOf('data-wp', id, wpInfo), n: w.n, ico: w.ico, col: '#c9a2ff', sub: 'Warp-Fähigkeit · Stufe ' + l + '/' + w.max + ' · bleibt für immer', txt: WPTXT[id], rows: [['Wirkung', wpVal(id, l), mx ? null : wpVal(id, l + 1)], ['Kosten', mx ? 'MAX' : '✦' + c]],
-    buy: [mx ? 'MAX' : 'Leveln · ✦' + c, mx || S.dm < c, () => { if (WP(id) >= w.max || S.dm < w.cost(WP(id))) return; S.dm -= w.cost(WP(id)); S.wp[id] = WP(id) + 1; save('now'); render(); wpInfo(id); }] }); }
+    buy: [mx ? 'MAX' : 'Leveln · ✦' + c, mx || S.dm < c, () => { if (wpMx(id, WP(id)) || S.dm < w.cost(WP(id))) return; S.dm -= w.cost(WP(id)); S.wp[id] = WP(id) + 1; save('now'); render(); wpInfo(id); }] }); }
 function wInfo(id, dir) { const w = WEAP.find(x => x.id === id), l = WL(id), m = MODS[id], ml = ML(id);
   infoSheet({ dir, nav: navOf('data-wi', id, wInfo), n: w.n, ico: WICO[id], sub: (HYB[id] ? 'Hybrid-Waffe' : 'Waffe') + ' · Lv. ' + LVd(id) + (ST(id) ? ' · ★' + ST(id) : '') + ' · nächstes ★ bei Lv. ' + (HYB[id] && S.w[id] ? (HXS(id) + 1) * HYBS + 1 : msNext(l)), txt: w.d + '.' + (UPTXT[id] ? ' Jedes ★-Upgrade: x2 Schaden und ' + UPTXT[id] + '.' : ''),
     rows: [['Schaden/s', fmt(wDps(w))], ['Mod', ml + '/' + MOD_MAX + (ml ? ' · +' + 50 * ml + ' %' : '')], ['Mod-Special', ml ? m.f(ml) : 'ab Mod 1'], ['Special', m.s]] }); }
@@ -987,8 +1014,8 @@ const msN = l => MS.filter(m => l >= m).length + (l >= 200 ? Math.floor((l - 100
 const msNext = l => { for (const m of MS) if (l < m) return m; return Math.max(200, (Math.floor(l / 100) + 1) * 100); };
 const msPrev = l => { let p = 0; for (const m of MS) if (l >= m) p = m; return l >= 200 ? Math.floor(l / 100) * 100 : p; };
 const ST = id => msN(WL(id)) + (HYB[id] && S.w[id] ? HXS(id) : 0);
-const UPTXT = { line: 'ein Schuss mehr', star: 'mehr Kristall-Laser', drill: 'breitere, schnellere Lanze', nova: 'größerer Explosionsradius', scatter: '2 Schüsse mehr', drones: 'neue Drohne', chain: 'Blitz springt weiter', saw: 'mehr Sägeblätter', mine: 'mehr Minen', sniper: 'schießt schneller', meteor: 'ein Meteor mehr', whip: 'längere Peitsche', x_komet: 'stärkerer Hagel', x_traeger: 'mehr Raketen', x_sturm: 'mehr Blitze', x_malstrom: 'stärkerer Sog', x_prisma: 'mehr Funken', x_geist: 'mehr Nova-Explosionen', x_minen: 'stärkere Bohrminen', x_bum: 'stärkere Sternbumerangs', x_frostblitz: 'stärkerer Frostblitz', x_rail: 'stärkere Railgun', x_schwer: 'stärkere Meteore', x_bohrsturm: 'stärkere Bohrstürme', x_saegenring: 'schärfere Sägen', x_novamine: 'stärkere Nova-Minen', rockets: 'eine Rakete mehr', grav: 'größerer Sog', tornado: 'ein Wirbel mehr', boomer: 'eine Sichel mehr', frost: 'ein Splitter mehr' };
-const wDps = w => { const l = S.w[w.id] || 0; return l ? (w.hyb ? HYBM * (HYB[w.id].p.length > 2 ? 1.5 : 1) : 1) * T_DPS[tier(w.id)] * l * Math.pow(2, msN(l) + (w.hyb ? HXS(w.id) : 0)) * mult() * (1 + HAw(w.id)) * (1 + .5 * ML(w.id)) : 0; };
+const UPTXT = { orbit: 'breiterer Strahl, ab ★2 ein Strahl mehr', acid: 'größere, länger brennende Wolken', line: 'ein Schuss mehr', star: 'mehr Kristall-Laser', drill: 'breitere, schnellere Lanze', nova: 'größerer Explosionsradius', scatter: '2 Schüsse mehr', drones: 'neue Drohne', chain: 'Blitz springt weiter', saw: 'mehr Sägeblätter', mine: 'mehr Minen', sniper: 'schießt schneller', meteor: 'ein Meteor mehr', whip: 'längere Peitsche', x_komet: 'stärkerer Hagel', x_traeger: 'mehr Raketen', x_sturm: 'mehr Blitze', x_malstrom: 'stärkerer Sog', x_prisma: 'mehr Funken', x_geist: 'mehr Nova-Explosionen', x_minen: 'stärkere Bohrminen', x_bum: 'stärkere Sternbumerangs', x_frostblitz: 'stärkerer Frostblitz', x_rail: 'stärkere Railgun', x_schwer: 'stärkere Meteore', x_bohrsturm: 'stärkere Bohrstürme', x_saegenring: 'schärfere Sägen', x_novamine: 'stärkere Nova-Minen', rockets: 'eine Rakete mehr', grav: 'größerer Sog', tornado: 'ein Wirbel mehr', boomer: 'eine Sichel mehr', frost: 'ein Splitter mehr' };
+const wDps = w => { const l = S.w[w.id] || 0; return l ? (w.hyb ? HYBM * (HYB[w.id].p.length > 2 ? 1.5 : 1) : 1) * T_DPS[tier(w.id)] * l * Math.pow(2, msN(l) + (w.hyb ? HXS(w.id) : 0)) * mult() * (1 + HAw(w.id)) * (1 + .5 * ML(w.id)) * (1 + SYBw(w.id)) : 0; };
 // ================== Waffen-Mods: mit ⬢ Chips (1 Chip pro 5 geschaffte Planeten), bleiben für immer ==================
 const ML = id => HYB[id] ? Math.max(...HYB[id].p.map(p => (S.mod || {})[p] || 0)) : (S.mod || {})[id] || 0;
 const MOD_MAX = 5;
@@ -1010,7 +1037,9 @@ const MODS = {
   grav: { s: 'Stärkerer Sog', f: l => '+' + 20 * l + ' % Radius' },
   tornado: { s: 'Größerer Wirbel', f: l => '+' + 25 * l + ' % Breite' },
   boomer: { s: 'Breitere Sichel', f: l => l >= 3 ? 'Riesensichel' : 'breite Sichel' },
-  frost: { s: 'Frostfeld beim Aufprall', f: l => (l >= 3 ? '5×5' : '3×3') + ' Blöcke gefrieren' }
+  frost: { s: 'Frostfeld beim Aufprall', f: l => (l >= 3 ? '5×5' : '3×3') + ' Blöcke gefrieren' },
+  orbit: { s: 'Breiterer Strahl', f: l => '+' + 30 * l + ' % Breite' },
+  acid: { s: 'Größere Säurewolken', f: l => '+' + 20 * l + ' % Radius' }
 };
 for (const h in HYB) MODS[h] = { s: 'Mods der beiden Waffen zählen', f: l => '+' + 50 * l + ' %' };
 
@@ -1258,7 +1287,8 @@ const novas = [], waves = [];
 const sawPat = () => { const n = ML('saw') >= 3 ? 2 : ML('saw') ? 1.5 : 1, o = []; for (let a = -2; a <= 2; a++) for (let b = -2; b <= 2; b++) if (Math.hypot(a, b) <= n) o.push([a * CELL, b * CELL]); return o; };
 let sawB = 0; const SAWR = 78; // Sägen kreisen ums Schiff und reichen bis in die Blöcke
 let cdBlast = 0, cdChain = 0, sawA = 0, cdMine = 0, cdSnip = 0; const saws = [], mines = [];
-let geistT = 0, cdMet = 0, cdBoo = 0, cdFro = 0, clk = 0, cdWh = 0, cdRk = 0, cdGr = 0, cdTo = 0; const mets = [], boos = [], whips = [], rkts = [], gravs = [], tors = [];
+let geistT = 0, cdMet = 0, cdBoo = 0, cdFro = 0, clk = 0, cdWh = 0, cdRk = 0, cdGr = 0, cdTo = 0; const klPos = () => { const a = Math.atan2(ship.y - G.cy, ship.x - G.cx) + 1.1, d = Math.hypot(ship.x - G.cx, ship.y - G.cy); return [G.cx + Math.cos(a) * d, G.cy + Math.sin(a) * d]; }; /* Schattenklon fliegt versetzt neben dir um den Planeten */
+const mets = [], boos = [], whips = [], rkts = [], gravs = [], tors = [], orbs = [], acids = [], quakes = []; let cdOrb = 0, cdAc = 0, cdKl = 0;
 function freezeAt(i, n) { if (i < 0) return; if (!G.frz) G.frz = new Float32Array(G.alive.length); const c = i % COLS, r = i / COLS | 0; for (let a = -n; a <= n; a++) for (let b = -n; b <= n; b++) { const cc = c + a, rr = r + b; if (cc >= 0 && cc < COLS && rr >= 0 && rr < ROWS) { const j = rr * COLS + cc; if (G.alive[j]) { G.frz[j] = clk + 3; (G.frL || (G.frL = new Set())).add(j); } } } }
 const bats = [], fogs = []; let drillMax = 4, starA = 0, cdDrill = 0, cdNova = 0, cdScatter = 0, lineTarget = -1, surfR = 0, surfT = 0;
 function nearest(x, y, jitter) {
@@ -1389,9 +1419,9 @@ function step(dt) {
   if (dK && (cdChain -= dt * Rv * sp75('chain')) <= 0) { cdChain = 2; let i = front(CELL * 3 * OV('chain')), px = ship.x, py = ship.y; const pts = []; const used = new Set();
     /* echter Kettenblitz: springt weit nach außen und verzweigt sich – je höher die Stufe, desto weiter und breiter streut er */
     const ovc = OV('chain'), lvC = WL('chain'), nj = Math.min(Math.round(28 * ovc), Math.round((6 + 2 * ST('chain') + 2 * ML('chain')) * ovc)),
-      jr = Math.min(16, Math.round((3.5 + Math.min(6, lvC / 20)) * ovc)), br = Math.min(4, 1 + Math.floor(ST('chain') / 2) + (lvC >= 100 ? 1 : 0)), dmK = dK * 2 / nj;
+      jr = Math.min(20, Math.round((3.5 + Math.min(6, lvC / 20)) * ovc * (SY('supra') ? 1.4 : 1))), br = Math.min(4, 1 + Math.floor(ST('chain') / 2) + (lvC >= 100 ? 1 : 0)), dmK = dK * 2 / nj;
     const q0 = i >= 0 ? [{ i, px, py, g: 0, a: Math.atan2(cellXY(i)[1] - py, cellXY(i)[0] - px) }] : []; let hits = 0;
-    while (q0.length && hits < nj) { const n = q0.shift(); if (used.has(n.i) || !G.alive[n.i]) continue; used.add(n.i); hits++; const [x, y] = cellXY(n.i); pts.push([n.px, n.py, x, y, n.g]); if (HY('x_frostblitz')) freezeAt(n.i, 0); hit(n.i, dmK * critMul());
+    while (q0.length && hits < nj) { const n = q0.shift(); if (used.has(n.i) || !G.alive[n.i]) continue; used.add(n.i); hits++; const [x, y] = cellXY(n.i); pts.push([n.px, n.py, x, y, n.g]); if (HY('x_frostblitz')) freezeAt(n.i, 0); hit(n.i, dmK * critMul() * (SY('supra') && G.frz && G.frz[n.i] > clk ? 2 : 1));
       const c = n.i % COLS, r = n.i / COLS | 0, cand = [];
       for (let a = -jr; a <= jr; a++) for (let b2 = -jr; b2 <= jr; b2++) { const d2 = a * a + b2 * b2; if (d2 < 4 || d2 > jr * jr) continue; const cc = c + a, rr = r + b2; if (cc < 0 || cc >= COLS || rr < 0 || rr >= ROWS) continue; const j = rr * COLS + cc; if (!G.alive[j] || used.has(j)) continue;
         const an = Math.atan2(b2, a), da = Math.abs(((an - n.a + Math.PI * 3) % (Math.PI * 2)) - Math.PI); /* lieber weit weg und nicht zurück */
@@ -1427,7 +1457,7 @@ function step(dt) {
     const tg = nearList(ship.x, ship.y, nm); for (let k = 0; k < tg.length; k++) { const i = tg[k]; const [x, y] = cellXY(i), oa = Math.atan2(y - G.cy, x - G.cx) + (Math.random() - .5) * .6, D = 260 + Math.random() * 120;
       mets.push({ x0: x + Math.cos(oa) * D, y0: y + Math.sin(oa) * D, tx: x, ty: y, i, t: -k * .22, z: 5 + Math.random() * 3, rot: Math.random() * 6, d: dMe * 3.2 / nm * critMul() }); } }
   for (let k = mets.length - 1; k >= 0; k--) { const m = mets[k]; m.t += dt * .75; m.rot += dt * 2.2; if (!G.alive[m.i]) { const j = nearest(m.tx, m.ty); if (j >= 0) { m.i = j; [m.tx, m.ty] = cellXY(j); } } if (m.t < 1) continue; mets.splice(k, 1);
-    const c0 = cellAt(m.tx, m.ty), mr = (ML('meteor') ? (ML('meteor') >= 3 ? 3 : 2) : 1) + (HY('x_schwer') ? 1 : 0); if (c0 >= 0) { const c = c0 % COLS, r = c0 / COLS | 0, nc = (2 * mr + 1) ** 2; for (let a = -mr; a <= mr; a++) for (let b2 = -mr; b2 <= mr; b2++) { const cc = c + a, rr = r + b2; if (cc >= 0 && cc < COLS && rr >= 0 && rr < ROWS) hit(rr * COLS + cc, m.d * (a || b2 ? .5 / (nc - 1) : .5)); } }
+    const c0 = cellAt(m.tx, m.ty), mr = (ML('meteor') ? (ML('meteor') >= 3 ? 3 : 2) : 1) + (HY('x_schwer') ? 1 : 0) + (SY('schwer') ? 1 : 0); if (c0 >= 0) { const c = c0 % COLS, r = c0 / COLS | 0, nc = (2 * mr + 1) ** 2; for (let a = -mr; a <= mr; a++) for (let b2 = -mr; b2 <= mr; b2++) { const cc = c + a, rr = r + b2; if (cc >= 0 && cc < COLS && rr >= 0 && rr < ROWS) hit(rr * COLS + cc, m.d * (a || b2 ? .5 / (nc - 1) : .5)); } }
     if (HY('x_komet') && c0 >= 0) freezeAt(c0, mr);
     const T = lvTier(WL('meteor')); fx.push({ k: 'ring', x: m.tx, y: m.ty, r: CELL * (mr + 1.2), t: .4, c: HY('x_komet') ? '#9fe8ff' : T >= 3 ? '#ffd23f' : WCOL.meteor, w: 3 + T });
     for (let q = 0; q < 4 + T * 2; q++) parts.push({ x: m.tx, y: m.ty, vx: (Math.random() - .5) * 200, vy: (Math.random() - .5) * 200, t: .45, c: q % 2 ? '#8a5a3a' : '#ffb04a' }); shake = Math.max(shake, 1.5); }
@@ -1480,6 +1510,27 @@ function step(dt) {
   curW = 'frost';
   const dFr = WD('frost') * Rd;
   if (dFr && (cdFro -= dt * Rv * sp75('frost')) <= 0) { cdFro = 2.4; const np = Math.min(10, 4 + ST('frost')), fr = ML('frost') ? (ML('frost') >= 3 ? 2 : 1) : 0, aF = aimNear() ?? face; for (let k = 0; k < np; k++) { const a = aF + (k - (np - 1) / 2) * (.5 / np) + (Math.random() - .5) * .05, sp = 300 + Math.random() * 40; proj.push({ x: ship.x, y: ship.y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, d: dFr * 2.4 / np * critMul(), t: 2, w: 'frost', fr, flv: WL('frost'), c: WCOL.frost }); } }
+  // 15) Orbitalstrahl: Strahl aus dem All fegt über die Oberfläche
+  curW = 'orbit';
+  const dOr = WD('orbit') * Rd;
+  if (dOr && (cdOrb -= dt * Rv * sp75('orbit')) <= 0) { cdOrb = 3; const nb = Math.min(3, 1 + Math.floor(ST('orbit') / 2)), tg = nearList(ship.x, ship.y, 14);
+    for (let k = 0; k < nb && tg.length; k++) { const i = tg[(Math.random() * tg.length) | 0], [x, y] = cellXY(i); orbs.push({ x, y, dir: Math.random() < .5 ? -1 : 1, t: -k * .25, T: 1.4, r: (1.2 + .2 * ST('orbit')) * (1 + .3 * ML('orbit')) * Math.sqrt(OV('orbit')), d: dOr * 3 / nb * critMul(), lv: WL('orbit') }); } SND.fx.zap(); }
+  for (let k = orbs.length - 1; k >= 0; k--) { const o = orbs[k]; o.t += dt; if (o.t < 0) continue; if (o.t > o.T) { orbs.splice(k, 1); continue; } o.x += o.dir * CELL * 4.5 * dt;
+    const c0 = cellAt(o.x, o.y); let cc0, rr0; if (c0 >= 0) { cc0 = c0 % COLS; rr0 = c0 / COLS | 0; } else { const j = nearest(o.x, o.y, 9 * CELL * CELL); if (j < 0) continue; cc0 = j % COLS; rr0 = j / COLS | 0; o.y = cellXY(j)[1]; }
+    const n = Math.ceil(o.r), cl = []; for (let a = -n; a <= n; a++) for (let b2 = -n; b2 <= n; b2++) { if (a * a + b2 * b2 > o.r * o.r + .5) continue; const cc = cc0 + a, rr = rr0 + b2; if (cc < 0 || cc >= COLS || rr < 0 || rr >= ROWS) continue; const j = rr * COLS + cc; if (G.alive[j]) cl.push(j); }
+    for (const j of cl) hit(j, o.d * dt / o.T / Math.max(2, cl.length));
+    if (SY('regen') && Math.random() < dt * 2.5) acids.push({ x: o.x, y: o.y, t: 0, T: 2.5, fly: 0, r: CELL * 1.6, d: dOr * .6, pud: 1 });
+    if (Math.random() < dt * 30 && parts.length < 420) parts.push({ x: o.x, y: o.y, vx: (Math.random() - .5) * 120, vy: -40 - Math.random() * 90, t: .4, c: Math.random() < .5 ? '#fff3b0' : WCOL.orbit }); }
+  // 16) Säurewolke: Wolke legt sich auf die Oberfläche und zersetzt alles darin
+  curW = 'acid';
+  const dAc = WD('acid') * Rd;
+  if (dAc && (cdAc -= dt * Rv * sp75('acid')) <= 0) { cdAc = 2.6; const nc = Math.min(3, 1 + Math.floor(ST('acid') / 3)), tg = nearList(ship.x, ship.y, 12);
+    for (let k = 0; k < nc && tg.length; k++) { const i = tg[(Math.random() * tg.length) | 0], [x, y] = cellXY(i); acids.push({ x, y, x0: ship.x, y0: ship.y, t: 0, fly: .35, T: 4 + .3 * ST('acid'), r: CELL * (2.1 + .25 * ST('acid')) * (1 + .2 * ML('acid')) * (SY('gift') ? 1.4 : 1) * Math.sqrt(OV('acid')), d: dAc * 2.6 / nc * critMul(), lv: WL('acid') }); } }
+  for (let k = acids.length - 1; k >= 0; k--) { const a = acids[k]; if (a.fly > 0) { a.fly -= dt; continue; } a.t += dt; if (a.t > a.T) { acids.splice(k, 1); continue; } if (a.pud) curW = 'orbit';
+    const c0 = cellAt(a.x, a.y), n = Math.ceil(a.r / CELL); if (c0 >= 0 || true) { const cc0 = Math.floor((a.x - G.ox) / CELL), rr0 = Math.floor((a.y - G.oy) / CELL), cl = [];
+      for (let q = -n; q <= n; q++) for (let b2 = -n; b2 <= n; b2++) { if (Math.hypot(q, b2) * CELL > a.r) continue; const cc = cc0 + q, rr = rr0 + b2; if (cc < 0 || cc >= COLS || rr < 0 || rr >= ROWS) continue; const j = rr * COLS + cc; if (G.alive[j]) cl.push(j); }
+      for (const j of cl) hit(j, a.d * dt / a.T / Math.max(2, cl.length)); }
+    curW = 'acid'; }
   curW = 'x'; abStep(dt); curW = null;
   shake = Math.max(0, shake - dt * 30); if (intro > 0) intro -= dt;
   { const e = eqItem('t'); if (Math.random() < dt * (e.smoke ? 30 : e.tr ? 18 : 10) && parts.length < 420) { const a = ship.ang - Math.PI / 2; parts.push({ x: ship.x + Math.cos(a) * 14, y: ship.y + Math.sin(a) * 14, vx: Math.cos(a) * 30 + (Math.random() - .5) * 20, vy: Math.sin(a) * 30 + (Math.random() - .5) * 20, t: e.smoke ? 1.1 : .5, c: e.smoke ? '#7fbf6a' : (e.col === 'rainbow' ? `hsl(${Math.random() * 360},100%,65%)` : e.col) }); } }
@@ -1816,6 +1867,17 @@ function draw(now) {
   hentsDraw();
   if (S.buf && S.buf.frz > Date.now()) { const tr = (S.bufP || {}).frzT || 0, [c, rgb] = ABCOL.frost[tr]; g.fillStyle = `rgba(${rgb},${.1 + .03 * tr + .03 * Math.sin(performance.now() / 200)})`; g.beginPath(); g.arc(G.cx, G.cy, G.R * 1.05, 0, 7); g.fill(); g.strokeStyle = `rgba(${rgb},.6)`; g.lineWidth = 2 + tr; g.stroke(); }
   if (S.buf && S.buf.dr > Date.now()) { const tr = (S.bufP || {}).drT || 0, n = 5 + tr * 2; for (let k = 0; k < n; k++) { const a = performance.now() / 300 + k * 6.283 / n, x = ship.x + Math.cos(a) * 44, y = ship.y + Math.sin(a) * 44; g.fillStyle = ABCOL.drohne[tr][0]; g.beginPath(); g.moveTo(x, y - 5); g.lineTo(x + 4, y + 3); g.lineTo(x - 4, y + 3); g.fill(); } }
+  for (const a of acids) { const tq = performance.now() / 1000; if (a.fly > 0) { const k = 1 - a.fly / .35, x = a.x0 + (a.x - a.x0) * k, y = a.y0 + (a.y - a.y0) * k - Math.sin(k * Math.PI) * 30; g.fillStyle = '#7dff3a'; g.globalAlpha = .9; g.beginPath(); g.arc(x, y, 5, 0, 7); g.fill(); g.globalAlpha = 1; continue; }
+    const fa = Math.min(1, a.t * 3, (a.T - a.t) * 1.5), T = lvTier(a.lv || 0), col = a.pud ? '200,255,74' : T >= 3 ? '170,255,60' : '125,255,58';
+    const gr = g.createRadialGradient(a.x, a.y, 0, a.x, a.y, a.r); gr.addColorStop(0, `rgba(${col},${.32 * fa})`); gr.addColorStop(.7, `rgba(${col},${.16 * fa})`); gr.addColorStop(1, `rgba(${col},0)`); g.fillStyle = gr; g.beginPath(); g.arc(a.x, a.y, a.r, 0, 7); g.fill();
+    for (let q = 0; q < (a.pud ? 3 : 6 + T); q++) { const an = q * 2.4 + tq * (.6 + q * .1), rr = a.r * (.25 + .5 * ((q * .37 + tq * .25) % 1)), bx = a.x + Math.cos(an) * rr, by = a.y + Math.sin(an) * rr * .8 - ((tq * 20 + q * 7) % 12); g.strokeStyle = `rgba(${col},${.8 * fa})`; g.lineWidth = 1.5; g.beginPath(); g.arc(bx, by, 2 + (q % 3), 0, 7); g.stroke(); } }
+  for (const o of orbs) { if (o.t < 0) continue; const k = o.t / o.T, fa = Math.min(1, o.t * 8, (o.T - o.t) * 5), top = cam.y - H / 2 - 40, T = lvTier(o.lv || 0), w = CELL * o.r * 1.3, col = T >= 3 ? '255,120,220' : '255,207,74';
+    const gr = g.createLinearGradient(o.x - w, 0, o.x + w, 0); gr.addColorStop(0, `rgba(${col},0)`); gr.addColorStop(.5, `rgba(${col},${.55 * fa})`); gr.addColorStop(1, `rgba(${col},0)`); g.fillStyle = gr; g.fillRect(o.x - w, top, w * 2, o.y - top);
+    g.fillStyle = `rgba(255,255,240,${.9 * fa})`; g.fillRect(o.x - w * .18, top, w * .36, o.y - top);
+    g.strokeStyle = `rgba(${col},${fa})`; g.lineWidth = 3; g.beginPath(); g.arc(o.x, o.y, w * (.9 + .25 * Math.sin(o.t * 30)), 0, 7); g.stroke(); g.fillStyle = `rgba(255,255,230,${.8 * fa})`; g.beginPath(); g.arc(o.x, o.y, w * .45, 0, 7); g.fill(); }
+  if (S.buf && S.buf.kl > Date.now()) { const tr = (S.bufP || {}).klT || 0, [gx, gy] = klPos(), an = Math.atan2(G.cy - gy, G.cx - gx) - Math.PI / 2, [c] = ABCOL.klon[tr];
+    g.save(); g.translate(gx, gy); g.rotate(an); g.globalAlpha = .55 + .15 * Math.sin(performance.now() / 120); g.shadowColor = c; g.shadowBlur = 18; g.fillStyle = c; g.beginPath(); g.moveTo(0, 16); g.lineTo(-11, -11); g.lineTo(0, -5); g.lineTo(11, -11); g.closePath(); g.fill(); g.shadowBlur = 0; g.restore(); g.globalAlpha = 1; }
+  for (const q of quakes) if (q.t > 0 && q.r > 0) { const fa = Math.max(0, 1 - q.r / (G.R * 1.15)); g.strokeStyle = `rgba(${ABCOL.beben[q.tr][1]},${.85 * fa})`; g.lineWidth = 6 + q.tr * 3; g.beginPath(); g.arc(G.cx, G.cy, q.r, 0, 7); g.stroke(); g.strokeStyle = `rgba(255,255,255,${.5 * fa})`; g.lineWidth = 2; g.beginPath(); g.arc(G.cx, G.cy, q.r * .96, 0, 7); g.stroke(); }
   for (const m of meteors) { const tr = m.tr || 0, [c, rgb] = ABCOL.meteor[tr], r = 6 + tr * 2.5, l = Math.hypot(m.tx - m.x, m.ty - m.y) || 1, ux = (m.tx - m.x) / l, uy = (m.ty - m.y) / l;
     for (let k = 1; k <= 4 + tr * 3; k++) { g.fillStyle = `rgba(${rgb},${.55 - k * .05})`; g.beginPath(); g.arc(m.x - ux * k * (5 + tr), m.y - uy * k * (5 + tr), Math.max(1, r - k * .6), 0, 7); g.fill(); }
     if (tr >= 2) { g.globalAlpha = .35; g.fillStyle = c; g.beginPath(); g.arc(m.x, m.y, r * 1.9, 0, 7); g.fill(); g.globalAlpha = 1; } g.fillStyle = c; g.beginPath(); g.arc(m.x, m.y, r, 0, 7); g.fill(); g.fillStyle = '#fff'; g.beginPath(); g.arc(m.x - ux * 2, m.y - uy * 2, r * .4, 0, 7); g.fill();
@@ -2016,7 +2078,7 @@ function ui() {
   $('abdot').hidden = !(ABIL.some(a => AL(a.id) && !S.hot.includes(a.id)) && S.hot.filter(Boolean).length < 8);
   // Roter Punkt im Hangar nur, wenn ein Teil leveln kann (5 Doppelte) oder ein besseres Teil nicht ausgerüstet ist
   $('hgdot').hidden = !ITEMS.some(it => S.inv[it.id] && ((ILV(it.id) < ITEM_MAX && ((S.dup || {})[it.id] || 0) >= DUPN) || better(it)));
-  $('wpdot').hidden = !(canWarp() || WARP.some(w => WP(w.id) < w.max && S.dm >= w.cost(WP(w.id))));
+  $('wpdot').hidden = !(canWarp() || WARP.some(w => !wpMx(w.id, WP(w.id)) && S.dm >= w.cost(WP(w.id))));
   if (tab === 'p' && $('wgain')) { $('wgain').textContent = '✦' + fmt(dmGain()); $('wmto').textContent = 'x' + ((S.wm || 1) + wmGain()).toFixed(2); $('wgo').disabled = !canWarp(); }
   if ($('shdot')) $('shdot').hidden = !dlyOpen();
   $('skdot').hidden = !S.augQ;
@@ -2044,7 +2106,8 @@ const LINEST = {
 };
 const lineSt = () => LINEST[S.eq && S.eq.h] || LINEST.h_kobold;
 function lineSync() { const L = lineSt(), w = WEAP.find(x => x.id === 'line'); if (w) { w.n = L.n; w.d = L.d; } WCOL.line = L.c; }
-function render() { lineSync();
+function synCheck() { S.synS = S.synS || []; for (const sy of SYN) if (synOn(sy) && !S.synS.includes(sy.id)) { S.synS.push(sy.id); setTimeout(() => cele('⚡ SYNERGIE!', sy.n + ' ist aktiv'), 400); } }
+function render() { lineSync(); synCheck();
   if (tab !== 'h') document.querySelectorAll('.hsheet').forEach(x => x.remove());
   applyFull();
   const L = $('list');
@@ -2053,30 +2116,35 @@ function render() { lineSync();
     let h = `<button class="br${fgR ? ' again' : ''}" id="fgopen" style="margin:0 0 8px;width:100%">⚒ WAFFEN-SCHMIEDE${fgR ? ' · BEREIT!' : ' · HYBRID-WAFFEN'}</button><div class="mode">${[1, 10, 'max'].map(n => `<button data-n="${n}" class="${buyN === n ? 'on' : ''}">${n === 'max' ? 'Max' : 'x' + n}</button>`).join('')}</div>`;
     for (const id of owned()) {
       const w = WEAP.find(x => x.id === id), l = WL(id), hy = !!HYB[id], dl = LVd(id), nx = hy ? (HXS(id) + 1) * HYBS + 1 : msNext(l), pv = hy ? HXS(id) * HYBS + 1 : msPrev(l);
-      h += `<div class="wp" style="--wc:${WCOL[w.id]}"><div class="wic" style="color:${WCOL[w.id]};border-color:${WCOL[w.id]}88;box-shadow:inset 0 0 8px ${WCOL[w.id]}40"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${WICO[w.id] || ""}</svg></div><div class="nm" data-wi="${w.id}" style="cursor:pointer"><b>${w.n} <span style="color:var(--cy);font-size:10px">ⓘ</span></b><div class="lv">${hy ? '<span style="color:' + HYB[id].c + '">HYBRID</span> · ' : ''}Lv. ${dl}${ST(id) ? ' <span class="stars">★' + ST(id) + '</span>' : ''} · ★ bei ${nx}</div><div class="dps" data-dps="${w.id}"></div></div><button class="br" data-up="${w.id}"></button><div class="pr"><i style="width:${(dl - pv) / (nx - pv) * 100}%"></i></div></div>`;
+      h += `<div class="wp" style="--wc:${WCOL[w.id]}"><div class="wic" style="color:${WCOL[w.id]};border-color:${WCOL[w.id]}88;box-shadow:inset 0 0 8px ${WCOL[w.id]}40"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${WICO[w.id] || ""}</svg></div><div class="nm" data-wi="${w.id}" style="cursor:pointer"><b>${w.n} <span style="color:var(--cy);font-size:10px">ⓘ</span></b><div class="lv">${hy ? '<span style="color:' + HYB[id].c + '">HYBRID</span> · ' : ''}${(hy ? HYB[id].p : [id]).map(p => SYN.find(sy => sy.p.includes(p) && synOn(sy))).filter((x, k, a) => x && a.indexOf(x) === k).map(sy => '<span style="color:' + sy.c + '">⚡' + sy.n + '</span> · ').join('')}Lv. ${dl}${ST(id) ? ' <span class="stars">★' + ST(id) + '</span>' : ''} · ★ bei ${nx}</div><div class="dps" data-dps="${w.id}"></div></div><button class="br" data-up="${w.id}"></button><div class="pr"><i style="width:${(dl - pv) / (nx - pv) * 100}%"></i></div></div>`;
     }
     const of = offers(), full = owned().length >= maxWeapons();
-    if (of.length && full) h += `<div class="wh" style="margin-top:12px"><p>🔒 Alle ${maxWeapons()} Waffenslots belegt.<br>Mehr Slots gibt's in der <b style="display:inline;font-size:12px;color:#c9a2ff">Warp-Werkstatt</b> (Warp-Fähigkeit „Waffenslots“).</p></div>`;
+    if (of.length && full) h += slotFull() ? `<div class="wh" style="margin-top:12px"><p>🔒 Alle ${maxWeapons()} Waffenslots belegt – mehr gibt's nicht.<br>Verschmilz zwei Waffen in der <b style="display:inline;font-size:12px;color:#ffd23f">Waffen-Schmiede</b>, dann wird ein Platz frei.</p></div>` : `<div class="wh" style="margin-top:12px"><p>🔒 Alle ${maxWeapons()} Waffenslots belegt.<br>Mehr Slots gibt's in der <b style="display:inline;font-size:12px;color:#c9a2ff">Warp-Werkstatt</b> (Warp-Fähigkeit „Waffenslots“).</p></div>`;
     if (of.length && !full) {
       h += `<div class="skh" style="margin-top:12px"><span>Nächste Waffe · ${fmt(nextUnl())} CR</span><b style="font-size:13px">Slots ${owned().length}/${maxWeapons()}</b></div><div class="offer">${of.map(id => { const w = WEAP.find(x => x.id === id); return `<button class="br" data-unl="${id}"><b>${w.n}</b><small>${w.d}</small><span>${fmt(nextUnl())} CR</span></button>`; }).join('')}</div>
         <button class="br rr" id="reroll" ${!S.rrUsed && WEAP.filter(w => !w.hyb).length - owned().length > 2 ? '' : 'disabled'}>${S.rrUsed ? '🎲 Schon neu gewürfelt' : '🎲 Einmal neu würfeln'}</button>`;
     }
     h += `<div style="font-size:11px;color:var(--mut);text-align:center;padding:6px 4px 10px">Bei Stufe 10, 25, 50, 100 und danach alle 100 Stufen bekommt eine Waffe ein Upgrade: x2 Schaden und ein neuer Effekt.</div>`;
-    const mo = WEAP.filter(w => !w.hyb).sort((x, y) => (WL(y.id) ? 1 : 0) - (WL(x.id) ? 1 : 0));
-    h += `<div class="skh" style="margin-top:6px;border-left-color:#ff9f43"><span>Waffen-Mods · 1 ⬢ Chip pro 5 Planeten · bleiben für immer</span><b class="chp">⬢ ${fmt(S.chip || 0)}</b></div>
-      <div class="mods">${mo.map(w => { const l = ML(w.id), m = MODS[w.id], mx = l >= MOD_MAX, c = modCost(l);
-        return `<div class="mod${l ? ' on' : ''}${WL(w.id) ? '' : ' nw'}"><div class="wic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${WICO[w.id] || ''}</svg></div>
-          <div class="nm"><b>${w.n}</b><small>${'◆'.repeat(l)}${'◇'.repeat(MOD_MAX - l)} · +${50 * l} % Schaden</small><em>${l ? '★ ' + m.s + ': ' + m.f(l) : 'Mod 1: ' + m.s}</em>${!mx && l && (l + 1 === 3) ? `<em class="nx">Mod 3: ${m.f(3)}</em>` : ''}</div>
-          <button class="br" data-mod="${w.id}" ${mx || (S.chip || 0) < c ? 'disabled' : ''}>${mx ? 'MAX' : '⬢' + c}</button></div>`; }).join('')}</div>`;
     L.innerHTML = h;
     $('fgopen').onclick = () => goTab('sm');
     L.querySelectorAll('[data-n]').forEach(b => b.onclick = () => { buyN = b.dataset.n === 'max' ? 'max' : +b.dataset.n; render(); });
     L.querySelectorAll('[data-up]').forEach(b => b.onclick = () => { const w = WEAP.find(x => x.id === b.dataset.up), n = buyN === 'max' ? maxBuy(w) : buyN, c = wCost(w, n); if (!n || S.cr < c) return; S.cr -= c; const s0 = ST(w.id); S.w[w.id] = WL(w.id) + n; mis('wup', n); SND.fx.up(); if (ST(w.id) > s0) upgradeFx(w); if (WL(w.id) >= 100 && window.BB) BB.unlock('drill_100'); save(); render(); });
     L.querySelectorAll('[data-unl]').forEach(b => b.onclick = () => { const w = WEAP.find(x => x.id === b.dataset.unl), c = nextUnl(); if (S.cr < c || owned().length >= maxWeapons()) return; S.cr -= c; S.w[w.id] = 1; S.wo = S.wo.concat(w.id); /* immer ans Ende: neue Waffen sind stärker als die davor */ S.offer = null; S.rrUsed = false; toast(`${w.n} freigeschaltet!`); if (owned().length >= 6 && window.BB) BB.unlock('drill_waffen'); save(true); render(); });
     L.querySelectorAll('[data-wi]').forEach(b => b.onclick = () => wInfo(b.dataset.wi));
+    if ($('reroll')) $('reroll').onclick = () => { if (S.rrUsed) return; offers(); if (!S.offer) return; S.rrUsed = true; const left = WEAP.filter(w => !WL(w.id) && !S.offer.includes(w.id)).map(w => w.id).sort(() => Math.random() - .5); const keep = left.length >= 2 ? [] : S.offer.slice(0, 2 - left.length); S.offer = left.slice(0, 2).concat(keep).slice(0, 2); save(true); render(); };
+  } else if (tab === 'y') { let h = '';
+    const mo = WEAP.filter(w => !w.hyb).sort((x, y) => (WL(y.id) ? 1 : 0) - (WL(x.id) ? 1 : 0));
+    h += `<div class="skh" style="margin-top:0;border-left-color:#ffd23f"><span>⚡ Waffen-Synergien</span><b style="color:#ffd23f">${SYN.filter(synOn).length}/${SYN.length} aktiv</b></div><div class="hint" style="margin:4px 2px 2px">Besitzt du beide Waffen eines Paars (auch verschmolzen), verstärken sie sich gegenseitig.</div><div class="syns">${SYN.map(sy => { const on = synOn(sy);
+      return `<div class="syn${on ? ' on' : ''}" style="--sc:${sy.c}"><div class="syn-ic">${sy.p.map((p, k) => `${k ? '<b>+</b>' : ''}<span class="fg-ic${WL(p) ? '' : ' miss'}" style="color:${WCOL[p]};border-color:${WCOL[p]}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${WICO[p] || ''}</svg></span>`).join('')}</div>
+        <div class="syn-t"><b>${sy.n}</b>${on ? '<i>AKTIV</i>' : ''}<small>${on ? sy.d : 'Braucht: ' + sy.p.filter(p => !WL(p)).map(p => WEAP.find(w => w.id === p).n).join(' + ')}</small></div></div>`; }).join('')}</div>`;
+    h += `<div class="skh" style="margin-top:14px;border-left-color:#ff9f43"><span>Waffen-Mods · 1 ⬢ Chip pro 5 Planeten · bleiben für immer</span><b class="chp">⬢ ${fmt(S.chip || 0)}</b></div>
+      <div class="mods">${mo.map(w => { const l = ML(w.id), m = MODS[w.id], mx = l >= MOD_MAX, c = modCost(l);
+        return `<div class="mod${l ? ' on' : ''}${WL(w.id) ? '' : ' mnw'}"><div class="wic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${WICO[w.id] || ''}</svg></div>
+          <div class="nm"><b>${w.n}</b><small>${'◆'.repeat(l)}${'◇'.repeat(MOD_MAX - l)} · +${50 * l} % Schaden</small><em>${l ? '★ ' + m.s + ': ' + m.f(l) : 'Mod 1: ' + m.s}</em>${!mx && l && (l + 1 === 3) ? `<em class="nx">Mod 3: ${m.f(3)}</em>` : ''}</div>
+          <button class="br" data-mod="${w.id}" ${mx || (S.chip || 0) < c ? 'disabled' : ''}>${mx ? 'MAX' : '⬢' + c}</button></div>`; }).join('')}</div>`;
+    L.innerHTML = h;
     L.querySelectorAll('[data-mod]').forEach(b => b.onclick = () => { const id = b.dataset.mod, l = ML(id), c = modCost(l); if (l >= MOD_MAX || (S.chip || 0) < c) return; S.chip -= c; S.mod = S.mod || {}; S.mod[id] = l + 1; SND.fx.win(); const w = WEAP.find(x => x.id === id);
       overlay(`<div class="crate" style="--rc:#ff9f43"><div class="cbox" style="color:#ff9f43"><svg width="66" height="66" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${WICO[id]}</svg></div></div><h2 style="color:#ff9f43">${w.n} · Mod ${l + 1}</h2><p>+${50 * (l + 1)} % Schaden<br><b style="color:var(--txt)">★ ${MODS[id].s}: ${MODS[id].f(l + 1)}</b></p>`, [['Stark', null]]); save('now'); render(); });
-    if ($('reroll')) $('reroll').onclick = () => { if (S.rrUsed) return; offers(); if (!S.offer) return; S.rrUsed = true; const left = WEAP.filter(w => !WL(w.id) && !S.offer.includes(w.id)).map(w => w.id).sort(() => Math.random() - .5); const keep = left.length >= 2 ? [] : S.offer.slice(0, 2 - left.length); S.offer = left.slice(0, 2).concat(keep).slice(0, 2); save(true); render(); };
   } else if (tab === 'a') { renderAb(L); fullHead(L); }
   else if (tab === 'h') { renderHangar(L); fullHead(L); }
   else if (tab === 'k') { renderShop(L); fullHead(L); }
@@ -2090,7 +2158,7 @@ function render() { lineSync();
       
       <button class="br" id="wgo" ${canWarp() ? '' : 'disabled'}>${canWarp() ? 'WARP-SPRUNG' + (wTok() > 1 ? ' · ' + wTok() + ' Tokens' : '') : 'Nächstes Token ab ' + wLbl(wReq())}</button></div>
       <div class="skh"><span>Warp-Werkstatt</span><b class="dm">✦ ${fmt(S.dm || 0)}</b></div>
-      <div class="sk wp6">${WARP.map(w => { const l = WP(w.id), mx = l >= w.max;
+      <div class="sk wp6">${WARP.map(w => { const l = WP(w.id), mx = wpMx(w.id, l);
         if (!wpOpen(w.id)) return `<button disabled class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>???</button>`;
         return `<button data-wp="${w.id}" class="${mx ? 'max' : ''} ${mx || S.dm < w.cost(l) ? 'cant' : ''}"><span class="q"></span><span class="c">${l}/${w.max}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${w.ico}</svg>${w.n}<small>${mx ? 'Max' : w.d(l) + ' · ✦' + w.cost(l)}</small></button>`; }).join('')}</div>
       ${WARP.some(w => !wpOpen(w.id)) ? `<button class="br unl" id="wpunl" style="margin-top:9px" ${S.dm < wpUnlCost() ? 'disabled' : ''}>NEUE WARP-FÄHIGKEIT FREISCHALTEN<br>✦${wpUnlCost()}</button>` : ''}
@@ -2120,7 +2188,7 @@ $('lb').onclick = () => window.BB && BB.open('board', 'drill');
 $('opt').onclick = openSettings;
 $('cv').addEventListener('pointerdown', e => { const r = $('cv').getBoundingClientRect(); if (evTap(e.clientX - r.left, e.clientY - r.top)) e.preventDefault(); });
 // Wischen im Menü: links/rechts = nächster/vorheriger Reiter
-{ let sx = 0, sy = 0, st = 0; const LL = $('list'), ORD = ['w', 's', 'a', 'h', 'p'];
+{ let sx = 0, sy = 0, st = 0; const LL = $('list'), ORD = ['w', 'y', 's', 'a', 'h', 'p'];
   LL.addEventListener('touchstart', e => { const t = e.touches[0]; sx = t.clientX; sy = t.clientY; st = Date.now(); }, { passive: true });
   LL.addEventListener('touchend', e => { const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy; if (Date.now() - st > 650 || Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.6) return;
     if (e.target.closest && e.target.closest('.mgrid,.hsheet,input')) return; const i = ORD.indexOf(tab); if (i < 0) return; const j = i + (dx < 0 ? 1 : -1); if (j < 0 || j >= ORD.length) return; goTab(ORD[j]); LL.classList.remove('swl', 'swr'); void LL.offsetWidth; LL.classList.add(dx < 0 ? 'swl' : 'swr'); }, { passive: true }); }
@@ -2172,6 +2240,9 @@ function augCard(c, k) { const T = AUGT[c.t];
 
 // ================== „Was ist neu“: einmal pro größerem Update beim Start, gut sichtbar ==================
 const NEWS = [ // [Icon, Titel, Text, Version] – angezeigt wird nur, was der Spieler noch nicht gesehen hat
+  ['🛰', '2 neue Waffen', 'Der Orbitalstrahl feuert aus dem All und fegt über die Oberfläche. Die Säurewolke legt sich auf den Planeten und zersetzt alles darin.', '2026-11-25b'],
+  ['✨', '2 neue Fähigkeiten', 'Schattenklon: ein zweites Schiff greift 12 s lang mit an. Planetenbeben: 3 Schockwellen treffen jeden Block des Planeten.', '2026-11-25b'],
+  ['🔗', 'Waffen-Synergien', 'Bestimmte Waffen-Paare verstärken sich gegenseitig, z. B. Frostkanone + Kettenblitz = Supraleiter. Alles dazu findest du im neuen Tab „Synergie“ unten – zusammen mit den Waffen-Mods. Klappt auch mit verschmolzenen Hybrid-Waffen.', '2026-11-25b'],
   ['⚡', 'Echter Kettenblitz', 'Der Kettenblitz kriecht nicht mehr Block für Block, sondern springt weit nach außen und verzweigt sich. Je höher die Stufe, desto weiter und breiter streut er.', '2026-11-25'],
   ['⚒', 'Hybride gehen ab', 'Geschmiedete Hybrid-Waffen starten jetzt bei Stufe 1 – aber mit ×5 statt ×2,2 Schaden, einem Extra-★ (x2) alle 25 Stufen und 70 % billigeren Upgrades. Deine bestehenden Hybride behalten ihre volle Stärke und zählen ab jetzt von Stufe 1.', '2026-11-24c'],
   ['💥', 'Nova repariert', 'Die Supernova verteilt ihren Schaden nicht mehr auf alle Blöcke, sondern trifft jeden Block im Radius voll – je höher die Stufe, desto größer das Loch. Auch die Plasma-Nova wird mit größerem Radius jetzt stärker statt schwächer.', '2026-11-24b'],
@@ -2296,7 +2367,9 @@ const ABIL = [
   { id: 'nova', n: 'Supernova', d: 'Riesen-Explosion im Planeten', cd: 45, ico: '<circle cx="12" cy="12" r="3"/><path d="M12 1v5M12 18v5M1 12h5M18 12h5M4 4l3.5 3.5M16.5 16.5L20 20M20 4l-3.5 3.5M7.5 16.5L4 20"/>' },
   { id: 'frost', n: 'Frostschock', d: 'Planet friert: x2 Schaden für 12 s', cd: 42, ico: '<path d="M12 2v20M4 6l16 12M20 6L4 18"/><path d="M9 4l3 2 3-2M9 20l3-2 3 2"/>' },
   { id: 'blitz', n: 'Gewitter', d: '24 Blitze schlagen ein', cd: 35, ico: '<path d="M7 14a5 5 0 1 1 1-9.9A6 6 0 0 1 19 7a4 4 0 0 1-1 7.9"/><path d="M13 12l-3 5h4l-2 5"/>' },
-  { id: 'kmag', n: 'Kristallmagnet', d: 'Blöcke geben 20 s lang öfter ◆', cd: 60, ico: '<path d="M6 3v8a6 6 0 0 0 12 0V3M6 7h4M14 7h4"/><path d="M12 19l2 2-2 2-2-2z"/>' }
+  { id: 'kmag', n: 'Kristallmagnet', d: 'Blöcke geben 20 s lang öfter ◆', cd: 60, ico: '<path d="M6 3v8a6 6 0 0 0 12 0V3M6 7h4M14 7h4"/><path d="M12 19l2 2-2 2-2-2z"/>' },
+  { id: 'klon', n: 'Schattenklon', d: 'Ein Klon greift 12 s lang mit an', cd: 45, ico: '<path d="M7 20l-4-12 4 3 3-6"/><path d="M17 4l4 12-4-3-3 6" stroke-dasharray="2 2"/>' },
+  { id: 'beben', n: 'Planetenbeben', d: '3 Schockwellen erschüttern den ganzen Planeten', cd: 40, ico: '<path d="M2 12h4l2-5 3 10 3-12 3 9 2-2h3"/>' }
 ];
 // Gemalte Fähigkeiten-Icons (ab/<id>.png) – solange ein Bild fehlt, bleibt das Linien-Symbol
 const ABOK = {}; let abImgT = 0;
@@ -2313,6 +2386,8 @@ const ABTXT = {
   loch: 'Öffnet ein schwarzes Loch an einer zufälligen Stelle. Es zieht 2 Sekunden lang alles im Radius ein und frisst die Blöcke Stück für Stück.',
   erz: 'Scannt den Planeten und verwandelt zufällige Blöcke in Erz. Erz bringt 10-mal so viele CR, manche werden sogar zu wertvollem pinkem Erz (40-mal).',
   drohne: 'Ein Schwarm Kampfdrohnen umkreist dein Schiff und feuert 15 Sekunden lang Blitze auf nahe Blöcke.', nova: 'Mitten im Planeten zündet eine Supernova. Die Explosion reißt ein riesiges Loch, je höher die Stufe, desto größer.', frost: 'Der ganze Planet friert ein. 12 Sekunden lang machen alle Treffer doppelten Schaden. Perfekt zusammen mit Meteoren oder der Kanone.', blitz: 'Ein Gewitter zieht über den Planeten: 24 Blitze schlagen nacheinander an zufälligen Stellen ein und sprengen je 3×3 Blöcke.', kmag: '20 Sekunden lang bringt jeder zerstörte Block mit etwas Glück einen ◆ Kristall.',
+  klon: 'Neben dir taucht ein Schattenklon deines Schiffs auf und ballert 12 Sekunden lang Laser auf den Planeten. So greifst du an zwei Stellen gleichzeitig an.',
+  beben: 'Drei Schockwellen rasen vom Kern aus nach außen und treffen dabei jeden einzelnen Block des Planeten. Mit höherer Stufe werden die Wellen stärker.',
   zeit: 'Spult die Zeit vor: Du bekommst sofort so viele CR, wie du sonst in rund 25 Sekunden verdienen würdest (mehr mit höherer Stufe). Ohne dass du warten musst.'
 };
 // Genaue Werte einer Fähigkeit auf Stufe lv (für die Detailansicht)
@@ -2332,6 +2407,8 @@ function abStats(id, lv) {
   else if (id === 'frost') r.push(['Effekt', 'x2 Schaden'], ['Dauer', (12 * (1 + .1 * (lv - 1))).toFixed(1) + ' s']);
   else if (id === 'blitz') r.push(['Blitze', '24'], ['Schaden je Blitz', fmt(D * .4 * P)]);
   else if (id === 'kmag') r.push(['Chance je Block', (2 + lv * .3).toFixed(1) + ' %'], ['Max. ◆ pro Einsatz', 4 + lv], ['Dauer', '20 s']);
+  else if (id === 'klon') r.push(['Dauer', (12 * (1 + .1 * (lv - 1))).toFixed(1) + ' s'], ['Schaden/s', fmt(D * 1.6 * P)]);
+  else if (id === 'beben') r.push(['Wellen', '3'], ['Schaden je Block und Welle', fmt(D * .015 * P)]);
   else if (id === 'zeit') r.push(['Sofort-Ertrag', fmt(Math.max(S.ema || 0, (G ? G.v0 : 1) * crMult() * 3) * 25 * P) + ' CR']);
   return r;
 }
@@ -2357,7 +2434,9 @@ const ABCOL = {
   frost: [['#9fefff', '159,239,255'], ['#5ce8f0', '92,232,240'], ['#6ab0ff', '106,176,255'], ['#ffffff', '255,255,255']],
   blitz: [['#a8c8ff', '168,200,255'], ['#ffe94d', '255,233,77'], ['#c06bff', '192,107,255'], ['#ffffff', '255,255,255']],
   kmag: [['#ffffff', '255,255,255'], ['#9fefff', '159,239,255'], ['#c9a2ff', '201,162,255'], ['#ffe94d', '255,233,77']],
-  zeit: [['#9dff6a', '157,255,106'], ['#5ce8f0', '92,232,240'], ['#c9a2ff', '201,162,255'], ['#ffe94d', '255,233,77']]
+  zeit: [['#9dff6a', '157,255,106'], ['#5ce8f0', '92,232,240'], ['#c9a2ff', '201,162,255'], ['#ffe94d', '255,233,77']],
+  klon: [['#c9a2ff', '201,162,255'], ['#8f6bff', '143,107,255'], ['#ff5fe0', '255,95,224'], ['#ffffff', '255,255,255']],
+  beben: [['#ffbe5a', '255,190,90'], ['#ff8a3a', '255,138,58'], ['#ff4f7a', '255,79,122'], ['#ffe94d', '255,233,77']]
 };
 const abc = (id, k) => (ABCOL[id] || ABCOL.meteor)[ABT(id)][k || 0];
 window.gbHype = () => { if (!S || !G) return 0; let h = 0; if (boosting()) h++; if (buf('dmg') || buf('cr')) h++; if (Date.now() - lastCast < 7000) h++; if (G.boss) h = Math.max(h, 1) + (h ? 1 : 0); return Math.min(3, h); };
@@ -2377,6 +2456,8 @@ function cast(id, auto) {
   else if (id === 'frost') { S.buf.frz = Date.now() + 12000 * (1 + .1 * (AL(id) - 1)); S.bufP = Object.assign(S.bufP || {}, { frzT: ABT(id) }); }
   else if (id === 'blitz') { const tr = ABT(id); for (let q = 0; q < 24; q++) storms.push({ t: q * .12, d: D * .4 * P, tr }); }
   else if (id === 'kmag') { S.buf.mag = Date.now() + 20000; S.bufP = Object.assign(S.bufP || {}, { mag: .02 + AL(id) * .003, magN: 4 + AL(id) }); }
+  else if (id === 'klon') { S.buf.kl = Date.now() + 12000 * (1 + .1 * (AL(id) - 1)); S.bufP = Object.assign(S.bufP || {}, { kl: D * 1.6 * P, klT: ABT(id) }); }
+  else if (id === 'beben') { const tr = ABT(id); for (let q = 0; q < 3; q++) quakes.push({ t: -q * .5, r: 0, d: D * .015 * P, tr, done: new Set() }); shake = 14 + tr * 3; }
   else if (id === 'zeit') { const v = Math.max(S.ema || 0, G.v0 * crMult() * 3) * 25 * P; S.cr += v; earnedSec += v; floats.push({ x: ship.x, y: ship.y - 30, t: 1.6, s: '+' + fmt(v) + ' CR', c: '#9dff6a' }); }
   fx.push({ k: 'cast', x: ship.x, y: ship.y, t: .5, c: abc(id, 1), tr: ABT(id) });
   if (id === 'erz') fx.push({ k: 'radar', x: G.cx, y: G.cy, r: G.R * 1.2, t: 1.2, c: abc(id, 1), tr: ABT(id) });
@@ -2404,6 +2485,11 @@ function abStep(dt) {
     const c0 = Math.floor((bhole.x - G.ox) / CELL), r0 = Math.floor((bhole.y - G.oy) / CELL), n = Math.ceil(r / CELL);
     for (let a = -n; a <= n; a++) for (let b2 = -n; b2 <= n; b2++) { const cc = c0 + a, rr = r0 + b2; if (cc < 0 || cc >= COLS || rr < 0 || rr >= ROWS || Math.hypot(a, b2) * CELL > r) continue; hit(rr * COLS + cc, bhole.d * dt / 2.2 / 6); }
     if (bhole.t <= 0) bhole = null; }
+  if (S.buf.kl > Date.now() && (cdKl -= dt) <= 0) { cdKl = .1; const tr = (S.bufP || {}).klT || 0, [gx, gy] = klPos(), i = nearest(gx, gy);
+    if (i >= 0) { hit(i, ((S.bufP || {}).kl || 1) * .1 * critMul()); const [x, y] = cellXY(i); fx.push({ k: 'bolt2', x: gx, y: gy, x2: x, y2: y, t: .12, c: ABCOL.klon[tr][0] }); } }
+  for (let k = quakes.length - 1; k >= 0; k--) { const q = quakes[k]; const was = q.t; q.t += dt; if (q.t <= 0) continue; if (was <= 0) { shake = Math.max(shake, 10 + q.tr * 3); fx.push({ k: 'nova', x: G.cx, y: G.cy, r: CELL * 4, t: .4, c: ABCOL.beben[q.tr][1] }); }
+    const r0 = q.r; q.r = q.t / .7 * G.R * 1.15; for (let i = 0; i < G.alive.length; i++) { if (!G.alive[i]) continue; const [x, y] = cellXY(i), dd = Math.hypot(x - G.cx, y - G.cy); if (dd >= r0 && dd < q.r) hit(i, q.d); }
+    if (q.r > G.R * 1.15) quakes.splice(k, 1); }
   if (!S.autoOff) for (const id of S.hot) if (id && AL(id) && abReady(id)) { cast(id, true); break; }
 }
 // ================== Hangar: Schiffsteile ==================
@@ -2733,6 +2819,15 @@ function nextDayTxt() { const n = new Date(), t = new Date(n); t.setHours(12, 0,
 setInterval(() => { try { if (!$('elc') && !$('aug')) loginCheck(); } catch (e) {} }, 60e3); // Tagesbonus auch ohne Neuladen um 12 Uhr anbieten
 
 // ================== Startbildschirm: Pixel-Planet mit glühendem Kern – antippen und er wird aufgebohrt ==================
+// Update-Trailer: läuft einmal pro großem Update direkt nach dem Start-Planeten, Vollbild, „Überspringen“ ab 5 s
+function updVid() { try { if (!S || S.updV === UPDV) return; } catch (e) { return; }
+  const pc = innerWidth > innerHeight, v = document.createElement('div'); v.id = 'updv';
+  v.innerHTML = `<video playsinline autoplay preload="auto" src="update${pc ? '_pc' : ''}.mp4?v=${UPDV}"></video><button id="updsk">Überspringen ▶▶</button>`;
+  document.body.appendChild(v); const vid = v.querySelector('video'), sk = v.querySelector('#updsk');
+  const fin = () => { if (v.dataset.x) return; v.dataset.x = 1; S.updV = UPDV; try { save('now'); } catch (e) {} v.classList.add('out'); try { vid.pause(); } catch (e) {} setTimeout(() => v.remove(), 400); };
+  vid.onended = fin; vid.onerror = fin; sk.onclick = fin; setTimeout(() => sk.classList.add('on'), 5000);
+  const pl = vid.play(); if (pl && pl.catch) pl.catch(() => { vid.muted = true; vid.play().catch(fin); });
+}
 function startScreen() {
   if (/[?&]tr\b/.test(location.search)) return; // Trailer-Aufnahme ohne Startbild
   const d = document.createElement('div'); d.id = 'start';
@@ -2749,7 +2844,7 @@ function startScreen() {
   let t0 = performance.now(), phase = 0, pt = 0, done = false, beam = 0;
   const go = () => { if (phase) return; phase = 1; pt = 0; d.querySelector('#stgo').style.display = 'none'; d.querySelector('.st-t').style.transition = 'opacity .6s'; d.querySelector('.st-t').style.opacity = '0'; try { SND.fx.warp(); } catch (e) {} vib && vib([30, 40, 80]);
     for (const c of cells) { const a = Math.atan2(c.v, c.u) + (Math.random() - .5) * .6, sp = .6 + Math.random() * 1.6 + (1 - c.rr) * .6; c.vx = Math.cos(a) * sp; c.vy = Math.sin(a) * sp; c.vz = .8 + Math.random() * 2.2; c.vr = (Math.random() - .5) * 8; } };
-  const end = () => { if (done) return; done = true; d.classList.add('out'); setTimeout(() => { d.remove(); removeEventListener('resize', fit); }, 450); };
+  const end = () => { if (done) return; done = true; d.classList.add('out'); setTimeout(() => { d.remove(); removeEventListener('resize', fit); }, 450); updVid(); };
   d.querySelector('#stc').onclick = e => { const R = Math.min(w, h * .8) * .26, dx = e.clientX - w / 2, dy = e.clientY - h * .53; if (dx * dx + dy * dy <= (R * 1.5) ** 2) go(); }; // nur der Planet in der Mitte startet
   const frame = now => { if (done) return; const T = (now - t0) / 1000; const dt = 1 / 60; if (phase) pt += dt;
     x.fillStyle = '#03050b'; x.fillRect(0, 0, w, h);

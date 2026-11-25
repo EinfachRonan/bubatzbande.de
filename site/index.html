@@ -325,7 +325,10 @@ function draw() {
   const hot = all.slice().sort((x, y) => (lpMe(y) - lpMe(x)) || (plMe(y) - plMe(x)))[0];
   const isHot = hot && (lpMe(hot) > 0 || plMe(hot) > 0);
   // Neues Update (letzte 3 Tage) kommt bei allen ganz nach oben – bis man es nach dem Update gespielt hat
-  const nu = all[0], isNew = nu && upT(nu) && Date.now() / 1000 - upT(nu) < 3 * 86400 && lpMe(nu) < upT(nu) * 1000;
+  // NEU_BIS: Spiel fest ganz oben bis zu dieser Zeit (bei allen, auch wenn schon gespielt)
+  const NEU_BIS = { drill: Date.UTC(2026, 10, 27, 19, 0) }; // Galaxie-Bohrer-Update bis Freitag 27.11. 20:00 Uhr
+  const pin = all.find(g => NEU_BIS[g.url.replace(/\/.*$/, '')] > Date.now());
+  const nu = pin || all[0], isNew = !!pin || (nu && upT(nu) && Date.now() / 1000 - upT(nu) < 3 * 86400 && lpMe(nu) < upT(nu) * 1000);
   const top = isNew ? nu : isHot ? hot : all[0], rest = all.filter(g => g !== top);
   const bsOf = g => { const bs = b && b.best(g.k); return bs ? b.fmt(g.k, bs.s) : ''; };
   const tb = bsOf(top);

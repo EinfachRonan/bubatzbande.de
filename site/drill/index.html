@@ -503,6 +503,9 @@ html,body{overscroll-behavior:none;position:fixed;inset:0;width:100%}button,a{to
 .syns{display:flex;flex-direction:column;gap:6px;margin:6px 0 4px}.syn{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid #ffffff1a;border-radius:10px;background:#0a0f16cc;opacity:.62}.syn.on{opacity:1;border-color:var(--sc);box-shadow:0 0 12px -4px var(--sc),inset 0 0 14px -8px var(--sc)}.syn-ic{display:flex;align-items:center;gap:3px;flex:none}.syn-ic b{color:#ffffff80;font-size:12px}.syn-ic .fg-ic{width:26px;height:26px}.syn-ic .fg-ic svg{width:18px;height:18px}.syn-ic .miss{filter:grayscale(1);opacity:.45}.syn-t{min-width:0}.syn-t b{font-size:12px;color:var(--sc)}.syn-t i{font-style:normal;font-size:9px;margin-left:6px;padding:1px 5px;border-radius:4px;background:var(--sc);color:#05080c;font-weight:700;letter-spacing:.05em}.syn-t small{display:block;font-size:10px;line-height:1.35;color:#c8d4e0;margin-top:2px}
 #updv{position:fixed;inset:0;z-index:100000;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity .4s}#updv.out{opacity:0}#updv video{width:100%;height:100%;object-fit:contain;background:#000}#updsk{position:absolute;right:max(16px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));padding:10px 16px;font:700 13px var(--mono);letter-spacing:.06em;color:#fff;background:rgba(5,8,12,.72);border:1.5px solid #ffffff66;border-radius:10px;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .35s,transform .35s}#updsk.on{opacity:1;pointer-events:auto;transform:none}#updsk:hover{border-color:#5ce8f0;color:#5ce8f0}
 .augopen{width:100%;margin:0 0 10px;display:flex;align-items:center;justify-content:center;gap:10px;color:#ffe94d!important;animation:augp 1.6s ease-in-out infinite}.augopen b{min-width:22px;padding:2px 7px;border-radius:9px;background:#ffe94d;color:#05070d;font-size:12px}@keyframes augp{50%{box-shadow:0 0 18px rgba(255,233,77,.55)}}
+#allw{position:fixed;inset:0;z-index:100001;background:#02030a;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:max(28px,env(safe-area-inset-top)) 18px max(26px,env(safe-area-inset-bottom));transition:opacity .5s;animation:awin .8s ease}#allw.out{opacity:0}@keyframes awin{from{opacity:0}}#allw canvas{position:absolute;inset:0;width:100%;height:100%}
+.aw-t{position:relative;text-align:center;animation:awt 1.2s 1.4s both}.aw-t small{font:12px Silkscreen,monospace;letter-spacing:.3em;color:#ffe94d}.aw-t h1{margin:10px 0 8px;font:400 clamp(34px,9vw,64px)/1.05 Silkscreen,monospace;color:#fff;text-shadow:0 0 24px #b48cff,0 0 50px #5ce8f0,0 4px 0 #000}.aw-t p{max-width:420px;margin:0 auto;font:14px/1.5 var(--mono);color:#dfe8f4;text-shadow:0 2px 6px #000}.aw-t b{color:#ffe94d}@keyframes awt{from{opacity:0;transform:translateY(-14px) scale(.96)}}
+.aw-b{position:relative;display:flex;flex-direction:column;gap:10px;width:min(360px,100%);animation:awt 1s 2.4s both}.aw-b button{padding:14px 16px;font:700 15px var(--mono);letter-spacing:.04em;color:#05070d;background:#5ce8f0;border:0;border-radius:12px;cursor:pointer;box-shadow:0 0 22px rgba(92,232,240,.45)}.aw-b button small{display:block;margin-top:4px;font:600 11px var(--mono);letter-spacing:0;color:#0b3b40}.aw-b #awrst{background:rgba(5,8,14,.7);color:#ff9fb0;border:1.5px solid #ff4a6288;box-shadow:none;font-size:13px}
 .fg-ic{flex:none;width:30px;height:30px;border:1.5px solid;border-radius:8px;background:#05080c;display:flex;align-items:center;justify-content:center}.fg-ic svg{width:21px;height:21px}
 .fg-ic.big{width:42px;height:42px;margin-left:auto;box-shadow:0 0 12px currentColor}.fg-ic.big svg{width:26px;height:26px}
 .fg-t b{display:block;font:400 15px Silkscreen,var(--mono);color:var(--hc)}.fg-t span{display:block;font-size:12px;color:#cfd8da;margin:2px 0}.fg-t em{font-style:normal;font-size:10.5px;color:var(--mut)}
@@ -1048,7 +1051,9 @@ for (const h in HYB) MODS[h] = { s: 'Mods der beiden Waffen zählen', f: l => '+
 const wCost = (w, n = 1) => { const l = WL(w.id), cf = HYB[w.id] ? HYBC : 1; let c = 0; for (let i = 0; i < n; i++) c += cf * T_UP[tier(w.id)] * Math.pow(1.22, l - 1 + i); return c; };
 const skCost = id => 1 + SK(id); // Stufe 1 = ◆1 … Stufe 10 = ◆10 → eine Skill-Reihe voll ≈ Planet 8-9
 let buyN = 1;
-const maxBuy = w => { let n = 0, c = 0; while (n < 500) { const k = (HYB[w.id] ? HYBC : 1) * T_UP[tier(w.id)] * Math.pow(1.22, WL(w.id) - 1 + n); if (c + k > S.cr) break; c += k; n++; } return n; };
+/* Maximalstufen: normale Waffen 100, Hybride 200 (angezeigte Stufe) */
+const WMAX = 100, HMAX = 200, wMax = id => HYB[id] ? HB(id) + HMAX - 1 : WMAX, wLeft = id => Math.max(0, wMax(id) - WL(id));
+const maxBuy = w => { let n = 0, c = 0; const lim = Math.min(500, wLeft(w.id)); while (n < lim) { const k = (HYB[w.id] ? HYBC : 1) * T_UP[tier(w.id)] * Math.pow(1.22, WL(w.id) - 1 + n); if (c + k > S.cr) break; c += k; n++; } return n; };
 
 // ================== Planet ==================
 const cv = $('cv'), g = cv.getContext('2d');
@@ -2095,7 +2100,7 @@ function ui() {
   if ($('shdot')) $('shdot').hidden = !dlyOpen();
   $('skdot').hidden = !S.augQ;
   // Knöpfe aktualisieren, ohne die Liste neu zu bauen
-  document.querySelectorAll('[data-up]').forEach(el => { const w = WEAP.find(x => x.id === el.dataset.up), n = buyN === 'max' ? Math.max(1, maxBuy(w)) : buyN, c = wCost(w, n); el.disabled = S.cr < c; const l0 = WL(w.id), f = l => { if (!HYB[w.id]) return T_DPS[tier(w.id)] * l * Math.pow(2, msN(l)) * mult(); const o = S.w[w.id]; S.w[w.id] = l; const v = wDps(w); S.w[w.id] = o; return v; }, sN = l => { if (!HYB[w.id]) return msN(l); const o = S.w[w.id]; S.w[w.id] = l; const v = ST(w.id); S.w[w.id] = o; return v; }, gn = f(l0 + n) - f(l0); el.innerHTML = (n > 1 ? `x${n} · ` : '') + fmt(c) + ' CR' + `<small class="gn">+${fmt(gn)} DPS${sN(l0 + n) > sN(l0) ? ' ★' : ''}</small>`; });
+  document.querySelectorAll('[data-up]').forEach(el => { const w = WEAP.find(x => x.id === el.dataset.up); if (!wLeft(w.id)) { el.disabled = true; el.innerHTML = 'MAX<small class="gn">Höchststufe</small>'; return; } const n = Math.min(wLeft(w.id), buyN === 'max' ? Math.max(1, maxBuy(w)) : buyN), c = wCost(w, n); el.disabled = S.cr < c; const l0 = WL(w.id), f = l => { if (!HYB[w.id]) return T_DPS[tier(w.id)] * l * Math.pow(2, msN(l)) * mult(); const o = S.w[w.id]; S.w[w.id] = l; const v = wDps(w); S.w[w.id] = o; return v; }, sN = l => { if (!HYB[w.id]) return msN(l); const o = S.w[w.id]; S.w[w.id] = l; const v = ST(w.id); S.w[w.id] = o; return v; }, gn = f(l0 + n) - f(l0); el.innerHTML = (n > 1 ? `x${n} · ` : '') + fmt(c) + ' CR' + `<small class="gn">+${fmt(gn)} DPS${sN(l0 + n) > sN(l0) ? ' ★' : ''}</small>`; });
   document.querySelectorAll('[data-unl]').forEach(el => { el.disabled = S.cr < nextUnl(); });
   document.querySelectorAll('[data-dps]').forEach(el => { el.textContent = 'DPS ' + fmt(wDps(WEAP.find(x => x.id === el.dataset.dps))) + '/s'; });
 }
@@ -2118,8 +2123,45 @@ const LINEST = {
 };
 const lineSt = () => LINEST[S.eq && S.eq.h] || LINEST.h_kobold;
 function lineSync() { const L = lineSt(), w = WEAP.find(x => x.id === 'line'); if (w) { w.n = L.n; w.d = L.d; } WCOL.line = L.c; }
+/* Alles freigeschaltet = alle Hybride geschmiedet (damit jede Waffe) + alle Fähigkeiten → einmalige Glückwunsch-Szene */
+const allDone = () => Object.keys(HYB).every(h => S.w[h] > 0) && ABIL.every(a => AL(a.id) > 0);
+let allT = 0;
+function allCheck() { if (S.allW || !allDone()) return; if ($('allw') || $('start') || $('updv') || $('aug') || $('news') || !$('ov').classList.contains('hide')) { if (!allT) allT = setTimeout(() => { allT = 0; allCheck(); }, 2000); return; } S.allW = Date.now(); save('now'); allShow(); }
+function allShow() {
+  const d = document.createElement('div'); d.id = 'allw';
+  d.innerHTML = `<canvas></canvas><div class="aw-t"><small>★ GALAXIE BOHRER ★</small><h1>Herzlichen<br>Glückwunsch!</h1><p>Du hast <b>alles</b> freigeschaltet: jede Waffe, jeden Hybrid und jede Fähigkeit.</p></div>
+    <div class="aw-b"><button id="awgo">▶ Weiterspielen<small>Neuer Content kommt bald – dauert nicht mehr lange!</small></button><button id="awrst">↺ Spielstand zurücksetzen</button></div>`;
+  document.body.appendChild(d); const cv = d.querySelector('canvas'), x = cv.getContext('2d'), dpr = Math.min(2, devicePixelRatio || 1); let w = 0, h = 0, run = true, t0 = performance.now();
+  const fit = () => { w = innerWidth; h = innerHeight; cv.width = w * dpr; cv.height = h * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0); }; fit(); addEventListener('resize', fit);
+  const im = new Image(); im.src = 'ships/' + (S.eq.h || 'h_pfeil') + '.png'; im.onerror = () => { im.src = 'ships/pix/' + (S.eq.h || 'h_pfeil') + '.png'; };
+  const eng = eqItem('t'), ST2 = Array.from({ length: 420 }, () => ({ a: Math.random() * 6.283, d: Math.random(), z: Math.random(), c: ['#ffffff', '#9fe8ff', '#ff9ad8', '#ffe94d', '#c9a2ff'][Math.random() * 5 | 0] }));
+  const GAL = Array.from({ length: 900 }, (_, i) => { const arm = i % 3, r = Math.pow(Math.random(), .6), a = arm * 2.094 + r * 5.2 + (Math.random() - .5) * .5; return { a, r, c: r < .2 ? '#fff3c4' : ['#8fb8ff', '#ff8ad8', '#b48cff'][arm] }; });
+  const frame = now => { if (!run) return; const t = (now - t0) / 1000, cx = w / 2, cy = h * .42;
+    x.fillStyle = '#02030a'; x.fillRect(0, 0, w, h);
+    /* Galaxie dreht sich langsam im Hintergrund */
+    const R = Math.max(w, h) * .55, rot = t * .05; x.globalCompositeOperation = 'lighter';
+    let gr = x.createRadialGradient(cx, cy, 0, cx, cy, R); gr.addColorStop(0, 'rgba(255,230,180,.35)'); gr.addColorStop(.25, 'rgba(180,120,255,.18)'); gr.addColorStop(.6, 'rgba(60,90,200,.08)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = gr; x.fillRect(0, 0, w, h);
+    for (const g2 of GAL) { const a = g2.a + rot, px = cx + Math.cos(a) * g2.r * R, py = cy + Math.sin(a) * g2.r * R * .55; x.globalAlpha = .55 * (1 - g2.r * .6); x.fillStyle = g2.c; x.fillRect(px, py, 1.6, 1.6); }
+    /* Sterne fliegen auf dich zu: Flug durch die Unendlichkeit */
+    for (const s2 of ST2) { s2.z -= .0045 + .002 * s2.d; if (s2.z <= .02) { s2.z = 1; s2.a = Math.random() * 6.283; s2.d = Math.random(); }
+      const k = 1 / s2.z, rr = (8 + s2.d * 60) * k, px = cx + Math.cos(s2.a) * rr, py = cy + Math.sin(s2.a) * rr, k2 = 1 / (s2.z + .03), rr2 = (8 + s2.d * 60) * k2;
+      x.globalAlpha = Math.min(1, (1 - s2.z) * 1.4); x.strokeStyle = s2.c; x.lineWidth = Math.min(3, .6 + (1 - s2.z) * 2.2); x.beginPath(); x.moveTo(px, py); x.lineTo(cx + Math.cos(s2.a) * rr2, cy + Math.sin(s2.a) * rr2); x.stroke(); }
+    x.globalAlpha = 1;
+    /* Schiff kommt auf dich zu, schwebt und neigt sich */
+    const appear = Math.min(1, t / 2.2), ez = 1 - Math.pow(1 - appear, 3), sz = Math.min(w, h) * (.06 + .2 * ez) * (1 + .03 * Math.sin(t * 2.2)), sx = cx + Math.sin(t * .9) * w * .05 * ez, sy = cy + Math.cos(t * 1.3) * h * .02;
+    const col = eng.col === 'rainbow' ? `hsl(${(t * 120) % 360},100%,65%)` : (eng.col || '#5ce8f0');
+    gr = x.createRadialGradient(sx, sy + sz * .55, 0, sx, sy + sz * .55, sz * .9); gr.addColorStop(0, col); gr.addColorStop(1, 'rgba(0,0,0,0)'); x.globalAlpha = .55 + .2 * Math.sin(t * 20); x.fillStyle = gr; x.beginPath(); x.arc(sx, sy + sz * .55, sz * .9, 0, 7); x.fill();
+    gr = x.createRadialGradient(sx, sy, 0, sx, sy, sz * 1.4); gr.addColorStop(0, 'rgba(160,220,255,.35)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); x.globalAlpha = 1; x.fillStyle = gr; x.beginPath(); x.arc(sx, sy, sz * 1.4, 0, 7); x.fill();
+    x.globalCompositeOperation = 'source-over';
+    if (im.complete && im.naturalWidth) { x.save(); x.translate(sx, sy); x.rotate(Math.PI + Math.sin(t * .9) * .12); x.imageSmoothingEnabled = false; x.drawImage(im, -sz / 2, -sz / 2, sz, sz); x.restore(); }
+    requestAnimationFrame(frame); };
+  requestAnimationFrame(frame); SND.fx.up && SND.fx.up(); vib([60, 40, 60, 40, 200]);
+  const close = () => { run = false; removeEventListener('resize', fit); d.classList.add('out'); setTimeout(() => d.remove(), 500); };
+  d.querySelector('#awgo').onclick = close;
+  d.querySelector('#awrst').onclick = () => { close(); setTimeout(() => $('vrst') ? $('vrst').click() : resetGame(), 520); };
+}
 function synCheck() { S.synS = S.synS || []; for (const sy of SYN) if (synOn(sy) && !S.synS.includes(sy.id)) { S.synS.push(sy.id); setTimeout(() => cele('⚡ SYNERGIE!', sy.n + ' ist aktiv'), 400); } }
-function render() { lineSync(); synCheck();
+function render() { lineSync(); synCheck(); allCheck();
   if (tab !== 'h') document.querySelectorAll('.hsheet').forEach(x => x.remove());
   applyFull();
   const L = $('list');
@@ -2140,7 +2182,7 @@ function render() { lineSync(); synCheck();
     L.innerHTML = h;
     $('fgopen').onclick = () => goTab('sm');
     L.querySelectorAll('[data-n]').forEach(b => b.onclick = () => { buyN = b.dataset.n === 'max' ? 'max' : +b.dataset.n; render(); });
-    L.querySelectorAll('[data-up]').forEach(b => b.onclick = () => { const w = WEAP.find(x => x.id === b.dataset.up), n = buyN === 'max' ? maxBuy(w) : buyN, c = wCost(w, n); if (!n || S.cr < c) return; S.cr -= c; const s0 = ST(w.id); S.w[w.id] = WL(w.id) + n; mis('wup', n); SND.fx.up(); if (ST(w.id) > s0) upgradeFx(w); if (WL(w.id) >= 100 && window.BB) BB.unlock('drill_100'); save(); render(); });
+    L.querySelectorAll('[data-up]').forEach(b => b.onclick = () => { const w = WEAP.find(x => x.id === b.dataset.up), n = Math.min(wLeft(w.id), buyN === 'max' ? maxBuy(w) : buyN), c = wCost(w, n); if (!n || S.cr < c) return; S.cr -= c; const s0 = ST(w.id); S.w[w.id] = WL(w.id) + n; mis('wup', n); SND.fx.up(); if (ST(w.id) > s0) upgradeFx(w); if (WL(w.id) >= 100 && window.BB) BB.unlock('drill_100'); save(); render(); });
     L.querySelectorAll('[data-unl]').forEach(b => b.onclick = () => { const w = WEAP.find(x => x.id === b.dataset.unl), c = nextUnl(); if (S.cr < c || owned().length >= maxWeapons()) return; S.cr -= c; S.w[w.id] = 1; S.wo = S.wo.concat(w.id); /* immer ans Ende: neue Waffen sind stärker als die davor */ S.offer = null; S.rrUsed = false; toast(`${w.n} freigeschaltet!`); if (owned().length >= 6 && window.BB) BB.unlock('drill_waffen'); save(true); render(); });
     L.querySelectorAll('[data-wi]').forEach(b => b.onclick = () => wInfo(b.dataset.wi));
     if ($('reroll')) $('reroll').onclick = () => { if (S.rrUsed) return; offers(); if (!S.offer) return; S.rrUsed = true; const left = WEAP.filter(w => !WL(w.id) && !S.offer.includes(w.id)).map(w => w.id).sort(() => Math.random() - .5); const keep = left.length >= 2 ? [] : S.offer.slice(0, 2 - left.length); S.offer = left.slice(0, 2).concat(keep).slice(0, 2); save(true); render(); };
@@ -2194,7 +2236,7 @@ document.querySelectorAll('.nav [data-t]').forEach(b => b.onclick = () => {
   if (!fold && tab === b.dataset.t) { if (FULLT[tab] && !isDesk()) { goTab('w'); return; } setFold(true); return; }
   tab = b.dataset.t; $('list').scrollTop = 0; setFold(false); document.querySelectorAll('.nav [data-t]').forEach(x => x.classList.toggle('on', x === b)); render(); });
 function upgradeFx(w) { SND.fx.win(); const n = ST(w.id); fx.push({ k: 'nova', x: ship.x, y: ship.y, r: 90, t: .8, c: '255,233,77' }); for (let k = 0; k < 30; k++) parts.push({ x: ship.x, y: ship.y, vx: (Math.random() - .5) * 300, vy: (Math.random() - .5) * 300, t: .8, c: '#ffe94d' });
-  overlay(`<div class="crate" style="--rc:#ffe94d"><div class="cbox" style="font-size:44px;color:#ffe94d">★${n}</div></div><h2 style="color:#ffe94d">${w.n} aufgewertet!</h2><p>x2 Schaden${UPTXT[w.id] ? ' · ' + UPTXT[w.id] : ''}<br>Nächstes Upgrade bei Stufe ${HYB[w.id] ? (HXS(w.id) + 1) * HYBS + 1 : msNext(WL(w.id))}</p>`, [['Stark', null]]); }
+  overlay(`<div class="crate" style="--rc:#ffe94d"><div class="cbox" style="font-size:44px;color:#ffe94d">★${n}</div></div><h2 style="color:#ffe94d">${w.n} aufgewertet!</h2><p>x2 Schaden${UPTXT[w.id] ? ' · ' + UPTXT[w.id] : ''}<br>${!wLeft(w.id) ? 'Höchststufe erreicht!' : 'Nächstes Upgrade bei Stufe ' + (HYB[w.id] ? (HXS(w.id) + 1) * HYBS + 1 : msNext(WL(w.id)))}</p>`, [['Stark', null]]); }
 function boostClick() { if (boosting() || S.boostCd > Date.now()) return; S.boostEnd = Date.now() + (5 + 2 * WP('boost')) * 60e3 * (PK('r', 10) ? 1.5 : 1); S.boostDur = S.boostEnd - Date.now(); S.boostCd = S.boostEnd + 3 * 60e3; /* 3 min Abklingzeit nach dem Boost */ toast('Boost aktiv: doppelter Schaden und doppelte CR!'); save(true); ui(); }
 $('lb').onclick = () => window.BB && BB.open('board', 'drill');
 $('opt').onclick = openSettings;
@@ -2252,6 +2294,7 @@ function augCard(c, k) { const T = AUGT[c.t];
 
 // ================== „Was ist neu“: einmal pro größerem Update beim Start, gut sichtbar ==================
 const NEWS = [ // [Icon, Titel, Text, Version] – angezeigt wird nur, was der Spieler noch nicht gesehen hat
+  ['🏆', 'Höchststufen', 'Normale Waffen gehen jetzt bis Stufe 100, Hybride bis Stufe 200. Und wer wirklich alles freischaltet, bekommt eine Überraschung …', '2026-11-25c'],
   ['⚒', 'Neuer Hybrid: Ätzstrahl', 'Orbitalstrahl + Säurewolke lassen sich jetzt in der Waffen-Schmiede verschmelzen: 50 % breiterer Strahl, und am Ende bleibt eine große Säurewolke liegen.', '2026-11-25c'],
   ['🛰', '2 neue Waffen', 'Der Orbitalstrahl feuert aus dem All und fegt über die Oberfläche. Die Säurewolke legt sich auf den Planeten und zersetzt alles darin.', '2026-11-25b'],
   ['✨', '2 neue Fähigkeiten', 'Schattenklon: ein zweites Schiff greift 12 s lang mit an. Planetenbeben: 3 Schockwellen treffen jeden Block des Planeten.', '2026-11-25b'],
@@ -3243,7 +3286,8 @@ function cleanSave() {
   if (!S.wp1) { S.wp1 = 1; S.wp = S.wp || {}; for (const id of (S.wpu || [])) { const w = WARP.find(x => x.id === id); if (w && id !== 'slot') S.wp[id] = Math.min(w.max, (S.wp[id] || 0) + 1); } } // Warp-Fähigkeiten: Stufe 1 jetzt gratis → alle bekommen sie nach
   if (!S.slot1b) { S.slot1b = 1; if ((S.wpu || []).includes('slot') && WP('slot') < 8) S.wp.slot = WP('slot') + 1; } // Waffenslot-Warp: Stufe 1 jetzt gratis, alte Stände bekommen sie nach
   if (!S.wq5b) { S.wq5b = 1; if (S.wReq > 10) S.wReq = Math.max(10, S.wReq - (S.wReq >= 41 ? 15 : 5)); } // Hürde jetzt +5 statt +10/+20: alte Stände anpassen
-  S.hb = S.hb || {}; for (const h in HYB) if (S.w[h] && !S.hb[h]) S.hb[h] = S.w[h]; /* bestehende Hybride zeigen ab jetzt Lv. 1 */
+  S.hb = S.hb || {}; for (const h in HYB) if (S.w[h] && !S.hb[h]) S.hb[h] = S.w[h];
+  for (const id in S.w) { const mx = HYB[id] ? S.hb[id] + HMAX - 1 : WMAX; if (S.w[id] > mx) S.w[id] = mx; } /* Höchststufen: normal 100, Hybrid 200 */ /* bestehende Hybride zeigen ab jetzt Lv. 1 */
   if (S.wTok == null) { S.wTok = 0; } tokSync(); // Warp-Tokens nachrechnen
   S.wo = (S.wo || ['line']).filter(id => id === '_' || WEAP.find(w => w.id === id)); hybSync(); if (!S.wo.length) S.wo = ['line'];
   for (const k in (S.mod || {})) if (!MODS[k]) delete S.mod[k];

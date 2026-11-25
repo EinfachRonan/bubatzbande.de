@@ -78,6 +78,8 @@ h2{margin:0;font:700 17px/1.2 var(--hd);letter-spacing:-.1px}
 .top1 .badge{position:absolute;left:14px;top:14px;z-index:1;display:flex;gap:6px}
 .top1 .badge span{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;border-radius:99px;padding:5px 10px;background:var(--ac);color:#0e1110}
 .top1 .badge span.sc{background:var(--gold)}
+.top1 .badge span.nu{background:#ff5d8f;color:#fff;animation:nuP 1.6s ease-in-out infinite}
+@keyframes nuP{50%{box-shadow:0 0 0 6px rgba(255,93,143,.25)}}
 .top1 .bd{padding:4px 18px 18px;display:flex;flex-direction:column;gap:8px;margin-top:-34px;position:relative}
 .top1 .kk{font-size:11.5px;font-weight:600;color:var(--ac);letter-spacing:.5px;text-transform:uppercase}
 .top1 h3{margin:0;font:700 30px/1.02 var(--hd);letter-spacing:-.4px}
@@ -322,10 +324,12 @@ function draw() {
   // Ganz oben: das Spiel, das DU zuletzt gespielt hast (im Konto, geräteübergreifend). Noch nichts gespielt → neuestes Update
   const hot = all.slice().sort((x, y) => (lpMe(y) - lpMe(x)) || (plMe(y) - plMe(x)))[0];
   const isHot = hot && (lpMe(hot) > 0 || plMe(hot) > 0);
-  const top = isHot ? hot : all[0], rest = all.filter(g => g !== top);
+  // Neues Update (letzte 3 Tage) kommt bei allen ganz nach oben – bis man es nach dem Update gespielt hat
+  const nu = all[0], isNew = nu && upT(nu) && Date.now() / 1000 - upT(nu) < 3 * 86400 && lpMe(nu) < upT(nu) * 1000;
+  const top = isNew ? nu : isHot ? hot : all[0], rest = all.filter(g => g !== top);
   const bsOf = g => { const bs = b && b.best(g.k); return bs ? b.fmt(g.k, bs.s) : ''; };
   const tb = bsOf(top);
-  $('topG').innerHTML = `<a class="top1" href="${top.url}"><div class="pic">${media(top)}<div class="badge"><span>${isHot ? '▶ Zuletzt gespielt' : upT(top) ? 'Neuestes Update' : 'Top-Spiel'}</span>${top.sec ? '<span class="sc">Geheim</span>' : ''}</div></div><div class="bd"><div class="kk">${esc(top.tag)}</div><h3>${esc(top.name)}</h3><p>${esc(top.text)}</p>${upT(top) ? `<span class="up">Zuletzt geupdatet: ${upF(upT(top))}</span>` : ''}<div class="ft"><span class="btn">${go.replace('<svg', '<svg width="16" height="16"')} Jetzt spielen</span>${hasLb(top) ? `<span class="lbx" data-lb="${top.k}">🏆 Bestenliste</span>` : ''}${isHot && lpMe(top) ? `<span class="bsx">Zuletzt: ${upF(lpMe(top) / 1000)}</span>` : ''}${tb ? `<span class="bsx">🏆 ${tb}</span>` : ''}</div></div></a>`;
+  $('topG').innerHTML = `<a class="top1" href="${top.url}"><div class="pic">${media(top)}<div class="badge"><span${isNew ? ' class="nu"' : ''}>${isNew ? '🆕 New Update' : isHot ? '▶ Zuletzt gespielt' : upT(top) ? 'Neuestes Update' : 'Top-Spiel'}</span>${top.sec ? '<span class="sc">Geheim</span>' : ''}</div></div><div class="bd"><div class="kk">${esc(top.tag)}</div><h3>${esc(top.name)}</h3><p>${esc(top.text)}</p>${upT(top) ? `<span class="up">Zuletzt geupdatet: ${upF(upT(top))}</span>` : ''}<div class="ft"><span class="btn">${go.replace('<svg', '<svg width="16" height="16"')} Jetzt spielen</span>${hasLb(top) ? `<span class="lbx" data-lb="${top.k}">🏆 Bestenliste</span>` : ''}${isHot && lpMe(top) ? `<span class="bsx">Zuletzt: ${upF(lpMe(top) / 1000)}</span>` : ''}${tb ? `<span class="bsx">🏆 ${tb}</span>` : ''}</div></div></a>`;
   $('games').innerHTML = rest.map(g => { const bs = bsOf(g);
     return `<a class="gc" href="${g.url}"><div class="pic">${media(g, 1)}<div class="tg">${g.sec ? '<span class="sc">Geheim</span>' : ''}<span>${esc(g.tag.replace(/^Testphase · /, 'Test · '))}</span></div></div><div class="bd"><h3>${esc(g.name)}</h3><p>${esc(g.text)}</p><div class="ft">${bs ? `<span class="bst">🏆 ${bs}</span>` : upT(g) ? `<span class="up">${upF(upT(g))}</span>` : '<span></span>'}${hasLb(g) ? '' : `<span class="go">${go}</span>`}</div>${hasLb(g) ? `<div class="acts"><span class="pl">${go} Spielen</span><span class="lb" data-lb="${g.k}">🏆 Bestenliste</span></div>` : ''}</div></a>`; }).join('');
   $('nH').innerHTML = `${all.length} Spiele.<br><span>1 Bande.</span>`;

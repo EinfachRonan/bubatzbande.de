@@ -500,6 +500,7 @@ html,body{overscroll-behavior:none;position:fixed;inset:0;width:100%}button,a{to
 .fg{margin:0 0 9px;padding:11px 12px;border-style:solid;border-image:url(ui/panel.png) 36 54 36 54 fill / 11px 15px 11px 15px stretch}
 .fg.rdy{box-shadow:0 0 14px color-mix(in srgb,var(--hc) 45%,transparent)}.fg.on{box-shadow:inset 0 0 22px color-mix(in srgb,var(--hc) 30%,transparent)}
 .fg-r{display:flex;align-items:center;gap:4px;margin-bottom:8px;min-width:0}.fg-r small{font:600 9.5px var(--mono);color:var(--mut);min-width:0;white-space:nowrap}.fg-r .pl{font:700 16px var(--mono);color:#7f9196;margin:0 2px}
+.syns{display:flex;flex-direction:column;gap:6px;margin:6px 0 4px}.syn{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid #ffffff1a;border-radius:10px;background:#0a0f16cc;opacity:.62}.syn.on{opacity:1;border-color:var(--sc);box-shadow:0 0 12px -4px var(--sc),inset 0 0 14px -8px var(--sc)}.syn-ic{display:flex;align-items:center;gap:3px;flex:none}.syn-ic b{color:#ffffff80;font-size:12px}.syn-ic .fg-ic{width:26px;height:26px}.syn-ic .fg-ic svg{width:18px;height:18px}.syn-ic .miss{filter:grayscale(1);opacity:.45}.syn-t{min-width:0}.syn-t b{font-size:12px;color:var(--sc)}.syn-t i{font-style:normal;font-size:9px;margin-left:6px;padding:1px 5px;border-radius:4px;background:var(--sc);color:#05080c;font-weight:700;letter-spacing:.05em}.syn-t small{display:block;font-size:10px;line-height:1.35;color:#c8d4e0;margin-top:2px}
 .fg-ic{flex:none;width:30px;height:30px;border:1.5px solid;border-radius:8px;background:#05080c;display:flex;align-items:center;justify-content:center}.fg-ic svg{width:21px;height:21px}
 .fg-ic.big{width:42px;height:42px;margin-left:auto;box-shadow:0 0 12px currentColor}.fg-ic.big svg{width:26px;height:26px}
 .fg-t b{display:block;font:400 15px Silkscreen,var(--mono);color:var(--hc)}.fg-t span{display:block;font-size:12px;color:#cfd8da;margin:2px 0}.fg-t em{font-style:normal;font-size:10.5px;color:var(--mut)}
@@ -748,6 +749,20 @@ const LVd = id => HYB[id] && S.w[id] ? HLV(id) : WL(id); /* angezeigte Stufe */
 let HP = {}; // Eltern-Waffe -> aktive Hybrid-Waffe
 function hybSync() { HP = {}; for (const h in HYB) if (S.w && S.w[h]) for (const p of HYB[h].p) HP[p] = h; }
 const HY = h => !!(S.w && S.w[h]);
+/* Waffen-Synergien: zwei bestimmte Waffen gleichzeitig besitzen (auch verschmolzen) → Bonus. Jede Waffe hat genau einen Partner. */
+const SYN = [
+  { id: 'supra', p: ['frost', 'chain'], n: 'Supraleiter', c: '#9fe8ff', b: { chain: .3, frost: .2 }, d: 'Eis leitet Strom: Der Kettenblitz springt 40 % weiter und macht auf gefrorenen Blöcken doppelten Schaden.' },
+  { id: 'schwer', p: ['grav', 'meteor'], n: 'Schwerkraft-Regen', c: '#ff9ae8', b: { meteor: .3, grav: .2 }, d: 'Die Gravitation zieht Meteore an: Krater werden ein Feld größer, Meteore +30 % Schaden.' },
+  { id: 'saegew', p: ['saw', 'tornado'], n: 'Sägewirbel', c: '#9dff6a', b: { saw: .4, tornado: .4 }, d: 'Der Wirbelsturm schleudert Splitter in die Sägen: beide Waffen +40 % Schaden.' },
+  { id: 'spreng', p: ['rockets', 'mine'], n: 'Sprengkopf', c: '#ff7a2a', b: { rockets: .5, mine: .25 }, d: 'Raketen mit Minen-Ladung: Raketen +50 %, Minen +25 % Schaden.' },
+  { id: 'fokus', p: ['star', 'sniper'], n: 'Kristallfokus', c: '#ff4f7a', b: { sniper: .6, star: .2 }, d: 'Der Kristallstern bündelt den Königsschuss: Königsschuss +60 %, Kristallstern +20 % Schaden.' },
+  { id: 'kern', p: ['drill', 'nova'], n: 'Kernschmelze', c: '#6effaa', b: { drill: .4, nova: .4 }, d: 'Die Bohrlanze bringt das Plasma tief rein: beide Waffen +40 % Schaden.' },
+  { id: 'schwarm', p: ['drones', 'scatter'], n: 'Schwarmfeuer', c: '#ffd23f', b: { drones: .35, scatter: .35 }, d: 'Drohnen markieren Ziele fürs Streufeuer: beide Waffen +35 % Schaden.' },
+  { id: 'sichel', p: ['whip', 'boomer'], n: 'Sichelpeitsche', c: '#b8fff0', b: { whip: .35, boomer: .35 }, d: 'Die Peitsche schleudert den Bumerang schneller zurück: beide Waffen +35 % Schaden.' }
+];
+const synOn = sy => sy.p.every(p => WL(p) > 0), SY = id => { const x = SYN.find(q => q.id === id); return !!(x && synOn(x)); };
+const SYB = id => SYN.reduce((a, sy) => a + (sy.b[id] && synOn(sy) ? sy.b[id] : 0), 0);
+const SYBw = id => HYB[id] ? HYB[id].p.reduce((a, p) => a + SYB(p), 0) / HYB[id].p.length : SYB(id);
 for (const h in HYB) { const H = HYB[h]; WEAP.push({ id: h, n: H.n, d: H.d, hyb: 1 }); }
 const T_DPS = [2, 9, 34, 120, 450, 1800, 7000, 28000, 110000, 450000];
 const T_UP = [10, 350, 5e3, 9e4, 1.8e6, 3.5e7, 7e8, 1.4e10, 2.8e11, 5.6e12];
@@ -818,7 +833,7 @@ let S = null;
 // Version des Spielstands: alles mit älterer Version wird verworfen (kompletter Neustart)
 const VER = 14; // interne Stand-Nummer (höher = einmaliger Reset)
 const VLABEL = '0.7'; // angezeigte Version: kleine Updates bleiben, größere Updates -> 0.6 usw.
-const NEWSV = '2026-11-25'; // bei größerem Update hochsetzen → „Was ist neu“ erscheint einmal
+const NEWSV = '2026-11-25b'; // bei größerem Update hochsetzen → „Was ist neu“ erscheint einmal
 const fresh = () => ({ seed: (Math.random() * 1e6) | 0, v: VER, newsV: NEWSV, wq5b: 1, wp1: 1, slot1b: 1, aug1: 1, augQ: 1, cr: 0, cry: 0, wm: 1, p: 1, best: 1, w: { line: 1 }, sk: {}, boostEnd: 0, boostCd: 0, ema: 0, t: Date.now(), last: Date.now(), done: 0, dm: 0, dmAll: 0, pc: 0, wp: {}, own: '', ab: {}, hot: [], abT: {}, buf: {}, inv: { h_pfeil: 1, r_basis: 1, t_basis: 1 }, eq: { h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, wo: ['line'], offer: null, rr: null, wpu: [] });
 const norm = o => Object.assign(fresh(), o || {}, { wq5b: o ? o.wq5b : 1, wp1: o ? o.wp1 : 1, slot1b: o ? o.slot1b : 1, aug1: o ? o.aug1 : 1, newsV: o ? o.newsV : NEWSV, augQ: o ? o.augQ || 0 : 1, w: Object.assign({ line: 1 }, (o && o.w) || {}), sk: (o && o.sk) || {}, wp: (o && o.wp) || {}, ab: (o && o.ab) || {}, hot: (o && o.hot) || [], abT: (o && o.abT) || {}, buf: (o && o.buf) || {}, inv: (o && o.inv && Object.keys(o.inv).length) ? o.inv : { h_pfeil: 1, r_basis: 1, t_basis: 1 }, /* Start-Teile nur bei neuem Spielstand, sonst kämen eingeschmolzene Teile beim Laden zurück */ eq: Object.assign({ h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, (o && o.eq) || {}), wpu: (o && o.wpu) || [], wo: (o && o.wo) || ['line', 'star', 'drill', 'nova', 'scatter', 'drones'].filter(id => o && o.w && o.w[id]) });
 try { S = JSON.parse(localStorage.getItem('gb_save')); } catch (e) {}
@@ -988,7 +1003,7 @@ const msNext = l => { for (const m of MS) if (l < m) return m; return Math.max(2
 const msPrev = l => { let p = 0; for (const m of MS) if (l >= m) p = m; return l >= 200 ? Math.floor(l / 100) * 100 : p; };
 const ST = id => msN(WL(id)) + (HYB[id] && S.w[id] ? HXS(id) : 0);
 const UPTXT = { line: 'ein Schuss mehr', star: 'mehr Kristall-Laser', drill: 'breitere, schnellere Lanze', nova: 'größerer Explosionsradius', scatter: '2 Schüsse mehr', drones: 'neue Drohne', chain: 'Blitz springt weiter', saw: 'mehr Sägeblätter', mine: 'mehr Minen', sniper: 'schießt schneller', meteor: 'ein Meteor mehr', whip: 'längere Peitsche', x_komet: 'stärkerer Hagel', x_traeger: 'mehr Raketen', x_sturm: 'mehr Blitze', x_malstrom: 'stärkerer Sog', x_prisma: 'mehr Funken', x_geist: 'mehr Nova-Explosionen', x_minen: 'stärkere Bohrminen', x_bum: 'stärkere Sternbumerangs', x_frostblitz: 'stärkerer Frostblitz', x_rail: 'stärkere Railgun', x_schwer: 'stärkere Meteore', x_bohrsturm: 'stärkere Bohrstürme', x_saegenring: 'schärfere Sägen', x_novamine: 'stärkere Nova-Minen', rockets: 'eine Rakete mehr', grav: 'größerer Sog', tornado: 'ein Wirbel mehr', boomer: 'eine Sichel mehr', frost: 'ein Splitter mehr' };
-const wDps = w => { const l = S.w[w.id] || 0; return l ? (w.hyb ? HYBM * (HYB[w.id].p.length > 2 ? 1.5 : 1) : 1) * T_DPS[tier(w.id)] * l * Math.pow(2, msN(l) + (w.hyb ? HXS(w.id) : 0)) * mult() * (1 + HAw(w.id)) * (1 + .5 * ML(w.id)) : 0; };
+const wDps = w => { const l = S.w[w.id] || 0; return l ? (w.hyb ? HYBM * (HYB[w.id].p.length > 2 ? 1.5 : 1) : 1) * T_DPS[tier(w.id)] * l * Math.pow(2, msN(l) + (w.hyb ? HXS(w.id) : 0)) * mult() * (1 + HAw(w.id)) * (1 + .5 * ML(w.id)) * (1 + SYBw(w.id)) : 0; };
 // ================== Waffen-Mods: mit ⬢ Chips (1 Chip pro 5 geschaffte Planeten), bleiben für immer ==================
 const ML = id => HYB[id] ? Math.max(...HYB[id].p.map(p => (S.mod || {})[p] || 0)) : (S.mod || {})[id] || 0;
 const MOD_MAX = 5;
@@ -1389,9 +1404,9 @@ function step(dt) {
   if (dK && (cdChain -= dt * Rv * sp75('chain')) <= 0) { cdChain = 2; let i = front(CELL * 3 * OV('chain')), px = ship.x, py = ship.y; const pts = []; const used = new Set();
     /* echter Kettenblitz: springt weit nach außen und verzweigt sich – je höher die Stufe, desto weiter und breiter streut er */
     const ovc = OV('chain'), lvC = WL('chain'), nj = Math.min(Math.round(28 * ovc), Math.round((6 + 2 * ST('chain') + 2 * ML('chain')) * ovc)),
-      jr = Math.min(16, Math.round((3.5 + Math.min(6, lvC / 20)) * ovc)), br = Math.min(4, 1 + Math.floor(ST('chain') / 2) + (lvC >= 100 ? 1 : 0)), dmK = dK * 2 / nj;
+      jr = Math.min(20, Math.round((3.5 + Math.min(6, lvC / 20)) * ovc * (SY('supra') ? 1.4 : 1))), br = Math.min(4, 1 + Math.floor(ST('chain') / 2) + (lvC >= 100 ? 1 : 0)), dmK = dK * 2 / nj;
     const q0 = i >= 0 ? [{ i, px, py, g: 0, a: Math.atan2(cellXY(i)[1] - py, cellXY(i)[0] - px) }] : []; let hits = 0;
-    while (q0.length && hits < nj) { const n = q0.shift(); if (used.has(n.i) || !G.alive[n.i]) continue; used.add(n.i); hits++; const [x, y] = cellXY(n.i); pts.push([n.px, n.py, x, y, n.g]); if (HY('x_frostblitz')) freezeAt(n.i, 0); hit(n.i, dmK * critMul());
+    while (q0.length && hits < nj) { const n = q0.shift(); if (used.has(n.i) || !G.alive[n.i]) continue; used.add(n.i); hits++; const [x, y] = cellXY(n.i); pts.push([n.px, n.py, x, y, n.g]); if (HY('x_frostblitz')) freezeAt(n.i, 0); hit(n.i, dmK * critMul() * (SY('supra') && G.frz && G.frz[n.i] > clk ? 2 : 1));
       const c = n.i % COLS, r = n.i / COLS | 0, cand = [];
       for (let a = -jr; a <= jr; a++) for (let b2 = -jr; b2 <= jr; b2++) { const d2 = a * a + b2 * b2; if (d2 < 4 || d2 > jr * jr) continue; const cc = c + a, rr = r + b2; if (cc < 0 || cc >= COLS || rr < 0 || rr >= ROWS) continue; const j = rr * COLS + cc; if (!G.alive[j] || used.has(j)) continue;
         const an = Math.atan2(b2, a), da = Math.abs(((an - n.a + Math.PI * 3) % (Math.PI * 2)) - Math.PI); /* lieber weit weg und nicht zurück */
@@ -1427,7 +1442,7 @@ function step(dt) {
     const tg = nearList(ship.x, ship.y, nm); for (let k = 0; k < tg.length; k++) { const i = tg[k]; const [x, y] = cellXY(i), oa = Math.atan2(y - G.cy, x - G.cx) + (Math.random() - .5) * .6, D = 260 + Math.random() * 120;
       mets.push({ x0: x + Math.cos(oa) * D, y0: y + Math.sin(oa) * D, tx: x, ty: y, i, t: -k * .22, z: 5 + Math.random() * 3, rot: Math.random() * 6, d: dMe * 3.2 / nm * critMul() }); } }
   for (let k = mets.length - 1; k >= 0; k--) { const m = mets[k]; m.t += dt * .75; m.rot += dt * 2.2; if (!G.alive[m.i]) { const j = nearest(m.tx, m.ty); if (j >= 0) { m.i = j; [m.tx, m.ty] = cellXY(j); } } if (m.t < 1) continue; mets.splice(k, 1);
-    const c0 = cellAt(m.tx, m.ty), mr = (ML('meteor') ? (ML('meteor') >= 3 ? 3 : 2) : 1) + (HY('x_schwer') ? 1 : 0); if (c0 >= 0) { const c = c0 % COLS, r = c0 / COLS | 0, nc = (2 * mr + 1) ** 2; for (let a = -mr; a <= mr; a++) for (let b2 = -mr; b2 <= mr; b2++) { const cc = c + a, rr = r + b2; if (cc >= 0 && cc < COLS && rr >= 0 && rr < ROWS) hit(rr * COLS + cc, m.d * (a || b2 ? .5 / (nc - 1) : .5)); } }
+    const c0 = cellAt(m.tx, m.ty), mr = (ML('meteor') ? (ML('meteor') >= 3 ? 3 : 2) : 1) + (HY('x_schwer') ? 1 : 0) + (SY('schwer') ? 1 : 0); if (c0 >= 0) { const c = c0 % COLS, r = c0 / COLS | 0, nc = (2 * mr + 1) ** 2; for (let a = -mr; a <= mr; a++) for (let b2 = -mr; b2 <= mr; b2++) { const cc = c + a, rr = r + b2; if (cc >= 0 && cc < COLS && rr >= 0 && rr < ROWS) hit(rr * COLS + cc, m.d * (a || b2 ? .5 / (nc - 1) : .5)); } }
     if (HY('x_komet') && c0 >= 0) freezeAt(c0, mr);
     const T = lvTier(WL('meteor')); fx.push({ k: 'ring', x: m.tx, y: m.ty, r: CELL * (mr + 1.2), t: .4, c: HY('x_komet') ? '#9fe8ff' : T >= 3 ? '#ffd23f' : WCOL.meteor, w: 3 + T });
     for (let q = 0; q < 4 + T * 2; q++) parts.push({ x: m.tx, y: m.ty, vx: (Math.random() - .5) * 200, vy: (Math.random() - .5) * 200, t: .45, c: q % 2 ? '#8a5a3a' : '#ffb04a' }); shake = Math.max(shake, 1.5); }
@@ -2044,7 +2059,8 @@ const LINEST = {
 };
 const lineSt = () => LINEST[S.eq && S.eq.h] || LINEST.h_kobold;
 function lineSync() { const L = lineSt(), w = WEAP.find(x => x.id === 'line'); if (w) { w.n = L.n; w.d = L.d; } WCOL.line = L.c; }
-function render() { lineSync();
+function synCheck() { S.synS = S.synS || []; for (const sy of SYN) if (synOn(sy) && !S.synS.includes(sy.id)) { S.synS.push(sy.id); setTimeout(() => cele('⚡ SYNERGIE!', sy.n + ' ist aktiv'), 400); } }
+function render() { lineSync(); synCheck();
   if (tab !== 'h') document.querySelectorAll('.hsheet').forEach(x => x.remove());
   applyFull();
   const L = $('list');
@@ -2053,7 +2069,7 @@ function render() { lineSync();
     let h = `<button class="br${fgR ? ' again' : ''}" id="fgopen" style="margin:0 0 8px;width:100%">⚒ WAFFEN-SCHMIEDE${fgR ? ' · BEREIT!' : ' · HYBRID-WAFFEN'}</button><div class="mode">${[1, 10, 'max'].map(n => `<button data-n="${n}" class="${buyN === n ? 'on' : ''}">${n === 'max' ? 'Max' : 'x' + n}</button>`).join('')}</div>`;
     for (const id of owned()) {
       const w = WEAP.find(x => x.id === id), l = WL(id), hy = !!HYB[id], dl = LVd(id), nx = hy ? (HXS(id) + 1) * HYBS + 1 : msNext(l), pv = hy ? HXS(id) * HYBS + 1 : msPrev(l);
-      h += `<div class="wp" style="--wc:${WCOL[w.id]}"><div class="wic" style="color:${WCOL[w.id]};border-color:${WCOL[w.id]}88;box-shadow:inset 0 0 8px ${WCOL[w.id]}40"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${WICO[w.id] || ""}</svg></div><div class="nm" data-wi="${w.id}" style="cursor:pointer"><b>${w.n} <span style="color:var(--cy);font-size:10px">ⓘ</span></b><div class="lv">${hy ? '<span style="color:' + HYB[id].c + '">HYBRID</span> · ' : ''}Lv. ${dl}${ST(id) ? ' <span class="stars">★' + ST(id) + '</span>' : ''} · ★ bei ${nx}</div><div class="dps" data-dps="${w.id}"></div></div><button class="br" data-up="${w.id}"></button><div class="pr"><i style="width:${(dl - pv) / (nx - pv) * 100}%"></i></div></div>`;
+      h += `<div class="wp" style="--wc:${WCOL[w.id]}"><div class="wic" style="color:${WCOL[w.id]};border-color:${WCOL[w.id]}88;box-shadow:inset 0 0 8px ${WCOL[w.id]}40"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${WICO[w.id] || ""}</svg></div><div class="nm" data-wi="${w.id}" style="cursor:pointer"><b>${w.n} <span style="color:var(--cy);font-size:10px">ⓘ</span></b><div class="lv">${hy ? '<span style="color:' + HYB[id].c + '">HYBRID</span> · ' : ''}${(hy ? HYB[id].p : [id]).map(p => SYN.find(sy => sy.p.includes(p) && synOn(sy))).filter((x, k, a) => x && a.indexOf(x) === k).map(sy => '<span style="color:' + sy.c + '">⚡' + sy.n + '</span> · ').join('')}Lv. ${dl}${ST(id) ? ' <span class="stars">★' + ST(id) + '</span>' : ''} · ★ bei ${nx}</div><div class="dps" data-dps="${w.id}"></div></div><button class="br" data-up="${w.id}"></button><div class="pr"><i style="width:${(dl - pv) / (nx - pv) * 100}%"></i></div></div>`;
     }
     const of = offers(), full = owned().length >= maxWeapons();
     if (of.length && full) h += `<div class="wh" style="margin-top:12px"><p>🔒 Alle ${maxWeapons()} Waffenslots belegt.<br>Mehr Slots gibt's in der <b style="display:inline;font-size:12px;color:#c9a2ff">Warp-Werkstatt</b> (Warp-Fähigkeit „Waffenslots“).</p></div>`;
@@ -2063,6 +2079,9 @@ function render() { lineSync();
     }
     h += `<div style="font-size:11px;color:var(--mut);text-align:center;padding:6px 4px 10px">Bei Stufe 10, 25, 50, 100 und danach alle 100 Stufen bekommt eine Waffe ein Upgrade: x2 Schaden und ein neuer Effekt.</div>`;
     const mo = WEAP.filter(w => !w.hyb).sort((x, y) => (WL(y.id) ? 1 : 0) - (WL(x.id) ? 1 : 0));
+    h += `<div class="skh" style="margin-top:12px;border-left-color:#ffd23f"><span>⚡ Waffen-Synergien · ${SYN.filter(synOn).length}/${SYN.length} aktiv</span></div><div class="syns">${SYN.map(sy => { const on = synOn(sy);
+      return `<div class="syn${on ? ' on' : ''}" style="--sc:${sy.c}"><div class="syn-ic">${sy.p.map((p, k) => `${k ? '<b>+</b>' : ''}<span class="fg-ic${WL(p) ? '' : ' miss'}" style="color:${WCOL[p]};border-color:${WCOL[p]}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${WICO[p] || ''}</svg></span>`).join('')}</div>
+        <div class="syn-t"><b>${sy.n}</b>${on ? '<i>AKTIV</i>' : ''}<small>${on ? sy.d : 'Braucht: ' + sy.p.filter(p => !WL(p)).map(p => WEAP.find(w => w.id === p).n).join(' + ')}</small></div></div>`; }).join('')}</div>`;
     h += `<div class="skh" style="margin-top:6px;border-left-color:#ff9f43"><span>Waffen-Mods · 1 ⬢ Chip pro 5 Planeten · bleiben für immer</span><b class="chp">⬢ ${fmt(S.chip || 0)}</b></div>
       <div class="mods">${mo.map(w => { const l = ML(w.id), m = MODS[w.id], mx = l >= MOD_MAX, c = modCost(l);
         return `<div class="mod${l ? ' on' : ''}${WL(w.id) ? '' : ' nw'}"><div class="wic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${WICO[w.id] || ''}</svg></div>
@@ -2172,6 +2191,7 @@ function augCard(c, k) { const T = AUGT[c.t];
 
 // ================== „Was ist neu“: einmal pro größerem Update beim Start, gut sichtbar ==================
 const NEWS = [ // [Icon, Titel, Text, Version] – angezeigt wird nur, was der Spieler noch nicht gesehen hat
+  ['🔗', 'Waffen-Synergien', 'Bestimmte Waffen-Paare verstärken sich gegenseitig, z. B. Frostkanone + Kettenblitz = Supraleiter. Welche es gibt und welche schon aktiv sind, siehst du unten im Waffen-Menü. Klappt auch mit verschmolzenen Hybrid-Waffen.', '2026-11-25b'],
   ['⚡', 'Echter Kettenblitz', 'Der Kettenblitz kriecht nicht mehr Block für Block, sondern springt weit nach außen und verzweigt sich. Je höher die Stufe, desto weiter und breiter streut er.', '2026-11-25'],
   ['⚒', 'Hybride gehen ab', 'Geschmiedete Hybrid-Waffen starten jetzt bei Stufe 1 – aber mit ×5 statt ×2,2 Schaden, einem Extra-★ (x2) alle 25 Stufen und 70 % billigeren Upgrades. Deine bestehenden Hybride behalten ihre volle Stärke und zählen ab jetzt von Stufe 1.', '2026-11-24c'],
   ['💥', 'Nova repariert', 'Die Supernova verteilt ihren Schaden nicht mehr auf alle Blöcke, sondern trifft jeden Block im Radius voll – je höher die Stufe, desto größer das Loch. Auch die Plasma-Nova wird mit größerem Radius jetzt stärker statt schwächer.', '2026-11-24b'],

@@ -104,7 +104,7 @@ html,body{height:100%;background:var(--bg);color:var(--txt);font:600 14px var(--
 .hs .cd{position:absolute;inset:0;pointer-events:none}
 .hs .ct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:15px;text-shadow:0 0 4px #000;pointer-events:none}
 .hs.rdy{box-shadow:inset 0 0 12px rgba(92,232,240,.35)}
-.hs.act{border-color:var(--li);box-shadow:0 0 12px rgba(157,255,106,.6)}
+.hs.act{border-color:var(--li);box-shadow:0 0 12px rgba(157,255,106,.6)}.hs.act .ct{color:#9dff6a;text-shadow:0 0 6px #9dff6a}
 .hs.shp{border-color:#ffe94d;color:#ffe94d}.hs.shp svg{width:55%;height:55%}
 .shop{display:flex;flex-direction:column;gap:8px}
 .sbox{display:flex;align-items:center;gap:10px;padding:10px;border:1.5px solid var(--rc);background:#0b0e10}
@@ -2343,7 +2343,7 @@ function warp() {
   overlay(`<h2>Warp-Sprung?</h2><p>Du bekommst <b style="color:#c9a2ff;font-size:18px">✦${fmt(n)} Dunkle Materie</b><br>Multiplikator: x${(S.wm || 1).toFixed(2)} → <b style="color:#5ce8f0">x${((S.wm || 1) + wmGain()).toFixed(2)}</b> (Schaden und CR, für immer)<br><br>Du behältst <b style="color:var(--txt)">${keepPct()} % deiner ◆</b> (◆${fmt(S.cry)} → ◆${fmt(Math.floor(S.cry * keepPct() / 100))}).<br>CR, Waffen, Planet und Skills werden zurückgesetzt. Fähigkeiten, Hangar und Warp-Werkstatt bleiben.</p>`,
     [['SPRINGEN', () => {
       S.wm = Math.round(((S.wm || 1) + wmGain()) * 100) / 100; mis('warp'); vib([40, 30, 40, 30, 300]); S.dm = (S.dm || 0) + n; S.dmAll = (S.dmAll || 0) + n; S.wTok = Math.max(0, wTok() - 1); S.pc = (S.pc || 0) + 1; S.dmgRun = {};
-      S.cry = Math.floor(S.cry * keepPct() / 100); { const e = WP('erbe'), o = S.sk || {}; S.sk = {}; if (e) for (const k in o) S.sk[k] = Math.min(o[k], e); } S.abT = {}; S.buf = {}; S.cr = Math.max(150, startCr(WP('start'))); S.w = { line: 1 }; S.wo = ['line']; HP = {}; S.offer = null; S.rrUsed = false; S.p = 1 + 2 * WP('skip'); S.done = 0; S.boostEnd = 0; S.seed = (Math.random() * 1e6) | 0;
+      S.cry = Math.floor(S.cry * keepPct() / 100); { const e = WP('erbe'), o = S.sk || {}; S.sk = {}; if (e) for (const k in o) S.sk[k] = Math.min(o[k], e); } S.abT = {}; S.abA = {}; S.buf = {}; S.cr = Math.max(150, startCr(WP('start'))); S.w = { line: 1 }; S.wo = ['line']; HP = {}; S.offer = null; S.rrUsed = false; S.p = 1 + 2 * WP('skip'); S.done = 0; S.boostEnd = 0; S.seed = (Math.random() * 1e6) | 0;
       S.augQ = 1 + Math.max(0, (S.p || 1) - 1); S.augO = null; travel = travT0 = 2.8; /* übersprungene Planeten (Hyperraum) geben ihre Augmente nach */ built = false; shake = 12; warpT = 2; G.clearing = 0; save('now'); SND.fx.warp(); setTimeout(augShow, 3200);
       if (window.BB) BB.unlock('drill_warp');
       toast(`Warp geschafft: ✦${fmt(n)} · Multiplikator x${S.wm.toFixed(2)} · Neuer Lauf ab Planet ${S.p}`); tab = 'w'; document.querySelectorAll('.nav [data-t]').forEach(x => x.classList.toggle('on', x.dataset.t === 'w')); render();
@@ -2423,6 +2423,8 @@ function abStats(id, lv) {
   return r;
 }
 const abReady = id => (S.abT[id] || 0) <= Date.now();
+/* Wirkdauer: Der Cooldown läuft erst NACH dem Effekt – sonst wären Buffs mit kurzem Cooldown dauerhaft an */
+const abDur = id => { const m = 1 + .1 * (AL(id) - 1); return { over: 12 * m, gold: 12 * m, drohne: 15 * m, frost: 12 * m, klon: 12 * m, kmag: 20, blitz: 3, loch: 2.2, beben: 1.8 }[id] || 0; };
 const buf = k => (S.buf[k] || 0) > Date.now();
 const drawCost = () => 8 + 12 * Object.keys(S.ab).length;
 const abUpCost = id => 3 * AL(id);
@@ -2453,7 +2455,7 @@ window.gbHype = () => { if (!S || !G) return 0; let h = 0; if (boosting()) h++; 
 function cast(id, auto) {
   const a = ABIL.find(x => x.id === id); if (!a || !AL(id) || !abReady(id) || !G || G.clearing || travel > 0) return;
   const P = abPow(id), D = Math.max(totalDps(), 1);
-  S.abT[id] = Date.now() + abCd(a) * 1000; SND.fx.cast(); lastCast = Date.now(); mis('cast');
+  S.abA = S.abA || {}; S.abA[id] = Date.now() + abDur(id) * 1000; S.abT[id] = S.abA[id] + abCd(a) * 1000; SND.fx.cast(); lastCast = Date.now(); mis('cast');
   if (id === 'over') S.buf.dmg = Date.now() + 12000 * (1 + .1 * (AL(id) - 1)) ;
   else if (id === 'gold') S.buf.cr = Date.now() + 12000 * (1 + .1 * (AL(id) - 1));
   else if (id === 'meteor') { for (let k = 0; k < 14; k++) { const i = randAlive(); if (i < 0) break; const [x, y] = cellXY(i); meteors.push({ x: x + (Math.random() - .5) * 120, y: cam.y - H / 2 - 20 - k * 30, tx: x, ty: y, d: D * .5 * P, v: 210 + Math.random() * 120, tr: ABT('meteor') }); } }
@@ -2761,10 +2763,11 @@ function hotbar(force) {
     $('boost').onclick = boostClick;
     $('hotx').onclick = () => { hotX = !hotX; try { localStorage.setItem('gb_hotx', hotX ? '1' : '0'); } catch (e) {} hotbar(true); resize(); };
   }
-  el.querySelectorAll('[data-cast]').forEach(b => { const a = ABIL.find(x => x.id === b.dataset.cast), left = (S.abT[a.id] || 0) - now, tot = abCd(a) * 1000;
-    const f = left > 0 ? Math.min(1, left / tot) : 0; b.querySelector('.cd').style.background = f ? `conic-gradient(rgba(0,0,0,.72) ${f * 360}deg, transparent 0)` : 'none';
-    b.querySelector('.ct').textContent = left > 0 ? Math.ceil(left / 1000) : ''; b.classList.toggle('rdy', left <= 0);
-    b.classList.toggle('act', (a.id === 'over' && buf('dmg')) || (a.id === 'gold' && buf('cr'))); });
+  el.querySelectorAll('[data-cast]').forEach(b => { const a = ABIL.find(x => x.id === b.dataset.cast), act = ((S.abA || {})[a.id] || 0) - now, left = (S.abT[a.id] || 0) - now, tot = abCd(a) * 1000;
+    /* läuft gerade: leuchtet + zeigt Restdauer; danach: Cooldown-Uhr */
+    const f = act > 0 ? 1 : left > 0 ? Math.min(1, left / tot) : 0; b.querySelector('.cd').style.background = act > 0 ? 'none' : f ? `conic-gradient(rgba(0,0,0,.72) ${f * 360}deg, transparent 0)` : 'none';
+    b.querySelector('.ct').textContent = act > 0 ? Math.ceil(act / 1000) : left > 0 ? Math.ceil(left / 1000) : ''; b.classList.toggle('rdy', left <= 0);
+    b.classList.toggle('act', act > 0); });
 }
 function goTab(t) { setFold(false); tab = t; $('list').scrollTop = 0; document.querySelectorAll('.nav [data-t]').forEach(x => x.classList.toggle('on', x.dataset.t === t)); render(); }
 let hTab = 'h', abSel = null;

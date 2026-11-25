@@ -818,7 +818,7 @@ let S = null;
 // Version des Spielstands: alles mit älterer Version wird verworfen (kompletter Neustart)
 const VER = 14; // interne Stand-Nummer (höher = einmaliger Reset)
 const VLABEL = '0.7'; // angezeigte Version: kleine Updates bleiben, größere Updates -> 0.6 usw.
-const NEWSV = '2026-11-24c'; // bei größerem Update hochsetzen → „Was ist neu“ erscheint einmal
+const NEWSV = '2026-11-25'; // bei größerem Update hochsetzen → „Was ist neu“ erscheint einmal
 const fresh = () => ({ seed: (Math.random() * 1e6) | 0, v: VER, newsV: NEWSV, wq5b: 1, wp1: 1, slot1b: 1, aug1: 1, augQ: 1, cr: 0, cry: 0, wm: 1, p: 1, best: 1, w: { line: 1 }, sk: {}, boostEnd: 0, boostCd: 0, ema: 0, t: Date.now(), last: Date.now(), done: 0, dm: 0, dmAll: 0, pc: 0, wp: {}, own: '', ab: {}, hot: [], abT: {}, buf: {}, inv: { h_pfeil: 1, r_basis: 1, t_basis: 1 }, eq: { h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, wo: ['line'], offer: null, rr: null, wpu: [] });
 const norm = o => Object.assign(fresh(), o || {}, { wq5b: o ? o.wq5b : 1, wp1: o ? o.wp1 : 1, slot1b: o ? o.slot1b : 1, aug1: o ? o.aug1 : 1, newsV: o ? o.newsV : NEWSV, augQ: o ? o.augQ || 0 : 1, w: Object.assign({ line: 1 }, (o && o.w) || {}), sk: (o && o.sk) || {}, wp: (o && o.wp) || {}, ab: (o && o.ab) || {}, hot: (o && o.hot) || [], abT: (o && o.abT) || {}, buf: (o && o.buf) || {}, inv: (o && o.inv && Object.keys(o.inv).length) ? o.inv : { h_pfeil: 1, r_basis: 1, t_basis: 1 }, /* Start-Teile nur bei neuem Spielstand, sonst kämen eingeschmolzene Teile beim Laden zurück */ eq: Object.assign({ h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, (o && o.eq) || {}), wpu: (o && o.wpu) || [], wo: (o && o.wo) || ['line', 'star', 'drill', 'nova', 'scatter', 'drones'].filter(id => o && o.w && o.w[id]) });
 try { S = JSON.parse(localStorage.getItem('gb_save')); } catch (e) {}
@@ -1387,9 +1387,20 @@ function step(dt) {
   curW = 'chain';
   const dK = WD('chain') * Rd;
   if (dK && (cdChain -= dt * Rv * sp75('chain')) <= 0) { cdChain = 2; let i = front(CELL * 3 * OV('chain')), px = ship.x, py = ship.y; const pts = []; const used = new Set();
-    const ovc = OV('chain'), nj = Math.min(Math.round(24 * ovc), Math.round((6 + 2 * ST('chain') + 2 * ML('chain')) * ovc)), jr = Math.round(3 * ovc); for (let k = 0; k < nj && i >= 0; k++) { used.add(i); const [x, y] = cellXY(i); pts.push([px, py, x, y]); if (HY('x_frostblitz')) freezeAt(i, 0); hit(i, dK * 2 / nj * critMul()); px = x; py = y;
-      let nb = -1, bd = 1e9; const c = i % COLS, r = i / COLS | 0; for (let a = -jr; a <= jr; a++) for (let b2 = -jr; b2 <= jr; b2++) { const cc = c + a, rr = r + b2; if (cc < 0 || cc >= COLS || rr < 0 || rr >= ROWS) continue; const j = rr * COLS + cc; if (!G.alive[j] || used.has(j)) continue; const d = a * a + b2 * b2 + Math.random() * 3; if (d < bd) { bd = d; nb = j; } } i = nb; }
-    SND.fx.zap(); pts.forEach((p, q) => fx.push({ k: 'zap', x: p[0], y: p[1], x2: p[2], y2: p[3], t: .55 + q * .02, t0: .55 + q * .02, lv: WL('chain') })); }
+    /* echter Kettenblitz: springt weit nach außen und verzweigt sich – je höher die Stufe, desto weiter und breiter streut er */
+    const ovc = OV('chain'), lvC = WL('chain'), nj = Math.min(Math.round(28 * ovc), Math.round((6 + 2 * ST('chain') + 2 * ML('chain')) * ovc)),
+      jr = Math.min(16, Math.round((3.5 + Math.min(6, lvC / 20)) * ovc)), br = Math.min(4, 1 + Math.floor(ST('chain') / 2) + (lvC >= 100 ? 1 : 0)), dmK = dK * 2 / nj;
+    const q0 = i >= 0 ? [{ i, px, py, g: 0, a: Math.atan2(cellXY(i)[1] - py, cellXY(i)[0] - px) }] : []; let hits = 0;
+    while (q0.length && hits < nj) { const n = q0.shift(); if (used.has(n.i) || !G.alive[n.i]) continue; used.add(n.i); hits++; const [x, y] = cellXY(n.i); pts.push([n.px, n.py, x, y, n.g]); if (HY('x_frostblitz')) freezeAt(n.i, 0); hit(n.i, dmK * critMul());
+      const c = n.i % COLS, r = n.i / COLS | 0, cand = [];
+      for (let a = -jr; a <= jr; a++) for (let b2 = -jr; b2 <= jr; b2++) { const d2 = a * a + b2 * b2; if (d2 < 4 || d2 > jr * jr) continue; const cc = c + a, rr = r + b2; if (cc < 0 || cc >= COLS || rr < 0 || rr >= ROWS) continue; const j = rr * COLS + cc; if (!G.alive[j] || used.has(j)) continue;
+        const an = Math.atan2(b2, a), da = Math.abs(((an - n.a + Math.PI * 3) % (Math.PI * 2)) - Math.PI); /* lieber weit weg und nicht zurück */
+        cand.push([j, an, Math.sqrt(d2) / jr * 2 - da * .9 + Math.random() * 1.2]); }
+      cand.sort((u, v) => v[2] - u[2]); const nB = n.g === 0 ? br + 1 : br, pick = [];
+      for (const cd of cand) { if (pick.length >= nB) break; if (pick.some(pk => Math.abs(((pk[1] - cd[1] + Math.PI * 3) % (Math.PI * 2)) - Math.PI) < .7)) continue; pick.push(cd); }
+      if (!pick.length) { let nb = -1, bd = 1e9; for (let a = -3; a <= 3; a++) for (let b2 = -3; b2 <= 3; b2++) { const cc = c + a, rr = r + b2; if (cc < 0 || cc >= COLS || rr < 0 || rr >= ROWS) continue; const j = rr * COLS + cc; if (!G.alive[j] || used.has(j)) continue; const d = a * a + b2 * b2; if (d < bd) { bd = d; nb = j; } } if (nb >= 0) pick.push([nb, n.a, 0]); }
+      for (const pk of pick) q0.push({ i: pk[0], px: x, py: y, g: n.g + 1, a: pk[1] }); }
+    SND.fx.zap(); pts.forEach(p => { const dl = p[4] * .07; fx.push({ k: 'zap', x: p[0], y: p[1], x2: p[2], y2: p[3], t: .55 + dl, t0: .55 + dl, dl, lv: lvC }); }); }
   // 8) Kräutersäge
   curW = 'saw';
   const dW = WD('saw') * Rd;
@@ -1715,10 +1726,10 @@ function draw(now) {
   for (const f of fx) {
     if (f.k === 'lance') { if (f.lv) megaBeam(f.x, f.y, f.x2, f.y2, f.lv, f.c || '#f4fbff', (f.w || 4) * .6 + 1, Math.min(1, f.t / .2), f.c50); else beam(f.x, f.y, f.x2, f.y2, f.c || '#f4fbff', (f.w || 4) * f.t / .35 + 1); }
     else if (f.k === 'sq') { const z = CELL * (1 + (.28 - f.t) * 4); g.globalAlpha = f.t * 3.2; g.strokeStyle = f.c; g.lineWidth = 2; g.strokeRect(f.x - z / 2, f.y - z / 2, z, z); g.globalAlpha = 1; }
-    else if (f.k === 'zap') { const T = lvTier(f.lv || 0), c = T >= 3 ? '#e2c6ff' : '#a8c8ff', nseg = 2 + T, jit = 10 + T * 4;
+    else if (f.k === 'zap') { const T = lvTier(f.lv || 0), c = T >= 3 ? '#e2c6ff' : '#a8c8ff', nseg = 2 + T + Math.min(6, Math.floor(Math.hypot(f.x2 - f.x, f.y2 - f.y) / 45)), jit = 10 + T * 4;
       // Zacken bleiben kurz stehen und springen nur alle ~0,09 s neu – länger sichtbar, kein Flackern
       if (!f.path || (f.rj = (f.rj || 0) - 1 / 60) <= 0) { f.rj = .09; f.path = [[f.x, f.y]]; for (let q = 1; q < nseg; q++) { const k = q / nseg; f.path.push([f.x + (f.x2 - f.x) * k + (Math.random() - .5) * jit, f.y + (f.y2 - f.y) * k + (Math.random() - .5) * jit]); } f.path.push([f.x2, f.y2]); }
-      const path = f.path, fade = f.t0 ? Math.min(1, f.t / f.t0 * 1.6) : 1;
+      const path = f.path, fade = (f.dl && f.t0 - f.t < f.dl) ? 0 : f.t0 ? Math.min(1, f.t / f.t0 * 1.6) : 1;
       const strokeP = (pp, w, col, al) => { g.strokeStyle = col; g.globalAlpha = al * fade; g.lineWidth = w; g.beginPath(); pp.forEach(([x, y], q) => q ? g.lineTo(x, y) : g.moveTo(x, y)); g.stroke(); };
       ink(() => strokeP(path, 4 + T, INK, .6));
       if (T >= 1) strokeP(path, 4 + T * 1.5, T >= 3 ? '#9a5cff' : '#4f7cff', .25 * glowK);
@@ -2161,6 +2172,7 @@ function augCard(c, k) { const T = AUGT[c.t];
 
 // ================== „Was ist neu“: einmal pro größerem Update beim Start, gut sichtbar ==================
 const NEWS = [ // [Icon, Titel, Text, Version] – angezeigt wird nur, was der Spieler noch nicht gesehen hat
+  ['⚡', 'Echter Kettenblitz', 'Der Kettenblitz kriecht nicht mehr Block für Block, sondern springt weit nach außen und verzweigt sich. Je höher die Stufe, desto weiter und breiter streut er.', '2026-11-25'],
   ['⚒', 'Hybride gehen ab', 'Geschmiedete Hybrid-Waffen starten jetzt bei Stufe 1 – aber mit ×5 statt ×2,2 Schaden, einem Extra-★ (x2) alle 25 Stufen und 70 % billigeren Upgrades. Deine bestehenden Hybride behalten ihre volle Stärke und zählen ab jetzt von Stufe 1.', '2026-11-24c'],
   ['💥', 'Nova repariert', 'Die Supernova verteilt ihren Schaden nicht mehr auf alle Blöcke, sondern trifft jeden Block im Radius voll – je höher die Stufe, desto größer das Loch. Auch die Plasma-Nova wird mit größerem Radius jetzt stärker statt schwächer.', '2026-11-24b'],
   ['⚡', 'Neue Leisten', 'Die Kopfleiste schwebt jetzt frei über dem Spielfeld, alle 8 Fähigkeiten passen klein in eine Reihe, und der Boost zeigt blau, wie lange er noch läuft. Der Tagesbonus kommt jetzt immer ab 12 Uhr.', '2026-11-24'],

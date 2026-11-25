@@ -1395,7 +1395,7 @@ function step(dt) {
       const c = n.i % COLS, r = n.i / COLS | 0, cand = [];
       for (let a = -jr; a <= jr; a++) for (let b2 = -jr; b2 <= jr; b2++) { const d2 = a * a + b2 * b2; if (d2 < 4 || d2 > jr * jr) continue; const cc = c + a, rr = r + b2; if (cc < 0 || cc >= COLS || rr < 0 || rr >= ROWS) continue; const j = rr * COLS + cc; if (!G.alive[j] || used.has(j)) continue;
         const an = Math.atan2(b2, a), da = Math.abs(((an - n.a + Math.PI * 3) % (Math.PI * 2)) - Math.PI); /* lieber weit weg und nicht zurück */
-        cand.push([j, an, Math.sqrt(d2) / jr * 2 - da * .9 + Math.random() * 1.2]); }
+        cand.push([j, an, Math.sqrt(d2) / jr * 2 - da * .9 + Math.random() * 1.2 + (1 - G.hp[j] / G.mx[j]) * 2.5]); } /* angeschlagene Blöcke ziehen den Blitz an → sie bröckeln über mehrere Entladungen weg */
       cand.sort((u, v) => v[2] - u[2]); const nB = n.g === 0 ? br + 1 : br, pick = [];
       for (const cd of cand) { if (pick.length >= nB) break; if (pick.some(pk => Math.abs(((pk[1] - cd[1] + Math.PI * 3) % (Math.PI * 2)) - Math.PI) < .7)) continue; pick.push(cd); }
       if (!pick.length) { let nb = -1, bd = 1e9; for (let a = -3; a <= 3; a++) for (let b2 = -3; b2 <= 3; b2++) { const cc = c + a, rr = r + b2; if (cc < 0 || cc >= COLS || rr < 0 || rr >= ROWS) continue; const j = rr * COLS + cc; if (!G.alive[j] || used.has(j)) continue; const d = a * a + b2 * b2; if (d < bd) { bd = d; nb = j; } } if (nb >= 0) pick.push([nb, n.a, 0]); }

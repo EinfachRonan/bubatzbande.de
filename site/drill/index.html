@@ -2124,12 +2124,12 @@ const LINEST = {
 const lineSt = () => LINEST[S.eq && S.eq.h] || LINEST.h_kobold;
 function lineSync() { const L = lineSt(), w = WEAP.find(x => x.id === 'line'); if (w) { w.n = L.n; w.d = L.d; } WCOL.line = L.c; }
 /* Alles freigeschaltet = alle Hybride geschmiedet (damit jede Waffe) + alle Fähigkeiten → einmalige Glückwunsch-Szene */
-const allDone = () => Object.keys(HYB).every(h => S.w[h] > 0) && ABIL.every(a => AL(a.id) > 0);
+const allDone = () => Object.keys(HYB).every(h => S.w[h] > 0) && ABIL.every(a => AL(a.id) > 0) && WARP.every(w => WP(w.id) > 0); /* + alle Warp-Fähigkeiten */
 let allT = 0;
 function allCheck() { if (S.allW || !allDone()) return; if ($('allw') || $('start') || $('updv') || $('aug') || $('news') || !$('ov').classList.contains('hide')) { if (!allT) allT = setTimeout(() => { allT = 0; allCheck(); }, 2000); return; } S.allW = Date.now(); save('now'); allShow(); }
 function allShow() {
   const d = document.createElement('div'); d.id = 'allw';
-  d.innerHTML = `<canvas></canvas><div class="aw-t"><small>★ GALAXIE BOHRER ★</small><h1>Herzlichen<br>Glückwunsch!</h1><p>Du hast <b>alles</b> freigeschaltet: jede Waffe, jeden Hybrid und jede Fähigkeit.</p></div>
+  d.innerHTML = `<canvas></canvas><div class="aw-t"><small>★ GALAXIE BOHRER ★</small><h1>Herzlichen<br>Glückwunsch!</h1><p>Du hast <b>alles</b> freigeschaltet: jede Waffe, jeden Hybrid, jede Fähigkeit und jede Warp-Fähigkeit.</p></div>
     <div class="aw-b"><button id="awgo">▶ Weiterspielen<small>Neuer Content kommt bald – dauert nicht mehr lange!</small></button><button id="awrst">↺ Spielstand zurücksetzen</button></div>`;
   document.body.appendChild(d); const cv = d.querySelector('canvas'), x = cv.getContext('2d'), dpr = Math.min(2, devicePixelRatio || 1); let w = 0, h = 0, run = true, t0 = performance.now();
   const fit = () => { w = innerWidth; h = innerHeight; cv.width = w * dpr; cv.height = h * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0); }; fit(); addEventListener('resize', fit);

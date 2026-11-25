@@ -169,6 +169,17 @@ footer{margin:30px 20px 10px;color:var(--mu2);font-size:12px;text-align:center}
 .vr span{width:118px;flex:none;font-weight:600;font-size:14px}
 .vr b{width:38px;text-align:right;font:700 14px var(--hd);color:var(--mu)}
 .vr input{flex:1;accent-color:var(--ac);height:28px}
+.mupop{position:fixed;z-index:8500;width:264px;max-width:calc(100vw - 20px);background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:0 14px 40px rgba(0,0,0,.55);display:none}
+.mupop.on{display:block}
+.mupop .r1{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.mupop .r1 b{font:700 15px var(--hd)}
+.mupop .sw{width:46px;height:26px;border-radius:13px;border:0;background:#2a302c;position:relative;flex:none;cursor:pointer}
+.mupop .sw:after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#cfd6d0;transition:left .15s}
+.mupop .sw.on{background:var(--ac)}.mupop .sw.on:after{left:23px;background:#10140f}
+.mupop .r2{display:flex;align-items:center;gap:10px}
+.mupop .r2 input{flex:1;accent-color:var(--ac);height:30px}
+.mupop .r2 span{width:34px;text-align:right;font:700 13px var(--hd);color:var(--mu)}
+.mupop small{display:block;color:var(--mu2);font-size:11.5px;margin-top:4px}
 .sheet .nt{color:var(--mu);font-size:12.5px;margin:10px 0 16px}
 .sheet .wide{width:100%}
 .btn.ghost{background:var(--card2);color:var(--tx);border:1px solid var(--line)}.btn.ghost:hover{background:#232925}
@@ -229,6 +240,7 @@ footer{margin:30px 20px 10px;color:var(--mu2);font-size:12px;text-align:center}
   <button data-tab="friends"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.5 3.5-5 6.5-5s5.5 1.5 6.5 5M16 4.5a3.5 3.5 0 0 1 0 7M18 15c2 .6 3.2 2.2 3.5 5"/></svg>Freunde</button>
 </nav></div>
 <span id="bbChip" hidden></span>
+<div class="mupop" id="mupop" role="dialog" aria-label="Musik"><div class="r1"><b>🎧 Lofi-Radio</b><button class="sw" id="muSw" aria-label="Lofi-Radio an/aus"></button></div><div class="r2"><span style="width:auto">🔈</span><input type="range" min="0" max="100" id="muV" aria-label="Lautstärke"><span id="muVv"></span></div><small>Lautstärke gilt auch für die Musik in den Spielen.</small></div>
 <div class="set" id="set" role="dialog" aria-modal="true" aria-label="Einstellungen"><div class="sheet">
   <div class="hd"><h2>Einstellungen</h2><button class="ib" id="setX" aria-label="Schließen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   <label class="vr"><span>🔊 Sound</span><input type="range" min="0" max="100" id="vS"><b id="vSv"></b></label>
@@ -241,7 +253,7 @@ footer{margin:30px 20px 10px;color:var(--mu2);font-size:12px;text-align:center}
 </div></div>
 <script src="art.js?v=20261111b"></script>
 <script src="bb.js?v=20261120c"></script>
-<script src="lofi.js?v=20261118a"></script>
+<script src="lofi.js?v=20261125a"></script>
 <script>
 'use strict';
 const IMG = k => 'krieg/img/' + k + '.jpg';
@@ -301,7 +313,7 @@ function draw() {
   }
   $('top').querySelectorAll('[data-o]').forEach(x => x.onclick = () => b && b.open(x.dataset.o));
   $('top').querySelectorAll('[data-set]').forEach(x => x.onclick = openSet);
-  $('top').querySelectorAll('[data-mu]').forEach(x => x.onclick = () => window.BBLofi && BBLofi.toggle());
+  $('top').querySelectorAll('[data-mu]').forEach(x => x.onclick = e => { e.stopPropagation(); muOpen(x); });
   // Spiele: neuestes (zuletzt geupdatet) als Top-Vorschau, alle anderen als Kacheln
   const go = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>';
   const mFrei = MARIO.filter(g => MFREI.includes(g.k)).map(g => mGame(g, 1)), mBeta = MARIO.filter(g => !MFREI.includes(g.k)).map(g => mGame(g, 0));
@@ -347,6 +359,29 @@ function openSet() {
   $('codeF').classList.remove('on'); $('codeGo').style.display = ''; $('codeMsg').textContent = ''; $('won').classList.remove('on'); $('codeIn').value = '';
   $('set').classList.add('on');
 }
+// 🎵-Knopf: kleines Fenster mit An/Aus und Lautstärke
+function muSync() {
+  const b = B(), v = b && b.vol ? b.vol().m : .5, o = window.BBLofi ? BBLofi.on() : 0;
+  $('muSw').classList.toggle('on', !!o); $('muSw').setAttribute('aria-pressed', o ? 'true' : 'false');
+  $('muV').value = Math.round(v * 100); $('muVv').textContent = $('muV').value;
+}
+function muOpen(btn) {
+  const p = $('mupop');
+  if (p.classList.contains('on')) { p.classList.remove('on'); return; }
+  if (window.BBLofi && BBLofi.on()) BBLofi.set(true); // falls noch nicht gestartet (Browser erlauben Ton erst nach Berührung)
+  muSync(); p.classList.add('on'); muPos();
+}
+function muPos() { // Knopf wird beim Neuzeichnen ersetzt → immer den aktuellen nehmen
+  const p = $('mupop'), btn = document.querySelector('#top [data-mu]'); if (!btn || !p.classList.contains('on')) return;
+  const r = btn.getBoundingClientRect(), w = Math.min(264, innerWidth - 20);
+  p.style.top = (r.bottom + 8) + 'px'; p.style.left = Math.max(10, Math.min(innerWidth - w - 10, r.right - w)) + 'px';
+}
+addEventListener('bb-lofi', () => setTimeout(muPos)); addEventListener('resize', muPos);
+$('muSw').onclick = e => { e.stopPropagation(); if (window.BBLofi) BBLofi.set(!BBLofi.on()); muSync(); };
+$('muV').oninput = e => { $('muVv').textContent = e.target.value; const b = B(); if (b && b.setVol) b.setVol('m', e.target.value / 100); if (e.target.value > 0 && window.BBLofi && !BBLofi.on()) BBLofi.set(true); muSync(); };
+$('mupop').addEventListener('pointerdown', e => e.stopPropagation());
+document.addEventListener('pointerdown', e => { if (!e.target.closest('[data-mu]')) $('mupop').classList.remove('on'); });
+addEventListener('scroll', () => $('mupop').classList.remove('on'), { passive: true });
 function closeSet() { $('set').classList.remove('on'); }
 [['vS', 's'], ['vM', 'm']].forEach(([id, k]) => $(id).oninput = e => { $(id + 'v').textContent = e.target.value; const b = B(); if (b && b.setVol) b.setVol(k, e.target.value / 100); });
 $('setX').onclick = closeSet;

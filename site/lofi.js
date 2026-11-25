@@ -25,7 +25,7 @@
   try { on = localStorage.getItem(KEY) !== '0'; } catch (e) {}
 
   function vol() { try { return window.BB && BB.vol ? BB.vol().m : 0.5; } catch (e) { return 0.5; } }
-  function level() { return on ? Math.pow(vol(), 1.4) * 0.55 : 0; }
+  function level() { return on ? Math.pow(vol(), 1.4) * 0.26 : 0; } // leiser als früher (0,55)
 
   function build() {
     const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false;

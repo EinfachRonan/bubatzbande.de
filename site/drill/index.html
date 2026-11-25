@@ -1287,7 +1287,7 @@ const novas = [], waves = [];
 const sawPat = () => { const n = ML('saw') >= 3 ? 2 : ML('saw') ? 1.5 : 1, o = []; for (let a = -2; a <= 2; a++) for (let b = -2; b <= 2; b++) if (Math.hypot(a, b) <= n) o.push([a * CELL, b * CELL]); return o; };
 let sawB = 0; const SAWR = 78; // Sägen kreisen ums Schiff und reichen bis in die Blöcke
 let cdBlast = 0, cdChain = 0, sawA = 0, cdMine = 0, cdSnip = 0; const saws = [], mines = [];
-let geistT = 0, cdMet = 0, cdBoo = 0, cdFro = 0, clk = 0, cdWh = 0, cdRk = 0, cdGr = 0, cdTo = 0; const klPos = () => { const a = Math.atan2(ship.y - G.cy, ship.x - G.cx) + 1.1, d = Math.hypot(ship.x - G.cx, ship.y - G.cy); return [G.cx + Math.cos(a) * d, G.cy + Math.sin(a) * d]; }; /* Schattenklon fliegt versetzt neben dir um den Planeten */
+let geistT = 0, cdMet = 0, cdBoo = 0, cdFro = 0, clk = 0, cdWh = 0, cdRk = 0, cdGr = 0, cdTo = 0; const klPos = () => { const d = Math.max(1, Math.hypot(ship.x - G.cx, ship.y - G.cy)), a = Math.atan2(ship.y - G.cy, ship.x - G.cx) + Math.min(1.1, 105 / d) * (1 + .12 * Math.sin(performance.now() / 900)); return [G.cx + Math.cos(a) * d, G.cy + Math.sin(a) * d]; }; /* Schattenklon fliegt versetzt neben dir um den Planeten */
 const mets = [], boos = [], whips = [], rkts = [], gravs = [], tors = [], orbs = [], acids = [], quakes = []; let cdOrb = 0, cdAc = 0, cdKl = 0;
 function freezeAt(i, n) { if (i < 0) return; if (!G.frz) G.frz = new Float32Array(G.alive.length); const c = i % COLS, r = i / COLS | 0; for (let a = -n; a <= n; a++) for (let b = -n; b <= n; b++) { const cc = c + a, rr = r + b; if (cc >= 0 && cc < COLS && rr >= 0 && rr < ROWS) { const j = rr * COLS + cc; if (G.alive[j]) { G.frz[j] = clk + 3; (G.frL || (G.frL = new Set())).add(j); } } } }
 const bats = [], fogs = []; let drillMax = 4, starA = 0, cdDrill = 0, cdNova = 0, cdScatter = 0, lineTarget = -1, surfR = 0, surfT = 0;
@@ -1875,8 +1875,14 @@ function draw(now) {
     const gr = g.createLinearGradient(o.x - w, 0, o.x + w, 0); gr.addColorStop(0, `rgba(${col},0)`); gr.addColorStop(.5, `rgba(${col},${.55 * fa})`); gr.addColorStop(1, `rgba(${col},0)`); g.fillStyle = gr; g.fillRect(o.x - w, top, w * 2, o.y - top);
     g.fillStyle = `rgba(255,255,240,${.9 * fa})`; g.fillRect(o.x - w * .18, top, w * .36, o.y - top);
     g.strokeStyle = `rgba(${col},${fa})`; g.lineWidth = 3; g.beginPath(); g.arc(o.x, o.y, w * (.9 + .25 * Math.sin(o.t * 30)), 0, 7); g.stroke(); g.fillStyle = `rgba(255,255,230,${.8 * fa})`; g.beginPath(); g.arc(o.x, o.y, w * .45, 0, 7); g.fill(); }
-  if (S.buf && S.buf.kl > Date.now()) { const tr = (S.bufP || {}).klT || 0, [gx, gy] = klPos(), an = Math.atan2(G.cy - gy, G.cx - gx) - Math.PI / 2, [c] = ABCOL.klon[tr];
-    g.save(); g.translate(gx, gy); g.rotate(an); g.globalAlpha = .55 + .15 * Math.sin(performance.now() / 120); g.shadowColor = c; g.shadowBlur = 18; g.fillStyle = c; g.beginPath(); g.moveTo(0, 16); g.lineTo(-11, -11); g.lineTo(0, -5); g.lineTo(11, -11); g.closePath(); g.fill(); g.shadowBlur = 0; g.restore(); g.globalAlpha = 1; }
+  if (S.buf && S.buf.kl > Date.now()) { const tr = (S.bufP || {}).klT || 0, [gx, gy] = klPos(), an = Math.atan2(G.cy - gy, G.cx - gx) - Math.PI / 2, [c, rgb] = ABCOL.klon[tr], tq = performance.now() / 1000, sc = 1.35 + tr * .1;
+    /* Schattenklon: groß, leuchtend, mit Aura und Nachbildern – klar sichtbar */
+    const au = g.createRadialGradient(gx, gy, 0, gx, gy, 46 * sc); au.addColorStop(0, `rgba(${rgb},.45)`); au.addColorStop(1, `rgba(${rgb},0)`); g.fillStyle = au; g.beginPath(); g.arc(gx, gy, 46 * sc, 0, 7); g.fill();
+    g.strokeStyle = `rgba(${rgb},${.6 + .3 * Math.sin(tq * 6)})`; g.lineWidth = 2.5; g.setLineDash([6, 6]); g.lineDashOffset = -tq * 40; g.beginPath(); g.arc(gx, gy, 26 * sc, 0, 7); g.stroke(); g.setLineDash([]);
+    const shp = (x, y, a, al, s2) => { g.save(); g.translate(x, y); g.rotate(a); g.scale(s2, s2); g.globalAlpha = al; g.shadowColor = c; g.shadowBlur = 22; g.fillStyle = c; g.beginPath(); g.moveTo(0, 16); g.lineTo(-11, -11); g.lineTo(0, -5); g.lineTo(11, -11); g.closePath(); g.fill(); g.shadowBlur = 0; g.strokeStyle = '#ffffff'; g.lineWidth = 1.6 / s2; g.stroke(); g.restore(); };
+    for (let k = 3; k >= 1; k--) { const pa = Math.atan2(gy - G.cy, gx - G.cx) - k * .045, d = Math.hypot(gx - G.cx, gy - G.cy); shp(G.cx + Math.cos(pa) * d, G.cy + Math.sin(pa) * d, an - k * .045, .18 / k + .06, sc); }
+    shp(gx, gy, an, .85 + .15 * Math.sin(tq * 9), sc); g.globalAlpha = 1;
+    g.font = '700 10px monospace'; g.textAlign = 'center'; g.fillStyle = c; g.fillText('KLON', gx, gy - 30 * sc); }
   for (const q of quakes) if (q.t > 0 && q.r > 0) { const fa = Math.max(0, 1 - q.r / (G.R * 1.15)); g.strokeStyle = `rgba(${ABCOL.beben[q.tr][1]},${.85 * fa})`; g.lineWidth = 6 + q.tr * 3; g.beginPath(); g.arc(G.cx, G.cy, q.r, 0, 7); g.stroke(); g.strokeStyle = `rgba(255,255,255,${.5 * fa})`; g.lineWidth = 2; g.beginPath(); g.arc(G.cx, G.cy, q.r * .96, 0, 7); g.stroke(); }
   for (const m of meteors) { const tr = m.tr || 0, [c, rgb] = ABCOL.meteor[tr], r = 6 + tr * 2.5, l = Math.hypot(m.tx - m.x, m.ty - m.y) || 1, ux = (m.tx - m.x) / l, uy = (m.ty - m.y) / l;
     for (let k = 1; k <= 4 + tr * 3; k++) { g.fillStyle = `rgba(${rgb},${.55 - k * .05})`; g.beginPath(); g.arc(m.x - ux * k * (5 + tr), m.y - uy * k * (5 + tr), Math.max(1, r - k * .6), 0, 7); g.fill(); }
@@ -2486,7 +2492,7 @@ function abStep(dt) {
     for (let a = -n; a <= n; a++) for (let b2 = -n; b2 <= n; b2++) { const cc = c0 + a, rr = r0 + b2; if (cc < 0 || cc >= COLS || rr < 0 || rr >= ROWS || Math.hypot(a, b2) * CELL > r) continue; hit(rr * COLS + cc, bhole.d * dt / 2.2 / 6); }
     if (bhole.t <= 0) bhole = null; }
   if (S.buf.kl > Date.now() && (cdKl -= dt) <= 0) { cdKl = .1; const tr = (S.bufP || {}).klT || 0, [gx, gy] = klPos(), i = nearest(gx, gy);
-    if (i >= 0) { hit(i, ((S.bufP || {}).kl || 1) * .1 * critMul()); const [x, y] = cellXY(i); fx.push({ k: 'bolt2', x: gx, y: gy, x2: x, y2: y, t: .12, c: ABCOL.klon[tr][0] }); } }
+    if (i >= 0) { hit(i, ((S.bufP || {}).kl || 1) * .1 * critMul()); const [x, y] = cellXY(i); fx.push({ k: 'bolt2', x: gx, y: gy, x2: x, y2: y, t: .14, c: ABCOL.klon[tr][0] }, { k: 'bolt2', x: gx, y: gy, x2: x, y2: y, t: .1, c: '#ffffff' }); fx.push({ k: 'ring', x, y, r: CELL * 1.2, t: .2, c: ABCOL.klon[tr][0], w: 2 }); } }
   for (let k = quakes.length - 1; k >= 0; k--) { const q = quakes[k]; const was = q.t; q.t += dt; if (q.t <= 0) continue; if (was <= 0) { shake = Math.max(shake, 10 + q.tr * 3); fx.push({ k: 'nova', x: G.cx, y: G.cy, r: CELL * 4, t: .4, c: ABCOL.beben[q.tr][1] }); }
     const r0 = q.r; q.r = q.t / .7 * G.R * 1.15; for (let i = 0; i < G.alive.length; i++) { if (!G.alive[i]) continue; const [x, y] = cellXY(i), dd = Math.hypot(x - G.cx, y - G.cy); if (dd >= r0 && dd < q.r) hit(i, q.d); }
     if (q.r > G.R * 1.15) quakes.splice(k, 1); }

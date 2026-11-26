@@ -2882,7 +2882,8 @@ setInterval(() => { try { if (!$('elc') && !$('aug')) loginCheck(); } catch (e) 
 
 // ================== Startbildschirm: Pixel-Planet mit glühendem Kern – antippen und er wird aufgebohrt ==================
 // Update-Trailer: läuft einmal pro großem Update direkt nach dem Start-Planeten, Vollbild, „Überspringen“ ab 5 s
-function updVid() { try { if (!S || S.updV === UPDV) return; } catch (e) { return; }
+const UPD_BIS = Date.UTC(2026, 10, 27, 19, 0); // Update-Trailer läuft bei jedem Start bis Fr 27.11. 20:00 Uhr, danach nicht mehr
+function updVid() { try { if (!S || Date.now() > UPD_BIS) return; } catch (e) { return; }
   const pc = innerWidth > innerHeight, v = document.createElement('div'); v.id = 'updv';
   v.innerHTML = `<video playsinline autoplay preload="auto" src="update${pc ? '_pc' : ''}.mp4?v=${UPDV}k"></video><button id="updsk">Überspringen ▶▶</button>`;
   document.body.appendChild(v); const vid = v.querySelector('video'), sk = v.querySelector('#updsk');

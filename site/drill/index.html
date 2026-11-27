@@ -503,6 +503,8 @@ html,body{overscroll-behavior:none;position:fixed;inset:0;width:100%}button,a{to
 .syns{display:flex;flex-direction:column;gap:6px;margin:6px 0 4px}.syn{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid #ffffff1a;border-radius:10px;background:#0a0f16cc;opacity:.62}.syn.on{opacity:1;border-color:var(--sc);box-shadow:0 0 12px -4px var(--sc),inset 0 0 14px -8px var(--sc)}.syn-ic{display:flex;align-items:center;gap:3px;flex:none}.syn-ic b{color:#ffffff80;font-size:12px}.syn-ic .fg-ic{width:26px;height:26px}.syn-ic .fg-ic svg{width:18px;height:18px}.syn-ic .miss{filter:grayscale(1);opacity:.45}.syn-t{min-width:0}.syn-t b{font-size:12px;color:var(--sc)}.syn-t i{font-style:normal;font-size:9px;margin-left:6px;padding:1px 5px;border-radius:4px;background:var(--sc);color:#05080c;font-weight:700;letter-spacing:.05em}.syn-t small{display:block;font-size:10px;line-height:1.35;color:#c8d4e0;margin-top:2px}
 #updv{position:fixed;inset:0;z-index:100000;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity .4s}#updv.out{opacity:0}#updv video{width:100%;height:100%;object-fit:contain;background:#000}#updsk{position:absolute;right:max(16px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));padding:10px 16px;font:700 13px var(--mono);letter-spacing:.06em;color:#fff;background:rgba(5,8,12,.72);border:1.5px solid #ffffff66;border-radius:10px;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .35s,transform .35s}#updsk.on{opacity:1;pointer-events:auto;transform:none}#updsk:hover{border-color:#5ce8f0;color:#5ce8f0}
 .augopen{width:100%;margin:0 0 10px;display:flex;align-items:center;justify-content:center;gap:10px;color:#ffe94d!important;animation:augp 1.6s ease-in-out infinite}.augopen b{min-width:22px;padding:2px 7px;border-radius:9px;background:#ffe94d;color:#05070d;font-size:12px}@keyframes augp{50%{box-shadow:0 0 18px rgba(255,233,77,.55)}}
+#k2m,#k2t{position:fixed;inset:0;z-index:9000;display:flex;flex-direction:column;gap:8px;padding:max(14px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));background:radial-gradient(ellipse at 70% 20%,rgba(255,95,168,.18),transparent 60%),#03040a;color:#e8f1ff;font-family:var(--mono)}#k2m svg{flex:1;min-height:260px;width:100%;max-width:560px;margin:0 auto}.k2h{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:14px}.k2h b{font-family:Silkscreen,monospace;font-weight:400;font-size:17px;color:#ff9ad8}.k2h span{color:#ffe94d;white-space:nowrap}.k2i{min-height:38px;font-size:13px;line-height:1.4;text-align:center;color:#c9d6ea;max-width:560px;margin:0 auto}.k2a{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}.k2a span{font-size:11px;padding:3px 7px;border:1px solid #b48cff88;border-radius:6px;background:#1a1030}.k2btn{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:560px;width:100%;margin:0 auto}.k2auto{text-align:center;font-size:11px;color:#9fb0c8;min-height:14px}
+#k2t{overflow-y:auto}.k2tp{margin:0;font-size:12px;color:#9fb0c8}.k2tb{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;flex:1}.k2br{display:flex;flex-direction:column;align-items:stretch}.k2br h3{margin:0 0 6px;font:400 14px Silkscreen,monospace;color:var(--tc);text-align:center}.k2n{padding:8px;border:1.5px solid #ffffff22;border-radius:10px;background:#0b1020;display:flex;flex-direction:column;gap:3px;font-size:11px}.k2n.on{border-color:var(--tc);box-shadow:0 0 12px -5px var(--tc)}.k2n.lk{opacity:.45}.k2n b{font-size:12px;color:#fff}.k2n small{color:#c9d6ea;line-height:1.3}.k2n span{color:var(--tc);letter-spacing:1px}.k2n button{min-height:32px;padding:4px;font-size:12px}.k2ln{display:block;width:2px;height:10px;margin:0 auto;background:var(--tc);opacity:.5}#k2tx{max-width:560px;width:100%;margin:6px auto 0}@media(max-width:520px){.k2tb{grid-template-columns:minmax(0,1fr)}}.k2hp{color:#9dff6a}
 #awsk{position:absolute;right:max(16px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));z-index:2;padding:10px 16px;font:700 13px var(--mono);color:#fff;background:rgba(5,8,12,.72);border:1.5px solid #ffffff66;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .35s}#awsk.on{opacity:1;pointer-events:auto}
 .aw-end{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:max(28px,env(safe-area-inset-top)) 18px max(26px,env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(2,3,10,.55),rgba(2,3,10,0) 45%,rgba(2,3,10,.75))}.aw-end[hidden]{display:none}.aw-end .aw-t,.aw-end .aw-b{animation-delay:.2s}.aw-b #awk1{background:rgba(5,8,14,.75);color:#e8f1ff;border:1.5px solid #5ce8f066;box-shadow:none}.aw-b #awk1 small{color:#9fb0c8}
 .wingb{margin:0 0 12px;padding:12px;border:1px solid var(--wc,#5ce8f0);border-radius:12px;background:#0a0f16cc;box-shadow:0 0 16px -8px var(--wc,#5ce8f0)}.wingb p{margin:8px 0;font-size:12px;line-height:1.45;color:#c8d4e0}.wingb>b{color:#5ce8f0}.wingt{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.wingt button{padding:8px 4px;font:700 12px var(--mono);color:#e8f1ff;background:#0d141d;border:1.5px solid #ffffff22;border-radius:9px;cursor:pointer}.wingt button small{display:block;font-weight:500;font-size:10px;opacity:.75}.wingt button.on{border-color:var(--wc);color:var(--wc);box-shadow:0 0 10px -3px var(--wc)}#wingup,#k2go{width:100%}.k2sp{color:#ff9ad8}
@@ -854,8 +856,8 @@ let S = null;
 const VER = 14; // interne Stand-Nummer (höher = einmaliger Reset)
 const VLABEL = '0.7'; // angezeigte Version: kleine Updates bleiben, größere Updates -> 0.6 usw.
 const NEWSV = '2026-11-27', UPDV = '2026-11-25b'; /* UPDV: Update-Trailer einmal zeigen */ // bei größerem Update hochsetzen → „Was ist neu“ erscheint einmal
-const fresh = () => ({ ch: 1, k2: { sp: 0, wt: '', wl: 0 }, updV: UPDV, seed: (Math.random() * 1e6) | 0, v: VER, newsV: NEWSV, wq5b: 1, wp1: 1, slot1b: 1, aug1: 1, augQ: 1, cr: 0, cry: 0, wm: 1, p: 1, best: 1, w: { line: 1 }, sk: {}, boostEnd: 0, boostCd: 0, ema: 0, t: Date.now(), last: Date.now(), done: 0, dm: 0, dmAll: 0, pc: 0, wp: {}, own: '', ab: {}, hot: [], abT: {}, buf: {}, inv: { h_pfeil: 1, r_basis: 1, t_basis: 1 }, eq: { h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, wo: ['line'], offer: null, rr: null, wpu: [] });
-const norm = o => Object.assign(fresh(), o || {}, { k2: Object.assign({ sp: 0, wt: '', wl: 0 }, (o || {}).k2 || {}), updV: o ? o.updV : UPDV, wq5b: o ? o.wq5b : 1, wp1: o ? o.wp1 : 1, slot1b: o ? o.slot1b : 1, aug1: o ? o.aug1 : 1, newsV: o ? o.newsV : NEWSV, augQ: o ? o.augQ || 0 : 1, w: Object.assign({ line: 1 }, (o && o.w) || {}), sk: (o && o.sk) || {}, wp: (o && o.wp) || {}, ab: (o && o.ab) || {}, hot: (o && o.hot) || [], abT: (o && o.abT) || {}, buf: (o && o.buf) || {}, inv: (o && o.inv && Object.keys(o.inv).length) ? o.inv : { h_pfeil: 1, r_basis: 1, t_basis: 1 }, /* Start-Teile nur bei neuem Spielstand, sonst kämen eingeschmolzene Teile beim Laden zurück */ eq: Object.assign({ h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, (o && o.eq) || {}), wpu: (o && o.wpu) || [], wo: (o && o.wo) || ['line', 'star', 'drill', 'nova', 'scatter', 'drones'].filter(id => o && o.w && o.w[id]) });
+const fresh = () => ({ ch: 1, k2: { sp: 0, wt: '', wl: 0, hp: 100, sec: 1, map: null, r: 0, k: 0, nb: 'kampf', wait: 0, arts: [], tree: {}, last: 0 }, updV: UPDV, seed: (Math.random() * 1e6) | 0, v: VER, newsV: NEWSV, wq5b: 1, wp1: 1, slot1b: 1, aug1: 1, augQ: 1, cr: 0, cry: 0, wm: 1, p: 1, best: 1, w: { line: 1 }, sk: {}, boostEnd: 0, boostCd: 0, ema: 0, t: Date.now(), last: Date.now(), done: 0, dm: 0, dmAll: 0, pc: 0, wp: {}, own: '', ab: {}, hot: [], abT: {}, buf: {}, inv: { h_pfeil: 1, r_basis: 1, t_basis: 1 }, eq: { h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, wo: ['line'], offer: null, rr: null, wpu: [] });
+const norm = o => Object.assign(fresh(), o || {}, { k2: Object.assign({ sp: 0, wt: '', wl: 0, hp: 100, sec: 1, map: null, r: 0, k: 0, nb: 'kampf', wait: 0, arts: [], tree: {}, last: 0 }, (o || {}).k2 || {}), updV: o ? o.updV : UPDV, wq5b: o ? o.wq5b : 1, wp1: o ? o.wp1 : 1, slot1b: o ? o.slot1b : 1, aug1: o ? o.aug1 : 1, newsV: o ? o.newsV : NEWSV, augQ: o ? o.augQ || 0 : 1, w: Object.assign({ line: 1 }, (o && o.w) || {}), sk: (o && o.sk) || {}, wp: (o && o.wp) || {}, ab: (o && o.ab) || {}, hot: (o && o.hot) || [], abT: (o && o.abT) || {}, buf: (o && o.buf) || {}, inv: (o && o.inv && Object.keys(o.inv).length) ? o.inv : { h_pfeil: 1, r_basis: 1, t_basis: 1 }, /* Start-Teile nur bei neuem Spielstand, sonst kämen eingeschmolzene Teile beim Laden zurück */ eq: Object.assign({ h: 'h_pfeil', r: 'r_basis', t: 't_basis' }, (o && o.eq) || {}), wpu: (o && o.wpu) || [], wo: (o && o.wo) || ['line', 'star', 'drill', 'nova', 'scatter', 'drones'].filter(id => o && o.w && o.w[id]) });
 try { S = JSON.parse(localStorage.getItem('gb_save')); } catch (e) {}
 if (S && S.v !== VER) { try { localStorage.removeItem('gb_intro'); } catch (e) {} } // neuer Start: Intro nochmal zeigen
 S = S && typeof S.cr === 'number' && S.v === VER ? norm(S) : fresh();
@@ -1093,11 +1095,11 @@ const PTYPE = {
 const K2T = ['k2kris', 'k2lava', 'k2geist', 'k2metall'], LASERW = new Set(['line', 'star', 'sniper', 'scatter', 'drones', 'orbit']), HEAVYW = new Set(['drill', 'rockets', 'mine', 'meteor']), AREAW = new Set(['nova', 'grav', 'tornado', 'acid', 'mine', 'chain', 'x']);
 function planetType(p, boss) { if (K2() && !boss && p >= 2) { const r2 = mulberry(p * 104723 + (S.seed || 13) * 11)(); return r2 < .2 ? 'n' : K2T[Math.min(3, ((r2 - .2) / .2) | 0)]; } if (boss || p < 3) return 'n'; const r = mulberry(p * 104729 + (S.seed || 13) * 7)(); return r < .45 ? 'n' : r < .6 ? 'lava' : r < .75 ? 'eis' : r < .88 ? 'gold' : 'kris'; }
 let lavaHs = [], cdLava = 0;
-const K2BOSS = () => uniOf(S.p) % 2 ? 'WELTENFRESSER' : 'MUTTERSCHIFF';
+const K2BOSS = () => (S.k2.sec || 1) % 2 ? 'WELTENFRESSER' : 'MUTTERSCHIFF';
 const hpCurve = p => { let g = 1; for (let k = 2; k <= p; k++) g *= 1.9 + 1.2 * Math.exp(-(k - 2) / 1.5); return g; }; // flacheres Wachstum pro Planet
 function buildPlanet(removed) {
-  const p = S.p, rnd = mulberry(p * 7919 + (S.seed || 13)), boss = p % 10 === 0;
-  const elite = !boss && p >= 4 && S.noElite !== p && mulberry(p * 31337 + (S.seed || 13) * 3)() < .12 + .05 * WP('elite');
+  const p = S.p, rnd = mulberry(p * 7919 + (S.seed || 13)), boss = K2() ? S.k2.nb === 'boss' : p % 10 === 0;
+  const elite = K2() ? S.k2.nb === 'elite' : !boss && p >= 4 && S.noElite !== p && mulberry(p * 31337 + (S.seed || 13) * 3)() < .12 + .05 * WP('elite');
   const ty = planetType(p, boss), TT = PTYPE[ty], pal = boss ? ['#5d6470', '#1f232b', '#ff6f91'] : TT.pal || PAL[(p - 1) % PAL.length];
   // Großer Planet: man sieht nur einen Ausschnitt, die Kamera folgt dem Schiff, die Minimap zeigt alles
   CELL = Math.max(14, 2 * Math.round(Math.min(W, 520) / 52)); // gerade Zahl: keine Nähte zwischen den Blöcken
@@ -1147,6 +1149,7 @@ const parts = [], floats = [], fx = [];
 let curW = null; // welche Waffe gerade trifft (für die Statistik)
 function hit(i, d) {
   if (i < 0 || !G.alive[i]) return;
+  if (K2()) { d *= k2M(); if (ART('boom') && !hitBoom && ++hitN % 10 === 0) { hitBoom = 1; const c0 = i % COLS, r0 = i / COLS | 0; for (let a = -1; a <= 1; a++) for (let b2 = -1; b2 <= 1; b2++) { const cc = c0 + a, rr = r0 + b2; if (cc >= 0 && cc < COLS && rr >= 0 && rr < ROWS) hit(rr * COLS + cc, d * 1.5 * artK()); } hitBoom = 0; if (fx.length < 300) { const [x, y] = cellXY(i); fx.push({ k: 'nova', x, y, r: CELL * 2, t: .25, c: '255,150,60' }); } } }
   if (G.type === 'k2metall') d *= LASERW.has(curW) ? .5 : HEAVYW.has(curW) ? 1.5 : 1;
   else if (G.type === 'k2geist') d *= AREAW.has(curW) ? 1.25 : (curW === 'line' || curW === 'sniper' || curW === 'star') ? .75 : 1;
   else if (G.type === 'k2kris' && Math.random() < .15) { if (Math.random() < .25 && parts.length < 420) { const [x, y] = cellXY(i); parts.push({ x, y, vx: (Math.random() - .5) * 160, vy: -60 - Math.random() * 80, t: .35, c: '#bff4ff' }); } return; }
@@ -1690,7 +1693,7 @@ const UNI2 = [
 ];
 const K2 = () => !!(S && S.ch === 2);
 const uniOf = p => Math.floor((p - 1) / 10) + 1, pInU = p => (p - 1) % 10 + 1;
-const uniT = u => (K2() ? UNI2 : UNI)[(u - 1) % UNI.length], uniName = u => uniT(u).n + (u > UNI.length ? ' ' + (Math.floor((u - 1) / UNI.length) + 1) : '');
+const uniT = u => K2() ? UNI2[((S.k2.sec || 1) - 1) % UNI2.length] : UNI[(u - 1) % UNI.length], uniName = u => uniT(u).n + (u > UNI.length ? ' ' + (Math.floor((u - 1) / UNI.length) + 1) : '');
 // Universums-Hintergründe (mit Higgsfield gemalt). Fehlt ein Bild, wird der Nebel wie bisher berechnet.
 const UBG = {}; let nbPx = 5;
 function uniBg(u) { const k = ((u - 1) % 8) + 1; if (!UBG[k]) { const im = new Image(); im.onload = () => { im.ok = true; nebKey = ''; }; im.src = 'bg/u' + k + '.jpg'; UBG[k] = im; } return UBG[k].ok ? UBG[k] : null; }
@@ -1699,7 +1702,7 @@ function buildNebula() {
   if (bi) { // Bild auf grobe Pixel runterrechnen, damit es zum Pixel-Look passt
     const sc = Math.max(w / bi.width, h / bi.height), dw = bi.width * sc, dh = bi.height * sc;
     nbg.imageSmoothingEnabled = true; nbg.fillStyle = T.bg; nbg.fillRect(0, 0, w, h); nbg.globalAlpha = .9; nbg.drawImage(bi, (w - dw) / 2, (h - dh) / 2, dw, dh); nbg.globalAlpha = 1;
-    nebKey = (S.ch || 1) + ':' + u + ':' + W + 'x' + H; return;
+    nebKey = (S.ch || 1) + ':' + (K2() ? S.k2.sec : u) + ':' + W + 'x' + H; return;
   }
   const img = nbg.createImageData(w, h), blobs = Array.from({ length: 7 }, () => [rnd() * w, rnd() * h, (.15 + rnd() * .3) * w, rnd() < .55 ? 0 : 1]);
   const A = hex(T.a), B = hex(T.b), BG = hex(T.bg), q = v => Math.floor(Math.max(0, Math.min(1, v)) * 4) / 4;
@@ -1717,7 +1720,7 @@ function buildNebula() {
     const qa = q(a) * .26, qb = q(b) * .22, o = (y * w + x) * 4, qe = q(e);
     for (let c = 0; c < 3; c++) img.data[o + c] = Math.min(255, BG[c] + A[c] * qa + B[c] * qb + (qe ? (c === 0 ? A[c] : A[c] * .8) * qe * .55 : 0));
     img.data[o + 3] = 255; }
-  nbg.putImageData(img, 0, 0); nebKey = (S.ch || 1) + ':' + u + ':' + W + 'x' + H;
+  nbg.putImageData(img, 0, 0); nebKey = (S.ch || 1) + ':' + (K2() ? S.k2.sec : u) + ':' + W + 'x' + H;
 }
 const STARS = [0, 1, 2].map(l => Array.from({ length: [70, 35, 12][l] }, () => ({ x: Math.random(), y: Math.random(), c: ['#ffffff', '#9fe8ff', '#ffd9a0', '#ffb0e0'][Math.random() * 4 | 0], ph: Math.random() * 9 })));
 let scanPat = null, vign = null;
@@ -1727,6 +1730,114 @@ function overlays() {
 }
 // ---------- Pixel-Schiff ----------
 const SC = document.createElement('canvas'), scg = SC.getContext('2d'); SC.width = SC.height = 44;
+/* ========== Kapitel 2: Sternenkarte · Hülle · Artefakte · Sternenbaum ========== */
+const K2ROWS = 6, MAPN = {
+  kampf: { n: 'Planet', i: '●', c: '#5ce8f0', d: 'Normaler Kapitel-2-Planet. Sicher, bringt ✧.' },
+  elite: { n: 'Elite-Planet', i: '☠', c: '#ff4a62', d: 'Doppeltes Leben, kostet Hülle. Belohnung: viel ✧ und ein Artefakt nach Wahl.' },
+  haendler: { n: 'Händler', i: '$', c: '#ffe94d', d: 'Tausche ✧ gegen Reparatur, Artefakte oder Begleiter-Stufen.' },
+  event: { n: 'Anomalie', i: '?', c: '#b48cff', d: 'Zufallsereignis mit Risiko und Belohnung.' },
+  ruhe: { n: 'Ruhe-Station', i: '+', c: '#9dff6a', d: 'Hülle reparieren oder den Begleiter gratis leveln.' },
+  boss: { n: 'Sektor-Boss', i: '♛', c: '#ff5fa8', d: 'Weltenfresser oder Mutterschiff. Danach: nächster Sektor.' }
+};
+const ARTS = {
+  boom: { n: 'Zündkern', i: '💥', d: 'Jeder 10. Treffer explodiert (3×3 Blöcke)' },
+  wing2: { n: 'Schwarmsender', i: '🛰', d: 'Begleiter feuert doppelt so schnell' },
+  metal: { n: 'Säurekern', i: '🧪', d: '+40 % Schaden auf Metall- und Kristallplaneten' },
+  cdr: { n: 'Zeitkristall', i: '⏳', d: 'Fähigkeiten laden 25 % schneller' },
+  dmg: { n: 'Sternenherz', i: '❤️‍🔥', d: '+25 % Schaden in diesem Sektor' },
+  heal: { n: 'Nanoschwarm', i: '🧬', d: 'Nach jedem Planeten +6 % Hülle' },
+  bossb: { n: 'Königsbrecher', i: '👑', d: '+50 % Schaden auf den Sektor-Boss' },
+  gier: { n: 'Gierschlund', i: '✧', d: '+60 % Sternensplitter aus Planeten' }
+};
+/* Sternenbaum: dauerhafte Talente für ✧, drei Äste, jeder Knoten braucht den vorherigen */
+const TREE = [
+  { id: 'rumpf', n: 'Rumpf', c: '#9dff6a', k: [
+    { id: 'panzer', n: 'Panzerplatten', mx: 5, d: l => '+' + 10 * l + ' max. Hülle' },
+    { id: 'repar', n: 'Notreparatur', mx: 5, d: l => '+' + 3 * l + ' % Hülle nach jedem Planeten' },
+    { id: 'schild', n: 'Schildgenerator', mx: 5, d: l => 'Elite & Ereignisse kosten ' + 12 * l + ' % weniger Hülle' },
+    { id: 'phoenix', n: 'Phönix-Protokoll', mx: 1, d: () => 'Einmal pro Sektor bei 0 Hülle mit 40 % weiterfliegen' } ] },
+  { id: 'navi', n: 'Navigator', c: '#ffe94d', k: [
+    { id: 'schatz', n: 'Schatzsucher', mx: 5, d: l => '+' + l + ' ✧ pro Planet' },
+    { id: 'rabatt', n: 'Händlerfreund', mx: 5, d: l => 'Händler ' + 8 * l + ' % billiger' },
+    { id: 'scanner', n: 'Anomalie-Scanner', mx: 5, d: l => 'Ereignisse gehen ' + 8 * l + ' % öfter gut aus' },
+    { id: 'leser', n: 'Sternenleser', mx: 1, d: () => 'Artefakt-Wahl: 4 statt 3 Karten' } ] },
+  { id: 'waffe', n: 'Waffenmeister', c: '#ff5fa8', k: [
+    { id: 'k2dmg', n: 'Galaxie-Feuer', mx: 5, d: l => '+' + 8 * l + ' % Schaden in Kapitel 2' },
+    { id: 'drill', n: 'Begleiter-Drill', mx: 5, d: l => '+' + 15 * l + ' % Begleiter-Schaden' },
+    { id: 'boss', n: 'Boss-Brecher', mx: 5, d: l => '+' + 12 * l + ' % Schaden auf Sektor-Bosse' },
+    { id: 'artk', n: 'Artefakt-Verstärker', mx: 3, d: l => 'Artefakte wirken ' + 20 * l + ' % stärker' } ] }
+];
+const TL = id => (S.k2 && S.k2.tree && S.k2.tree[id]) || 0, ART = id => K2() && (S.k2.arts || []).includes(id), artK = () => 1 + .2 * TL('artk');
+const treeCost = l => 6 + 6 * l, hpMax = () => 100 + 10 * TL('panzer');
+let hitN = 0, hitBoom = 0;
+const k2M = () => (1 + .08 * TL('k2dmg')) * (ART('dmg') ? 1 + .25 * artK() : 1) * (ART('metal') && (G.type === 'k2metall' || G.type === 'k2kris') ? 1 + .4 * artK() : 1) * (G.boss ? (1 + .12 * TL('boss')) * (ART('bossb') ? 1 + .5 * artK() : 1) : 1);
+function k2Gen() { const rnd = mulberry((S.k2.sec || 1) * 9173 + (S.seed || 13) * 31 + (S.k2.last || 0)), L = [];
+  const pick = r => { const x = rnd(); if (r === K2ROWS - 1) return x < .55 ? 'ruhe' : 'haendler'; if (r === 1) return x < .7 ? 'kampf' : 'event'; return x < .42 ? 'kampf' : x < .6 ? 'elite' : x < .78 ? 'event' : x < .9 ? 'haendler' : 'ruhe'; };
+  for (let r = 0; r <= K2ROWS; r++) { const n = r === 0 || r === K2ROWS ? 1 : 2 + ((rnd() * 2) | 0); L.push(Array.from({ length: n }, (_, k) => ({ t: r === 0 ? 'start' : r === K2ROWS ? 'boss' : pick(r), nx: [] }))); }
+  for (let r = 0; r < K2ROWS; r++) L[r].forEach((a, k) => { const nb = L[r + 1], pos = L[r].length === 1 ? .5 : k / (L[r].length - 1), near = nb.map((b, j) => [Math.abs((nb.length === 1 ? .5 : j / (nb.length - 1)) - pos), j]).sort((x, y) => x[0] - y[0]); a.nx.push(near[0][1]); if (near[1] && rnd() < .55) a.nx.push(near[1][1]); });
+  for (let r = 1; r <= K2ROWS; r++) L[r].forEach((b, j) => { if (!L[r - 1].some(a => a.nx.includes(j))) L[r - 1][(rnd() * L[r - 1].length) | 0].nx.push(j); });
+  return L; }
+function k2Init() { if (!S.k2.map) { S.k2.map = k2Gen(); S.k2.r = 0; S.k2.k = 0; } if (S.k2.hp == null) S.k2.hp = hpMax(); }
+const k2Reach = () => { const m = S.k2.map, a = m && m[S.k2.r] && m[S.k2.r][S.k2.k]; return a && m[S.k2.r + 1] ? a.nx.map(j => [S.k2.r + 1, j]) : []; };
+function hullHit(pct) { const v = pct * (1 - .12 * TL('schild')); S.k2.hp -= v; if (S.k2.hp <= 0) { if (TL('phoenix') && !S.k2.phx) { S.k2.phx = 1; S.k2.hp = hpMax() * .4; setTimeout(() => cele('PHÖNIX!', 'Mit 40 % Hülle weiter'), 300); } else { S.k2.hp = hpMax() * .6; S.k2.r = 0; S.k2.k = 0; S.k2.arts = []; setTimeout(() => cele('HÜLLE ZERSTÖRT!', 'Zurück an den Sektor-Anfang', 1), 300); } } return v; }
+/* Nach jedem Kapitel-2-Planeten: Belohnung, dann Karte öffnen */
+function k2Done() { k2Init(); const nb = S.k2.nb, boss = nb === 'boss'; S.k2.wait = 1; S.k2.nb = 'kampf'; /* sofort festhalten: kein neuer Planet, bevor gewählt ist */
+  let sp = 2 + Math.floor((S.k2.r || 1) / 2) + TL('schatz') + (nb === 'elite' ? 6 : 0) + (boss ? 25 : 0); if (ART('gier')) sp = Math.round(sp * (1 + .6 * artK())); S.k2.sp = (S.k2.sp || 0) + sp;
+  S.k2.hp = Math.min(hpMax(), S.k2.hp + 3 * TL('repar') + (ART('heal') ? 6 * artK() : 0));
+  setTimeout(() => toast('✧ +' + sp + ' Sternensplitter' + (boss ? ' · ' + K2BOSS() + ' besiegt!' : '')), 2600);
+  if (boss) { S.k2.sec = (S.k2.sec || 1) + 1; S.k2.last = (S.k2.last || 0) + 1; S.k2.map = null; S.k2.arts = []; S.k2.phx = 0; k2Init(); nebKey = ''; setTimeout(() => cele('SEKTOR ' + (S.k2.sec - 1) + ' GESCHAFFT!', 'Weiter nach ' + UNI2[(S.k2.sec - 1) % UNI2.length].n, 1), 1200); }
+  if (nb === 'elite' || boss) setTimeout(() => k2ArtPick(() => k2Wait()), boss ? 3200 : 1600); else k2Wait(); }
+function k2Wait() { S.k2.wait = 1; setTimeout(k2Map, 900); }
+function k2Choose(r, k) { const n = S.k2.map[r][k]; S.k2.r = r; S.k2.k = k; save('now'); $('k2m') && $('k2m').remove();
+  if (n.t === 'kampf' || n.t === 'elite' || n.t === 'boss') { S.k2.nb = n.t; if (n.t === 'elite') { const v = hullHit(20); toast('☠ Elite-Planet · Hülle -' + Math.round(v) + ' %'); } S.k2.wait = 0; render(); return; }
+  if (n.t === 'haendler') return k2Shop(); if (n.t === 'event') return k2Event(); if (n.t === 'ruhe') return k2Rest(); }
+const k2Next = () => { render(); setTimeout(k2Map, 250); };
+function k2Shop() { const f = 1 - .08 * TL('rabatt'), c = v => Math.max(1, Math.round(v * f)), cr = c(6), ca = c(14), cw = c(wingCost(S.k2.wl || 0)), arts = Object.keys(ARTS).filter(a => !S.k2.arts.includes(a)), a = arts[(Math.random() * arts.length) | 0];
+  const opts = [[`🛡 Reparatur +30 % · ✧${cr}`, () => { if (S.k2.sp < cr) return toast('Zu wenig ✧'); S.k2.sp -= cr; S.k2.hp = Math.min(hpMax(), S.k2.hp + 30); }]];
+  if (a) opts.push([`${ARTS[a].i} ${ARTS[a].n} · ✧${ca}`, () => { if (S.k2.sp < ca) return toast('Zu wenig ✧'); S.k2.sp -= ca; S.k2.arts.push(a); toast(ARTS[a].i + ' ' + ARTS[a].n + ': ' + ARTS[a].d); }]);
+  if ((S.k2.wl || 0) < WING_MAX) opts.push([`🚀 Begleiter +1 Stufe · ✧${cw}`, () => { if (S.k2.sp < cw) return toast('Zu wenig ✧'); S.k2.sp -= cw; S.k2.wl++; }]);
+  opts.push(['Weiterfliegen', null]);
+  const close = fn => () => { fn && fn(); save(); k2Next(); };
+  overlay(`<h2 style="color:#ffe94d">$ Händler</h2><p>„Frische Ware aus dem Jenseits!“ Du hast <b>✧${fmt(S.k2.sp)}</b> und <b>🛡${Math.round(S.k2.hp)} %</b> Hülle.${a ? `<br><small>${ARTS[a].i} ${ARTS[a].n}: ${ARTS[a].d}</small>` : ''}</p>`, opts.map(([l, fn]) => [l, close(fn)])); }
+const K2EV = [
+  { n: 'Treibendes Wrack', d: 'Ein altes Frachtschiff, halb zerstört. Plündern oder vorbeifliegen?', a: ['Plündern', ok => ok ? [() => { S.k2.sp += 10; }, '✧ +10 erbeutet!'] : [() => hullHit(15), 'Eine Falle! Hülle -15 %.']], b: ['Vorbeifliegen', () => [() => { S.k2.sp += 2; }, 'Ein paar Splitter treiben vorbei: ✧ +2.']] },
+  { n: 'Schwarzes Loch', d: 'Ein kleines Schwarzes Loch. Wer den Sprung wagt, findet am Ende oft Artefakte.', a: ['Springen', ok => ok ? [() => { const pool = Object.keys(ARTS).filter(x => !S.k2.arts.includes(x)); if (pool.length) S.k2.arts.push(pool[(Math.random() * pool.length) | 0]); }, 'Am anderen Ende treibt ein Artefakt: ' + '<b>' + 'neues Artefakt' + '</b>' + ' (siehe Karte).'] : [() => hullHit(25), 'Die Gezeiten reißen an dir: Hülle -25 %.']], b: ['Ausweichen', () => [() => {}, 'Sicher ist sicher.']] },
+  { n: 'Schmuggler', d: '„Psst. Reparatur gefällig? Kostet dich nur ein bisschen Splitter.“', a: ['Handeln (✧4)', ok => [() => { if (S.k2.sp >= 4) { S.k2.sp -= 4; S.k2.hp = Math.min(hpMax(), S.k2.hp + (ok ? 35 : 15)); } }, ok ? 'Top-Arbeit: Hülle +35 %.' : 'Pfusch, aber besser als nix: Hülle +15 %.']], b: ['Ablehnen', () => [() => {}, 'Der Schmuggler zieht weiter.']] },
+  { n: 'Sternenregen', d: 'Ein glitzernder Meteoritenschwarm kreuzt deinen Weg.', a: ['Durchfliegen', ok => [() => { S.k2.sp += ok ? 9 : 5; hullHit(ok ? 4 : 12); }, ok ? '✧ +9, kaum Kratzer.' : '✧ +5, aber Hülle -12 %.']], b: ['Umfliegen', () => [() => {}, 'Du fliegst einen Bogen.']] },
+  { n: 'Verlassene Station', d: 'Die Lichter flackern noch. Vielleicht lässt sich dein Begleiter hier aufrüsten.', a: ['Andocken', ok => ok ? [() => { if (S.k2.wl < WING_MAX) S.k2.wl++; }, 'Begleiter +1 Stufe!'] : [() => hullHit(10), 'Ein Sicherheitssystem feuert: Hülle -10 %.']], b: ['Weiterfliegen', () => [() => {}, 'Lieber nicht.']] }
+];
+function k2Event() { const e = K2EV[(Math.random() * K2EV.length) | 0], good = .55 + .08 * TL('scanner');
+  const run = res => () => { const [fn, txt] = res; fn(); save(); setTimeout(() => overlay(`<h2 style="color:#b48cff">? ${e.n}</h2><p>${txt}</p>`, [['Weiter', () => k2Next()]]), 80); };
+  overlay(`<h2 style="color:#b48cff">? ${e.n}</h2><p>${e.d}</p><p style="font-size:12px;opacity:.75">Hülle 🛡${Math.round(S.k2.hp)} % · ✧${fmt(S.k2.sp)}</p>`, [[e.a[0], run(e.a[1](Math.random() < good))], [e.b[0], run(e.b[1]())]]); }
+function k2Rest() { overlay(`<h2 style="color:#9dff6a">+ Ruhe-Station</h2><p>Kurz durchatmen. Hülle 🛡${Math.round(S.k2.hp)} % von ${hpMax()} %.</p>`, [['🛡 Hülle +40 % reparieren', () => { S.k2.hp = Math.min(hpMax(), S.k2.hp + 40); save(); k2Next(); }], ['🚀 Begleiter gratis +1 Stufe', () => { if (S.k2.wl < WING_MAX) S.k2.wl++; save(); k2Next(); }]]); }
+function k2ArtPick(after, one) { const pool = Object.keys(ARTS).filter(a => !S.k2.arts.includes(a)); if (!pool.length) return after && after(); const n = one ? 1 : TL('leser') ? 4 : 3, ch = []; while (ch.length < Math.min(n, pool.length)) { const a = pool[(Math.random() * pool.length) | 0]; if (!ch.includes(a)) ch.push(a); }
+  overlay(`<h2 style="color:#b48cff">Artefakt wählen</h2><p>Wirkt bis zum Ende dieses Sektors.</p>`, ch.map(a => [`${ARTS[a].i} ${ARTS[a].n}<small style="display:block;font-size:11px;opacity:.8;font-weight:500">${ARTS[a].d}</small>`, () => { S.k2.arts.push(a); save(); after && after(); }])); }
+/* Karte als Vollbild-Overlay */
+function k2Map(view) { if (!K2()) return; k2Init(); if ($('k2m')) $('k2m').remove(); if (!view && (!S.k2.wait || !$('ov').classList.contains('hide') || $('allw') || $('start'))) { if (S.k2.wait && !view) setTimeout(k2Map, 1200); return; }
+  const d = document.createElement('div'); d.id = 'k2m'; const R = k2Reach().map(x => x.join(','));
+  d.innerHTML = `<div class="k2h"><b>Sektor ${S.k2.sec} · ${UNI2[(S.k2.sec - 1) % UNI2.length].n}</b><span>🛡${Math.round(S.k2.hp)}/${hpMax()} % · ✧${fmt(S.k2.sp)}</span></div><svg id="k2sv"></svg>
+    <div class="k2i" id="k2i">${view ? 'Deine Route durch den Sektor.' : 'Wähl deinen nächsten Halt: Tipp einen leuchtenden Knoten an.'}</div>
+    <div class="k2a">${(S.k2.arts || []).map(a => `<span title="${ARTS[a].d}">${ARTS[a].i} ${ARTS[a].n}</span>`).join('') || '<span style="opacity:.6">Noch keine Artefakte</span>'}</div>
+    <div class="k2btn"><button class="br" id="k2tree">🌳 Sternenbaum</button>${view ? '<button class="br" id="k2x">Schließen</button>' : '<button class="br" id="k2go" disabled>Hinfliegen</button>'}</div><div class="k2auto" id="k2auto"></div>`;
+  document.body.appendChild(d); let sel = null;
+  const draw = () => { const sv = d.querySelector('#k2sv'), W2 = sv.clientWidth || 360, H2 = sv.clientHeight || 420, m = S.k2.map, pad = 34;
+    const pos = (r, k) => { const n = m[r].length; return [W2 / 2 + (n === 1 ? 0 : (k / (n - 1) - .5) * Math.min(W2 - pad * 2, 360)), H2 - pad - r * (H2 - pad * 2) / K2ROWS]; }; let o = '';
+    m.forEach((row, r) => row.forEach((a, k) => a.nx.forEach(j => { const [x1, y1] = pos(r, k), [x2, y2] = pos(r + 1, j), act = r === S.k2.r && k === S.k2.k; o += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${act ? '#5ce8f0' : '#41588a'}" stroke-width="${act ? 3 : 2}" stroke-dasharray="${act ? '6 6' : '3 7'}"/>`; })));
+    m.forEach((row, r) => row.forEach((n, k) => { const [x, y] = pos(r, k), t = MAPN[n.t] || { c: '#9fb0c8', i: '⌂' }, here = r === S.k2.r && k === S.k2.k, can = !view && R.includes(r + ',' + k), rr = n.t === 'boss' ? 22 : 16, sl = sel && sel[0] === r && sel[1] === k;
+      o += `<g data-rk="${r},${k}" opacity="${r < S.k2.r ? .35 : 1}" style="cursor:${can ? 'pointer' : 'default'}">${can ? `<circle cx="${x}" cy="${y}" r="${rr + 7}" fill="none" stroke="${t.c}" stroke-width="2" opacity=".55"><animate attributeName="r" values="${rr + 3};${rr + 10};${rr + 3}" dur="1.5s" repeatCount="indefinite"/></circle>` : ''}<circle cx="${x}" cy="${y}" r="${rr}" fill="#0b1020" stroke="${sl ? '#fff' : t.c}" stroke-width="${sl ? 3 : 2}"/><text x="${x}" y="${y + 6}" text-anchor="middle" font-size="${n.t === 'boss' ? 20 : 16}" font-weight="700" fill="${t.c}">${n.t === 'start' ? '⌂' : t.i}</text>${here ? `<polygon points="${x},${y - rr - 20} ${x - 8},${y - rr - 5} ${x},${y - rr - 9} ${x + 8},${y - rr - 5}" fill="#e8f1ff"/>` : ''}</g>`; }));
+    sv.innerHTML = o; };
+  draw(); const ro = new ResizeObserver(draw); ro.observe(d.querySelector('#k2sv'));
+  d.querySelector('#k2sv').onclick = e => { const gq = e.target.closest('g[data-rk]'); if (!gq || view || !R.includes(gq.dataset.rk)) return; sel = gq.dataset.rk.split(',').map(Number); const n = S.k2.map[sel[0]][sel[1]], t = MAPN[n.t]; d.querySelector('#k2i').innerHTML = `<b style="color:${t.c}">${t.i} ${t.n}</b> – ${t.d}`; d.querySelector('#k2go').disabled = false; draw(); };
+  const gb = d.querySelector('#k2go'); if (gb) gb.onclick = () => { if (!sel) return; clearInterval(at); ro.disconnect(); k2Choose(sel[0], sel[1]); };
+  const xb = d.querySelector('#k2x'); if (xb) xb.onclick = () => { ro.disconnect(); d.remove(); };
+  d.querySelector('#k2tree').onclick = () => k2Tree();
+  /* Auto-Route nach 25 s (oder sofort, wenn das Spiel im Hintergrund läuft), damit Idle weiterläuft */
+  let left = 25, at = 0; if (!view) { const tick = () => { if (!d.isConnected) return clearInterval(at); if (document.hidden) left = 0; if (--left <= 0) { clearInterval(at); ro.disconnect(); const pick = R.map(x => x.split(',').map(Number)).sort((a, b) => ({ kampf: 0, ruhe: 1, haendler: 2, event: 3, elite: 4, boss: 0 }[S.k2.map[a[0]][a[1]].t] - { kampf: 0, ruhe: 1, haendler: 2, event: 3, elite: 4, boss: 0 }[S.k2.map[b[0]][b[1]].t]))[0]; k2Choose(pick[0], pick[1]); } else d.querySelector('#k2auto').textContent = 'Auto-Route in ' + left + ' s'; }; at = setInterval(tick, 1000); tick(); } }
+function k2Tree() { if ($('k2t')) $('k2t').remove(); const d = document.createElement('div'); d.id = 'k2t';
+  const html = () => `<div class="k2h"><b>🌳 Sternenbaum</b><span>✧${fmt(S.k2.sp)}</span></div><p class="k2tp">Dauerhafte Talente für Kapitel 2. Jeder Knoten braucht den davor.</p><div class="k2tb">${TREE.map(br => `<div class="k2br" style="--tc:${br.c}"><h3>${br.n}</h3>${br.k.map((n, i) => { const l = TL(n.id), lock = i > 0 && !TL(br.k[i - 1].id), mx = l >= n.mx, c = treeCost(l);
+      return `<div class="k2n${lock ? ' lk' : ''}${l ? ' on' : ''}"><b>${n.n}</b><small>${n.d(Math.max(1, l))}</small><span>${'◆'.repeat(l)}${'◇'.repeat(n.mx - l)}</span><button class="br" data-tn="${n.id}" ${lock || mx || S.k2.sp < c ? 'disabled' : ''}>${mx ? 'MAX' : lock ? '🔒' : '✧' + c}</button></div>`; }).join('<i class="k2ln"></i>')}</div>`).join('')}</div><button class="br" id="k2tx">Zurück</button>`;
+  const paint = () => { d.innerHTML = html(); d.querySelectorAll('[data-tn]').forEach(b => b.onclick = () => { const id = b.dataset.tn, n = TREE.flatMap(x => x.k).find(x => x.id === id), l = TL(id), c = treeCost(l); if (l >= n.mx || S.k2.sp < c) return; S.k2.sp -= c; S.k2.tree[id] = l + 1; if (id === 'panzer') S.k2.hp += 10; SND.fx.up(); save(); paint(); }); d.querySelector('#k2tx').onclick = () => { d.remove(); render(); }; };
+  document.body.appendChild(d); paint(); }
 /* ---------- Begleiter-Schiff (Kapitel 2) ---------- */
 const WINGT = {
   jaeger: { n: 'Jäger', s: 'Dauerfeuer', c: '#5ce8f0', d: 'Schnelle Laser auf den nächsten Block', l25: 'Doppellaser', l50: 'Laser durchschlagen 3 Blöcke' },
@@ -1738,11 +1849,11 @@ let wingCd = 0, wingDpsC = 0, wingDpsT = 0; const wbombs = [];
 const wingPos = () => { const d = Math.max(1, Math.hypot(ship.x - G.cx, ship.y - G.cy)), a = Math.atan2(ship.y - G.cy, ship.x - G.cx) - Math.min(.7, 62 / d) + Math.sin(performance.now() / 700) * .03; return [G.cx + Math.cos(a) * (d + 6), G.cy + Math.sin(a) * (d + 6)]; };
 function wingStep(dt, R) {
   const wl = S.k2.wl, k = wl / WING_MAX, T = S.k2.wt; if ((wingDpsT -= dt) <= 0) { wingDpsT = 1; wingDpsC = totalDps(); }
-  const dps = wingDpsC * (.08 + .01 * wl) * (T === 'waechter' ? 1.1 : T === 'bomber' ? 1.2 : 1), [wx, wy] = wingPos(), c = WINGT[T].c; curW = 'wing';
+  const dps = wingDpsC * (.08 + .01 * wl) * (1 + .15 * TL('drill')) * (T === 'waechter' ? 1.1 : T === 'bomber' ? 1.2 : 1), [wx, wy] = wingPos(), c = WINGT[T].c; curW = 'wing';
   for (let i = wbombs.length - 1; i >= 0; i--) { const b = wbombs[i]; b.t += dt; if (b.t < b.T) continue; wbombs.splice(i, 1); const c0 = Math.floor((b.x - G.ox) / CELL), r0 = Math.floor((b.y - G.oy) / CELL), rr = wl >= 50 ? 2 : 1, cl = [];
     for (let a = -rr; a <= rr; a++) for (let b2 = -rr; b2 <= rr; b2++) { const cc = c0 + a, r2 = r0 + b2; if (cc < 0 || cc >= COLS || r2 < 0 || r2 >= ROWS) continue; const j = r2 * COLS + cc; if (G.alive[j]) cl.push(j); }
     for (const j of cl) hit(j, b.d / Math.max(2, cl.length) * 2); fx.push({ k: 'nova', x: b.x, y: b.y, r: CELL * (rr + 1.2), t: .35, c: '255,159,67' }); }
-  if ((wingCd -= dt * Math.min(R, 1.6)) > 0) { curW = null; return; }
+  if ((wingCd -= dt * Math.min(R, 1.6) * (ART('wing2') ? 1 + artK() : 1)) > 0) { curW = null; return; }
   const near = nearList(wx, wy, 10); if (!near.length) { curW = null; return; }
   if (T === 'jaeger') { const iv = .3 - .14 * k; wingCd = iv; const n = wl >= 25 ? 2 : 1;
     for (let q = 0; q < n && q < near.length; q++) { const i = near[q], [x, y] = cellXY(i); hit(i, dps * iv / n * critMul()); if (wl >= 50) for (const j of near.slice(n + q * 2, n + q * 2 + 2)) hit(j, dps * iv / n * .35); fx.push({ k: 'bolt2', x: wx, y: wy, x2: x, y2: y, t: .1, c }); } }
@@ -1826,7 +1937,7 @@ function draw(now) {
   const sx = shake ? (Math.random() - .5) * shake : 0, sy = shake ? (Math.random() - .5) * shake : 0;
   g.setTransform(DPR, 0, 0, DPR, sx * DPR, sy * DPR);
   g.fillStyle = uniT(uniOf(S.p)).bg; g.fillRect(-10, -10, W + 20, H + 20);
-  if (nebKey !== (S.ch || 1) + ':' + uniOf(S.p) + ':' + W + 'x' + H) buildNebula();
+  if (nebKey !== (S.ch || 1) + ':' + (K2() ? S.k2.sec : uniOf(S.p)) + ':' + W + 'x' + H) buildNebula();
   g.imageSmoothingEnabled = false; g.drawImage(NB, 0, 0, NB.width * nbPx, NB.height * nbPx); g.imageSmoothingEnabled = true;
   const tt = now / 1000;
   STARS.forEach((L, l) => { const sp = [3, 7, 14][l], sz = [1, 2, 2][l]; for (const st of L) { const x = Math.floor(st.x * W), y = Math.floor((st.y * H + tt * sp) % H), tw = .45 + .55 * Math.abs(Math.sin(tt * (1 + l) + st.ph));
@@ -2148,9 +2259,9 @@ let tab = 'w', uiT = 0;
 function ui() {
   $('cr').textContent = fmt(S.cr) + ' CR';
   { const m = $('mul'), on = boosting(); m.textContent = (on ? '⚡' : '') + 'x' + fmtX(crMult()); m.classList.toggle('bon', on); }
-  $('cry').innerHTML = '◆' + fmt(S.cry) + ` <span class="dm">✦${fmt(S.dm || 0)}</span> <span class="chp">⬢${fmt(S.chip || 0)}</span>` + (K2() ? ` <span class="k2sp">✧${fmt(S.k2.sp || 0)}</span>` : '');
+  $('cry').innerHTML = '◆' + fmt(S.cry) + ` <span class="dm">✦${fmt(S.dm || 0)}</span> <span class="chp">⬢${fmt(S.chip || 0)}</span>` + (K2() ? ` <span class="k2sp">✧${fmt(S.k2.sp || 0)}</span> <span class="k2hp">🛡${Math.round(S.k2.hp)}%</span>` : '');
   { const nm = $('plnm'); if (nm) { nm.textContent = G.name || ''; nm.style.color = G.boss ? '#ff9ab0' : G.elite ? '#ff6a80' : (G.pal ? G.pal[2] : ''); } }
-  $('pln').textContent = (K2() ? 'K2 · ' : '') + 'U' + uniOf(S.p) + ' · ' + (G.boss ? (K2() ? K2BOSS() : 'BOSS') : (G.elite ? 'ELITE ' : 'Planet ') + pInU(S.p)); $('pln').classList.toggle('boss', !!(G.boss || G.elite)); $('plp').textContent = fmt(G.total - G.left) + '/' + fmt(G.total);
+  $('pln').textContent = K2() ? 'K2 · Sektor ' + S.k2.sec + ' · ' + (G.boss ? K2BOSS() : (G.elite ? 'ELITE ' : 'Station ') + S.k2.r + '/' + K2ROWS) : 'U' + uniOf(S.p) + ' · ' + (G.boss ? 'BOSS' : (G.elite ? 'ELITE ' : 'Planet ') + pInU(S.p)); $('pln').classList.toggle('boss', !!(G.boss || G.elite)); $('plp').textContent = fmt(G.total - G.left) + '/' + fmt(G.total);
   hotbar();
   const b = $('boost'), bl = $('bl'), now = Date.now();
   if (boosting()) { b.classList.add('act'); bl.textContent = mmss(S.boostEnd - now); b.disabled = true; const tot = S.boostDur || (5 + 2 * WP('boost')) * 60e3, f = Math.max(0, Math.min(1, (S.boostEnd - now) / tot)) * 100; const bf = $('bfill'); if (bf) bf.style.height = f + '%'; }
@@ -2190,10 +2301,11 @@ const lineSt = () => LINEST[S.eq && S.eq.h] || LINEST.h_kobold;
 function lineSync() { const L = lineSt(), w = WEAP.find(x => x.id === 'line'); if (w) { w.n = L.n; w.d = L.d; } WCOL.line = L.c; }
 /* Alles freigeschaltet = alle Hybride geschmiedet (damit jede Waffe) + alle Fähigkeiten → einmalige Glückwunsch-Szene */
 const allDone = () => Object.keys(HYB).every(h => S.w[h] > 0) && ABIL.filter(a => !a.k2).every(a => AL(a.id) > 0) && WARP.every(w => WP(w.id) > 0); /* + alle Warp-Fähigkeiten */
-let allT = 0;
+let allT = 0, k2RT = 0;
+function k2Resume() { if (K2() && S.k2.wait && !$('k2m')) k2Map(); }
 function allCheck() { if (S.allW || !allDone()) return; if ($('allw') || $('start') || $('updv') || $('aug') || $('news') || !$('ov').classList.contains('hide')) { if (!allT) allT = setTimeout(() => { allT = 0; allCheck(); }, 2000); return; } S.allW = Date.now(); save('now'); allShow(); }
-function enterK2() { S.ch = 2; S.k2.wt = S.k2.wt || 'jaeger'; S.k2.wl = Math.max(1, S.k2.wl || 0); S.k2.sp = Math.max(S.k2.sp || 0, 5); nebKey = ''; buildPlanet(S.done || 0); save('now'); render();
-  setTimeout(() => cele('KAPITEL 2', 'Jenseits der Galaxie · Begleiter im Hangar', 1), 300); }
+function enterK2() { S.ch = 2; S.k2.wt = S.k2.wt || 'jaeger'; S.k2.wl = Math.max(1, S.k2.wl || 0); S.k2.sp = Math.max(S.k2.sp || 0, 10); S.k2.sec = S.k2.sec || 1; S.k2.hp = S.k2.hp || 100; k2Init(); S.k2.nb = 'kampf'; nebKey = ''; buildPlanet(S.done || 0); save('now'); render();
+  setTimeout(() => cele('KAPITEL 2', 'Jenseits der Galaxie', 1), 300); setTimeout(() => overlay(`<h2>🗺 Die Sternenkarte</h2><p>In Kapitel 2 wählst du nach jedem Planeten deinen Weg: Elite-Planeten, Händler, Anomalien, Ruhe-Stationen und am Ende der Sektor-Boss. Pass auf deine <b>Hülle 🛡</b> auf!</p><p>Mit <b>Sternensplitter ✧</b> levelst du deinen Begleiter und den <b>Sternenbaum 🌳</b> (beides im Hangar).</p>`, [['Los geht\'s', null]]), 2600); }
 /* Endsequenz Kapitel 1: Planet zerbricht → Glückwunsch → Wurmloch → Sprung → „Kapitel 2“, danach Wahl */
 function allShow() {
   const d = document.createElement('div'); d.id = 'allw';
@@ -2232,7 +2344,7 @@ function allShow() {
   d.querySelector('#awrst').onclick = () => { close(); setTimeout(() => $('vrst') ? $('vrst').click() : resetGame(), 520); };
 }
 function synCheck() { S.synS = S.synS || []; for (const sy of SYN) if (synOn(sy) && !S.synS.includes(sy.id)) { S.synS.push(sy.id); setTimeout(() => cele('⚡ SYNERGIE!', sy.n + ' ist aktiv'), 400); } }
-function render() { lineSync(); synCheck(); allCheck();
+function render() { lineSync(); synCheck(); allCheck(); if (K2() && S.k2.wait && !$('k2m') && !k2RT) k2RT = setTimeout(() => { k2RT = 0; k2Resume(); }, 1500);
   if (tab !== 'h') document.querySelectorAll('.hsheet').forEach(x => x.remove());
   applyFull();
   const L = $('list');
@@ -2324,7 +2436,7 @@ function overlay(html, btns) { infNav = null; $('ovb').innerHTML = html + btns.m
 // Nach dem Abbau: Schiff fliegt raus, Sterne ziehen vorbei, neuer Planet schwebt rein
 let travel = 0, built = true, pOff = 0, travT0 = 2.6;
 function travelStep(dt) {
-  travel -= dt;
+  travel -= dt; if (K2() && S.k2.wait && travel < 1.6) travel = 1.6; /* Sternenkarte: im Warp warten, bis der nächste Knoten gewählt ist */
   if (travel > 1.5) { const tx = cam.x, ty = cam.y - H * .28; ship.vx += ((tx - ship.x) * 5 - ship.vx * 4) * dt; ship.vy += ((ty - ship.y) * 5 - ship.vy * 4) * dt; ship.x += ship.vx * dt; ship.y += ship.vy * dt; ship.ang += (0 - ship.ang) * .1; warpT = 1.4; }
   else {
     if (!built) { const sx0 = ship.x - cam.x, sy0 = ship.y - cam.y; buildPlanet(0); built = true; intro = 2.4; introName = G.name; if (G.elite) eliteWarn(); ship.orb = -Math.PI / 2; cam.x = G.cx; cam.y = G.cy - G.R + H * .2; ship.x = cam.x + sx0; ship.y = cam.y + sy0; save('now'); }
@@ -2365,7 +2477,7 @@ function augCard(c, k) { const T = AUGT[c.t];
 
 // ================== „Was ist neu“: einmal pro größerem Update beim Start, gut sichtbar ==================
 const NEWS = [ // [Icon, Titel, Text, Version] – angezeigt wird nur, was der Spieler noch nicht gesehen hat
-  ['🌌', 'Kapitel 2: Jenseits der Galaxie', 'Wer Kapitel 1 komplett freischaltet (alle Hybride, Fähigkeiten und Warp-Fähigkeiten), bekommt eine Endsequenz und betritt eine neue Galaxie: 4 neue Planetentypen, Bosse, Sternensplitter ✧, ein Begleiter-Schiff und 3 neue Fähigkeiten (Supernova, Sternensturm, Zeitriss).', '2026-11-27'],
+  ['🌌', 'Kapitel 2: Jenseits der Galaxie', 'Wer Kapitel 1 komplett freischaltet (alle Hybride, Fähigkeiten und Warp-Fähigkeiten), bekommt eine Endsequenz und betritt eine neue Galaxie: die Sternenkarte mit eigener Route pro Sektor, Hülle 🛡, Artefakte, den Sternenbaum 🌳, ein Begleiter-Schiff, 4 neue Planetentypen, Sektor-Bosse und 3 neue Fähigkeiten.', '2026-11-27'],
   ['🏆', 'Höchststufen', 'Normale Waffen gehen jetzt bis Stufe 100, Hybride bis Stufe 200. Und wer wirklich alles freischaltet, bekommt eine Überraschung …', '2026-11-25c'],
   ['⚒', 'Neuer Hybrid: Ätzstrahl', 'Orbitalstrahl + Säurewolke lassen sich jetzt in der Waffen-Schmiede verschmelzen: 50 % breiterer Strahl, und am Ende bleibt eine große Säurewolke liegen.', '2026-11-25c'],
   ['🛰', '2 neue Waffen', 'Der Orbitalstrahl feuert aus dem All und fegt über die Oberfläche. Die Säurewolke legt sich auf den Planeten und zersetzt alles darin.', '2026-11-25b'],
@@ -2442,9 +2554,9 @@ function eliteReward(title, sub, pick) {
 function planetDone() {
   SND.fx.win();
   const gain = Math.ceil((1 + S.p * .3 + WP('kris')) * (G.boss ? 2 : 1)), old = G.name; // Prototyp: ◆ nur noch für Kisten & Fähigkeiten → weniger
-  if (G.elite) setTimeout(() => eliteReward(), 1900);
+  if (G.elite && !K2()) setTimeout(() => eliteReward(), 1900);
   mis('planets'); if (G.boss) { mis('boss'); vib([90, 60, 90, 60, 160]); } else vib(30);
-  let spG = 0; if (K2()) { spG = 2 + Math.floor(pInU(S.p) / 2) + (G.boss ? 15 : 0); S.k2.sp = (S.k2.sp || 0) + spG; setTimeout(() => toast('✧ +' + spG + ' Sternensplitter' + (G.boss ? ' · ' + K2BOSS() + ' besiegt!' : '') + ' · Begleiter im Hangar leveln'), 3400); }
+  if (K2()) k2Done();
   S.cry += gain; S.p++; S.best = Math.max(S.best, S.p); if (!augDone()) { S.augQ = (S.augQ || 0) + 1; setTimeout(() => toast('🎴 Neue Skill-Karte! Unter „Skills“ öffnen'), 2500); } /* Karten werden nicht mehr automatisch geöffnet */
   S.pAll = (S.pAll || 0) + 1; let chipT = ''; if (S.pAll % 5 === 0) { const cg = 1 + WP('chips'); S.chip = (S.chip || 0) + cg; chipT = ' · +⬢' + cg + ' Chip!'; setTimeout(() => toast('⬢ Waffen-Chip bekommen! Im Waffen-Tab bei „Waffen-Mods“ einsetzen.'), 2600); }
   let bgN = 0;
@@ -2509,7 +2621,7 @@ function abIco(a, attrs) { if (ABOK[a.id]) { const w = /width="(\d+)"/.exec(attr
 setTimeout(() => ABIL.forEach(a => { const im = new Image(); im.onload = () => { ABOK[a.id] = 1; clearTimeout(abImgT); abImgT = setTimeout(() => { try { hotSig = ''; hotbar(true); render(); } catch (e) {} }, 250); }; im.src = 'ab/' + a.id + '.png'; }), 300);
 const AL = id => (S.ab && S.ab[id]) || 0;
 const abPow = id => 1 + .25 * (AL(id) - 1);
-const abCd = a => a.cd * (1 - .08 * WP('meister')) * (1 - .04 * (AL(a.id) - 1)) * (1 - .04 * itemLv('t')) * (1 - Math.min(.5, HA('cd'))) * (PK('t', 3) ? .9 : 1);
+const abCd = a => (K2() && ART('cdr') ? 1 - .25 * artK() : 1) * a.cd * (1 - .08 * WP('meister')) * (1 - .04 * (AL(a.id) - 1)) * (1 - .04 * itemLv('t')) * (1 - Math.min(.5, HA('cd'))) * (PK('t', 3) ? .9 : 1);
 const ABTXT = {
   over: 'Dein Schiff dreht durch: Alle Waffen und deine Rumpf-Attacke machen für ein paar Sekunden doppelten Schaden. Am besten zusammen mit Boost und anderen Fähigkeiten zünden.',
   gold: 'Für ein paar Sekunden bringt jeder abgebaute Block doppelt so viele CR. Lohnt sich am meisten, wenn gerade viel kaputt geht, z. B. direkt nach dem Meteorschauer.',
@@ -3105,12 +3217,14 @@ function wingHtml() {
   return `<div class="wingb" style="--wc:${T.c}"><div class="skh" style="margin:0 0 8px;border-left-color:${T.c}"><span>Begleiter-Schiff</span><b>✧ ${fmt(S.k2.sp || 0)}</b></div>
     <div class="wingt">${Object.entries(WINGT).map(([k, v]) => `<button data-wt="${k}" class="${k === t ? 'on' : ''}" style="--wc:${v.c}">${v.n}<small>${v.s}</small></button>`).join('')}</div>
     <p><b style="color:${T.c}">${T.n} · Lv. ${l}/${WING_MAX}</b> – ${T.d}.<br><span style="opacity:.8">Ab Lv. 25: ${T.l25} · Ab Lv. 50: ${T.l50}</span></p>
-    <button class="br" id="wingup" ${mx || (S.k2.sp || 0) < c ? 'disabled' : ''}>${mx ? 'MAX' : `Leveln · ✧${c}`}</button></div>`;
+    <button class="br" id="wingup" ${mx || (S.k2.sp || 0) < c ? 'disabled' : ''}>${mx ? 'MAX' : `Leveln · ✧${c}`}</button>
+    <div class="wingt" style="grid-template-columns:1fr 1fr;margin-top:8px"><button id="k2mapb">🗺 Sternenkarte<small>Sektor ${S.k2.sec} · 🛡${Math.round(S.k2.hp)} %</small></button><button id="k2treeb">🌳 Sternenbaum<small>${Object.values(S.k2.tree || {}).reduce((a, b) => a + b, 0)} Talente</small></button></div></div>`;
 }
 function wingBind(L) {
   L.querySelectorAll('[data-wt]').forEach(b => b.onclick = () => { S.k2.wt = b.dataset.wt; save(); render(); });
   const u = L.querySelector('#wingup'); if (u) u.onclick = () => { const c = wingCost(S.k2.wl || 0); if ((S.k2.wl || 0) >= WING_MAX || (S.k2.sp || 0) < c) return; S.k2.sp -= c; S.k2.wl = (S.k2.wl || 0) + 1; SND.fx.up(); if (S.k2.wl === 25 || S.k2.wl === 50) cele('BEGLEITER LV. ' + S.k2.wl + '!', WINGT[S.k2.wt][S.k2.wl === 25 ? 'l25' : 'l50']); save(); render(); };
   const k = L.querySelector('#k2go'); if (k) k.onclick = () => enterK2();
+  const mb = L.querySelector('#k2mapb'); if (mb) mb.onclick = () => k2Map(!S.k2.wait); const tb = L.querySelector('#k2treeb'); if (tb) tb.onclick = () => k2Tree();
 }
 function renderHangar(L) {
   document.querySelectorAll('.hsheet').forEach(x => x.remove());
